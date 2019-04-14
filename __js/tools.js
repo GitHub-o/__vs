@@ -649,7 +649,7 @@ function sortDatas(fields, datas) {
 /**
  * 封装AJAX
  */
-var xhr = (function () {
+var xhr = (function (doc) {
 	function _doAjax(opt) {
 		var o = window.XMLHttpRequest ?
 			new XMLHttpRequest() :
@@ -663,7 +663,9 @@ var xhr = (function () {
 			url = opt.url,
 			type = (opt.type || 'GET').toUpperCase(),
 			dataType = (opt.dataType || 'JSON').toUpperCase(),
-			async = opt.async == false ? false : true,
+			async = opt.async === false ? false : true,
+			jsonp = opt.jsonp || 'cb',
+			jsonpCallback = opt.jsonpCallback || 'jQuery' + randomNum(),
 			data = opt.data || null,
 			timeout = opt.timeout || 30000,
 			error = opt.error || function () {},
@@ -674,6 +676,23 @@ var xhr = (function () {
 
 		if (!url) {
 			throw (new Error('您没有填写URL'));
+		}
+
+		if(dataType === 'JSONP' && type !== 'GET') {
+			throw new Error('数据类型为"JSONP"的话，请求方式必须为"GET"或者不设置');
+		}
+
+		if(dataType === 'JSONP') {
+			var oScript = doc.createElement('script');
+			oScript.src = url.indexOf('?') === -1
+					    ? url + '?' + jsonp + '=' + jsonpCallback
+					    : url + '&' + jsonp + '=' + jsonpCallback;
+			doc.body.appendChild(oScript);
+			doc.body.removeChild(oScript);
+			window[jsonpCallback] = function(data) {
+				success(data);
+			}
+			return;
 		}
 
 		o.onreadystatechange = function () {
@@ -709,7 +728,7 @@ var xhr = (function () {
 
 		t = setTimeout(function () {
 			complete();
-			o && o.abort();
+			o.abort();
 			clearTimeout(t);
 			t = null;
 			o = null;
@@ -724,38 +743,46 @@ var xhr = (function () {
 		return str.replace(/&$/, '');
 	}
 
+	function randomNum() {
+		var res = '';
+		for(var i = 0; i < 20; i++) {
+			res += Math.floor((Math.random() * 10)); 
+		}
+		return res + '_' + new Date().getTime();
+	}
+
 	return {
 		ajax: function (opt) {
 			_doAjax(opt);
 		},
 
-		post: function (url, data, callback) {
+		post: function (url, data, successCB) {
 			_doAjax({
-				type: 'POST',
 				url: url,
+				type: 'POST',
 				data: data,
-				success: callback
+				success: successCB
 			})
 		},
 
-		get: function (url, callback) {
+		get: function (url, successCB) {
 			_doAjax({
-				type: 'GET',
 				url: url,
-				success: callback
+				type: 'GET',
+				success: successCB
 			})
 		}
 	}
-}())
+}(document))
 
 
 
 /**
  * 跨域domain
  */
-var ajaxDomain = (function () {
+var ajaxDomain = (function (doc) {
 	function createIframe(frameId, frameUrl) {
-		var frame = document.createElement('iframe');
+		var frame = doc.createElement('iframe');
 		frame.src = frameUrl;
 		frame.id = frameId;
 		frame.style.display = 'none';
@@ -764,23 +791,23 @@ var ajaxDomain = (function () {
 	}
 
 	return function (opt) {
-		document.domain = opt.basicDomain;
+		doc.domain = opt.basicDomain;
 		var frame = createIframe(opt.frameId, opt.frameUrl);
 
 		frame.onload = function () {
-			var $$ = document.getElementById(opt.frameId).contentWindow.xhr;
+			var $$ = doc.getElementById(opt.frameId).contentWindow.xhr;
 			$$.ajax({
 				url: opt.url,
 				type: opt.type,
+				dataType: opt.dataType,
 				data: opt.data,
 				success: opt.success,
 				error: opt.error
 			})
 		}
-		document.body.appendChild(frame);
+		doc.body.appendChild(frame);
 	}
-})();
-
+})(document);
 
 
 
@@ -954,7 +981,6 @@ function move(elem, speed) {
 		}
 	})
 }
-
 
 
 /**

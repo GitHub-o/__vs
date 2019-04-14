@@ -207,102 +207,132 @@ function showStatusAnimation(status, wrap, showAnimation, time) {
     }, .1 * time);
 }
 
-var xhr = (function () {
-  function _doAjax(opt) {
-      var o = window.XMLHttpRequest ?
-          new XMLHttpRequest() :
-          new ActiveXObject('Microsoft.XMLHTTP');
+var xhr = (function (doc) {
+	function _doAjax(opt) {
+		var o = window.XMLHttpRequest ?
+			new XMLHttpRequest() :
+			new ActiveXObject('Microsoft.XMLHTTP');
 
-      if (!o) {
-          throw (new Error('您的浏览器不支持异步发起HTTP请求'));
-      }
+		if (!o) {
+			throw (new Error('您的浏览器不支持异步发起HTTP请求'));
+		}
 
-      var opt = opt || {},
-          url = opt.url,
-          type = (opt.type || 'GET').toUpperCase(),
-          dataType = (opt.dataType || 'JSON').toUpperCase(),
-          async = opt.async == false ? false : true,
-              data = opt.data || null,
-              timeout = opt.timeout || 30000,
-              error = opt.error || function () {},
-              success = opt.success || function () {},
-              complete = opt.compelet || function () {};
+		var opt = opt || {},
+			url = opt.url,
+			type = (opt.type || 'GET').toUpperCase(),
+			dataType = (opt.dataType || 'JSON').toUpperCase(),
+			async = opt.async === false ? false : true,
+			jsonp = opt.jsonp || 'cb',
+			jsonpCallback = opt.jsonpCallback || 'jQuery' + randomNum(),
+			data = opt.data || null,
+			timeout = opt.timeout || 30000,
+			error = opt.error || function () {},
+			success = opt.success || function () {},
+			complete = opt.compelet || function () {},
 
-      var t = null;
+			t = null;
 
-      if (!url) {
-          throw (new Error('您没有填写URL'));
-      }
+		if (!url) {
+			throw (new Error('您没有填写URL'));
+		}
 
-      o.onreadystatechange = function () {
-          if (o.readyState === 4) {
-              if ((o.status >= 200 && o.status < 300) || o.status === 304) {
-                  switch (dataType) {
-                      case 'JSON':
-                          success(JSON.parse(o.responseText));
-                          break;
-                      case 'TEXT':
-                          success(o.responseText);
-                          break;
-                      case 'XML':
-                          success(o.responseXML);
-                          break;
-                      default:
-                          success(JSON.parse(o.responseText));
-                          break;
-                  }
-              } else {
-                  error();
-              }
+		if(dataType === 'JSONP' && type !== 'GET') {
+			throw new Error('数据类型为"JSONP"的话，请求方式必须为"GET"或者不设置');
+		}
 
-              complete();
-              clearTimeout(t);
-              t = null;
-              o = null;
-          }
-      }
-      o.open(type, url, async);
-      type === 'POST' && o.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-      o.send(type === 'GET' ? null : formatDatas(data));
+		if(dataType === 'JSONP') {
+			var oScript = doc.createElement('script');
+			oScript.src = url.indexOf('?') === -1
+					    ? url + '?' + jsonp + '=' + jsonpCallback
+					    : url + '&' + jsonp + '=' + jsonpCallback;
+			doc.body.appendChild(oScript);
+			doc.body.removeChild(oScript);
+			window[jsonpCallback] = function(data) {
+				success(data);
+			}
+			return;
+		}
 
-      t = setTimeout(function () {
-          complete();
-          o && o.abort();
-          clearTimeout(t);
-          t = null;
-          o = null;
-      }, timeout);
-  }
+		o.onreadystatechange = function () {
+			if (o.readyState === 4) {
+				if ((o.status >= 200 && o.status < 300) || o.status === 304) {
+					switch (dataType) {
+						case 'JSON':
+							success(JSON.parse(o.responseText));
+							break;
+						case 'TEXT':
+							success(o.responseText);
+							break;
+						case 'XML':
+							success(o.responseXML);
+							break;
+						default:
+							success(JSON.parse(o.responseText));
+							break;
+					}
+				} else {
+					error();
+				}
 
-  function formatDatas(obj) {
-      var str = '';
+				complete();
+				clearTimeout(t);
+				t = null;
+				o = null;
+			}
+		}
+		o.open(type, url, async);
+		type === 'POST' && o.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		o.send(type === 'GET' ? null : formatDatas(data));
 
-      for (key in obj) {
-          str += key + '=' + obj[key] + '&';
-      }
-      return str.replace(/&$/, '');
-  }
+		t = setTimeout(function () {
+			complete();
+			o.abort();
+			clearTimeout(t);
+			t = null;
+			o = null;
+		}, timeout);
+	}
 
-  return {
-      ajax: function (opt) {
-          _doAjax(opt);
-      },
+	function formatDatas(obj) {
+		var str = '';
+		for (key in obj) {
+			str += key + '=' + obj[key] + '&';
+		}
+		return str.replace(/&$/, '');
+	}
 
-      post: function (url, data, callback) {
-          _doAjax({
-              type: 'POST',
-              url: url,
-              data: data,
-              success: callback
-          })
-      },
+	function randomNum() {
+		var res = '';
+		for(var i = 0; i < 20; i++) {
+			res += Math.floor((Math.random() * 10)); 
+		}
+		return res + '_' + new Date().getTime();
+	}
 
-      get: function (url, callback) {
-          _doAjax({
-              type: 'GET',
-              url: url,
-              success: callback
-          })
-      }
-  }
-}())
+	return {
+		ajax: function (opt) {
+			_doAjax(opt);
+		},
+
+		post: function (url, data, successCB) {
+			_doAjax({
+				url: url,
+				type: 'POST',
+				data: data,
+				success: successCB
+			})
+		},
+
+		get: function (url, successCB) {
+			_doAjax({
+				url: url,
+				type: 'GET',
+				success: successCB
+			})
+		}
+	}
+}(document))
+
+function trimSpace(str) {
+	return str.replace(/\s+/g, '');
+}
