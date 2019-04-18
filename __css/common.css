@@ -33,6 +33,7 @@ body {
       color: #424242;
       font-size: 14px;
       font-family: '微软雅黑', Verdana, Arial, Helvetica, sans-serif;
+      -webkit-font-smoothing: antialiased; 
 }
 
 td,
@@ -91,6 +92,7 @@ select,
 button {
       border: 1px solid #ccc;
       font: 14px '微软雅黑', Verdana, Helvetica, Arial, sans-serif;
+      color: #424242;
       outline: none;
 }
 
@@ -121,6 +123,12 @@ div {
 .clearfix {
       *zoom: 1;
 }
+
+::selection {
+      background-color: #333;
+      color: #fff;
+}
+
 
 /* 设置滚动条的样式 */
 ::-webkit-scrollbar {
