@@ -335,4 +335,5 @@ var xhr = (function (doc) {
 
 function trimSpace(str) {
 	return str.replace(/\s+/g, '');
+
 }

@@ -1849,3 +1849,19 @@ var pointInTriangle = (function () {
 		return sameSymbols(R1, R2) && sameSymbols(R2, R3);
 	}
 }());
+
+
+/**
+ * let
+ * 1、同一作用域下不可重复声明
+ * 2、声明不会被提升，暂时性死区
+ * 3、只在该作用域下生效
+ */
+
+ /**
+  * 箭头函数 =>
+  * 1、this指向由外层作用域决定，this指向固化
+  * 2、=> 不能作为构造函数来使用
+  * 3、没有arguments对象，rest运算符代替
+  * 4、在generator函数中，yield命令不能生效
+  */
