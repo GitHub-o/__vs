@@ -93,7 +93,7 @@ HTMLCollection.prototype.jSome = function (fn) {
 HTMLCollection.prototype.jReduce = function (fn, initialValue) {
 	var arr = this,
 		len = arr.length,
-		arg3 = args3 || window,
+		arg3 = dblWrap || window,
 		item;
 	for (var i = 0; i < len; i++) {
 		item = deepClone(arr[i]);
@@ -143,17 +143,17 @@ Array.prototype.unique = function () {
 }
 
 // 查询出现的次数
-Array.prototype.jq = function() {
-      var len = this.length,
-            temp = {};
-      for(var i = 0; i < len; i++) {
-            if(!temp.hasOwnProperty(this[i])) {
-                  temp[this[i]] = 1;
-            }else {
-                  temp[this[i]]++;
-            }
-      }
-      return temp;
+Array.prototype.jq = function () {
+	var len = this.length,
+		temp = {};
+	for (var i = 0; i < len; i++) {
+		if (!temp.hasOwnProperty(this[i])) {
+			temp[this[i]] = 1;
+		} else {
+			temp[this[i]]++;
+		}
+	}
+	return temp;
 }
 
 
@@ -664,32 +664,32 @@ var xhr = (function (doc) {
 			type = (opt.type || 'GET').toUpperCase(),
 			dataType = (opt.dataType || 'JSON').toUpperCase(),
 			async = opt.async === false ? false : true,
-			jsonp = opt.jsonp || 'cb',
-			jsonpCallback = opt.jsonpCallback || 'jQuery' + randomNum(),
-			data = opt.data || null,
-			timeout = opt.timeout || 30000,
-			error = opt.error || function () {},
-			success = opt.success || function () {},
-			complete = opt.compelet || function () {},
+				jsonp = opt.jsonp || 'cb',
+				jsonpCallback = opt.jsonpCallback || 'jQuery' + randomNum(),
+				data = opt.data || null,
+				timeout = opt.timeout || 30000,
+				error = opt.error || function () {},
+				success = opt.success || function () {},
+				complete = opt.compelet || function () {},
 
-			t = null;
+				t = null;
 
 		if (!url) {
 			throw (new Error('您没有填写URL'));
 		}
 
-		if(dataType === 'JSONP' && type !== 'GET') {
+		if (dataType === 'JSONP' && type !== 'GET') {
 			throw new Error('数据类型为"JSONP"的话，请求方式必须为"GET"或者不设置');
 		}
 
-		if(dataType === 'JSONP') {
+		if (dataType === 'JSONP') {
 			var oScript = doc.createElement('script');
-			oScript.src = url.indexOf('?') === -1
-					    ? url + '?' + jsonp + '=' + jsonpCallback
-					    : url + '&' + jsonp + '=' + jsonpCallback;
+			oScript.src = url.indexOf('?') === -1 ?
+				url + '?' + jsonp + '=' + jsonpCallback :
+				url + '&' + jsonp + '=' + jsonpCallback;
 			doc.body.appendChild(oScript);
 			doc.body.removeChild(oScript);
-			window[jsonpCallback] = function(data) {
+			window[jsonpCallback] = function (data) {
 				success(data);
 			}
 			return;
@@ -745,8 +745,8 @@ var xhr = (function (doc) {
 
 	function randomNum() {
 		var res = '';
-		for(var i = 0; i < 20; i++) {
-			res += Math.floor((Math.random() * 10)); 
+		for (var i = 0; i < 20; i++) {
+			res += Math.floor((Math.random() * 10));
 		}
 		return res + '_' + new Date().getTime();
 	}
@@ -813,31 +813,34 @@ var ajaxDomain = (function (doc) {
 
 /**
  * 拖拽函数
- * @param {点击可拖拽的元素} elem 
- * @param {外层的父级元素} elemWrap
- * @param {双击elem所显示的元素} dbClickWrap
- * @param {右键菜单所显示的元素} menuClickWrap
- * @param {双击elem元素所显示元素展示的动画} showAnimation
+ * @param {点击的元素} opt.elem 
+ * @param {拖拽的元素} opt.dragWrap
+ * @param {双击elem所显示的元素} opt.dblWrap
+ * @param {右键elem所显示的元素} opt.menuWrap
+ * @param {双击elem所显示dblWrap的动画} opt.animation
  */
-function drag(elem, elemWrap, dbClickWrap, menuClickWrap, showAnimation) {
-	var args = arguments[1] || arguments[0],
-		args1 = arguments[0],
-		args3 = arguments[2],
-		args4 = arguments[3],
-		args5 = arguments[4],
+function drag(opt) {
+	var dragWrap = opt.dragWrap || opt.elem,
+		elem = opt.elem,
+		dblWrap = opt.dblWrap,
+		menuWrap = opt.menuWrap,
+		animation = opt.animation,
 		disX,
 		disY,
 		[cbTime, ceTime, counter, t] = [null, null, 0, null];
 
-	if (args4) {
-		var mWidth = getStyle(args4, 'width'),
-			mHeight = getStyle(args4, 'height'),
-			wWidth = getViewPortOffset().w,
-			wHeight = getViewPortOffset().h,
+	if (menuWrap) {
+		var mWidth = getStyle(menuWrap, 'width'),
+			mHeight = getStyle(menuWrap, 'height'),
+			wWidth = getViewPort().w,
+			wHeight = getViewPort().h,
 			maxW = wWidth - mWidth,
 			maxH = wHeight - mHeight;
+		addEvent(menuWrap, 'click', stopEvent);
 	}
-	addEvent(args1, 'mousedown', mouseDown);
+	addEvent(elem, 'mousedown', mouseDown);
+	addEvent(dragWrap, 'contextmenu', stopEvent);
+	addEvent(elem, 'contextmenu', stopEvent);
 
 	function mouseDown(e) {
 		var e = e || window.event,
@@ -847,14 +850,17 @@ function drag(elem, elemWrap, dbClickWrap, menuClickWrap, showAnimation) {
 			mLeft,
 			mTop;
 
+		stopBubble(e);
+		stopHandler(e);
+
 		if (btnCode === 0) {
-			disX = x - getStyle(args, 'left');
-			disY = y - getStyle(args, 'top');
+			disX = x - getStyle(dragWrap, 'left');
+			disY = y - getStyle(dragWrap, 'top');
 
 			addEvent(document, 'mousemove', mouseMove);
 			addEvent(document, 'mouseup', mouseUp);
 		} else if (btnCode === 2) {
-			if (args4) {
+			if (menuWrap) {
 				if (x >= maxW) {
 					mLeft = x - mWidth;
 				} else {
@@ -865,23 +871,26 @@ function drag(elem, elemWrap, dbClickWrap, menuClickWrap, showAnimation) {
 				} else {
 					mTop = y;
 				}
-				args4.style.left = mLeft + 'px';
-				args4.style.top = mTop + 'px';
-				args4.style.display = 'block';
+				menuWrap.style.left = mLeft + 'px';
+				menuWrap.style.top = mTop + 'px';
+				menuWrap.style.display = 'block';
+				addEvent(document, 'click', hideMenu);
+				addEvent(menuWrap, 'contextmenu', stopEvent);
 			}
 		}
-		stopBubble(e);
-		stopHandler(e);
-
 	}
 
 	function mouseMove(e) {
 		var e = e || window.event,
 			x = pagePos(e).x - disX,
 			y = pagePos(e).y - disY,
-			maxX = getViewPortOffset().w - getStyle(args, 'width'),
-			maxY = getViewPortOffset().h - getStyle(args, 'height');
-		args4 ? args4.style.display = 'none' : '';
+			maxX = getViewPort().w - getStyle(dragWrap, 'width'),
+			maxY = getViewPort().h - getStyle(dragWrap, 'height');
+		if(menuWrap) {
+			menuWrap.style.display = 'none'
+			removeEvent(document, 'click', hideMenu);
+			removeEvent(menuWrap, 'contextmenu', stopEvent);
+		}
 		if (x < 0) {
 			x = 0;
 		} else if (x >= maxX) {
@@ -894,12 +903,12 @@ function drag(elem, elemWrap, dbClickWrap, menuClickWrap, showAnimation) {
 			y = maxY - 1;
 		}
 
-		args.style.left = x + 'px';
-		args.style.top = y + 'px';
+		dragWrap.style.left = x + 'px';
+		dragWrap.style.top = y + 'px';
 	}
 
 	function mouseUp() {
-		if (args3) {
+		if (dblWrap) {
 			var res;
 			counter++;
 			if (counter == 1) {
@@ -910,7 +919,7 @@ function drag(elem, elemWrap, dbClickWrap, menuClickWrap, showAnimation) {
 			}
 			res = ceTime - cbTime;
 			if (cbTime && ceTime && res < 300) {
-				args5 ? showStatusAnimation('block', args3, args5) : args3.style.display = 'block';
+				animation ? showStatusAnimation('block', dblWrap, animation) : dblWrap.style.display = 'block';
 			}
 			t = setTimeout(function () {
 				cbTime = ceTime = counter = 0;
@@ -920,20 +929,34 @@ function drag(elem, elemWrap, dbClickWrap, menuClickWrap, showAnimation) {
 		removeEvent(document, 'mousemove', mouseMove);
 		removeEvent(document, 'mouseup', mouseUp);
 	}
+
+	function stopEvent(e) {
+		var e = e || window.event;
+		stopHandler(e);
+		stopBubble(e);
+	}
+
+	function hideMenu() {
+		menuWrap.style.display = 'none'
+	}
 }
 
 
 /**
  * 元素显示/隐藏的动画
- * @param {元素显示的状态} status 
- * @param {元素} wrap 
- * @param {元素显示时的动画} showAnimation 
- * @param {动画时间} time
+ * @param {元素显示的状态} opt.status 
+ * @param {元素} opt.wrap 
+ * @param {元素显示时的动画} opt.animation 
+ * @param {动画时间} opt.time
  */
-function showStatusAnimation(status, wrap, showAnimation, time) {
-	var [t, t1, t2] = [null, null, null];
-	time = time || '1s';
-	wrap.style.animation = showAnimation + ' ' + time;
+function showStatusAnimation(opt) {
+	var [t, t1, t2] = [null, null, null],
+		status = opt.status,
+		time = opt.time || '1s',
+		wrap = opt.wrap,
+		animation = opt.animation;
+
+	wrap.style.animation = animation + ' ' + time;
 	time = parseInt(time) * 1000;
 
 	t = setTimeout(function () {
@@ -941,6 +964,7 @@ function showStatusAnimation(status, wrap, showAnimation, time) {
 			t2 = setTimeout(function () {
 				wrap.style.display = status;
 				clearTimeout(t2);
+				t2 = null;
 			}, .7 * time);
 		} else {
 			wrap.style.display = status;
@@ -948,8 +972,10 @@ function showStatusAnimation(status, wrap, showAnimation, time) {
 		t1 = setTimeout(function () {
 			wrap.style.animation = '';
 			clearTimeout(t1);
+			t1 = null;
 		}, .8 * time);
 		clearTimeout(t);
+		t = null;
 	}, .4 * time);
 }
 
@@ -1776,6 +1802,94 @@ function loadScript(url, callback) {
 }())
 
 
+/**
+ * 渲染翻页列表
+ * @param {当前页} curPage
+ * @param {总页数} pages
+ */
+var renderPageList = (function () {
+	var list = '';
+
+	function pageBtnTpl(type, num, cur, pages) {
+		switch (type) {
+			case 'btn':
+				return num === cur ?
+					'<span class="cur-page">' + num + '</span>' :
+					'<a class="page-btn" data-page=' + num + '>' + num + '</a>';
+				break;
+			case 'points':
+				return '<span class="points">…</span>';
+			case 'backward':
+				return cur === 1 ?
+					'<span class="disabled-btn">&lt;</span>' :
+					'<a class="backward-btn">&lt;</a>';
+			case 'forward':
+				return cur === pages ?
+					'<span class="disabled-btn">&gt;</span>' :
+					'<a class="forward-btn">&gt;</a>';
+				break;
+			default:
+				break;
+		}
+	}
+
+	function renderPageList(curPage, pages) {
+		if (pages <= 1) {
+			return '';
+		}
+		var btnGroup = pageBtnTpl('backward', '', curPage);
+		if (pages > 8) {
+			if (curPage < 3) {
+				btnGroup += makeBtns(1, 3, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(pages - 1, pages, curPage);
+			} else if (curPage >= 3 && curPage < 5) {
+				btnGroup += makeBtns(1, curPage + 1, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(pages - 1, pages, curPage);
+			} else if (curPage == 5) {
+				btnGroup += makeBtns(1, 2, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(curPage - 1, curPage + 1, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(pages - 1, pages, curPage);
+			} else if (curPage >= 6 && curPage < pages - 4) {
+				btnGroup += makeBtns(1, 2, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(curPage - 2, curPage + 2, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(pages - 1, pages, curPage);
+			} else if (curPage == pages - 4) {
+				btnGroup += makeBtns(1, 2, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(curPage - 1, curPage + 1, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(pages - 1, pages, curPage);
+			} else if (curPage >= pages - 3 && curPage <= pages - 2) {
+				btnGroup += makeBtns(1, 2, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(curPage - 1, pages, curPage);
+			} else if (curPage > pages - 2 && curPage <= pages) {
+				btnGroup += makeBtns(1, 2, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(pages - 2, pages, curPage);
+			}
+		} else {
+			btnGroup += makeBtns(1, pages, curPage);
+		}
+		return btnGroup += pageBtnTpl('forward', '', curPage, pages);
+	}
+
+	function makeBtns(start, end, curPage) {
+		list = '';
+		for (var i = start; i <= end; i++) {
+			list += pageBtnTpl('btn', i, curPage);
+		}
+		return list;
+	}
+
+	return renderPageList;
+}())
 
 /**
  * cookie 写/删/读  操作
@@ -1858,10 +1972,32 @@ var pointInTriangle = (function () {
  * 3、只在该作用域下生效
  */
 
+ 
+ 
+/**
+ * 箭头函数 =>
+ * 1、this指向由外层作用域决定，this指向固化
+ * 2、=> 不能作为构造函数来使用
+ * 3、没有arguments对象，rest运算符代替
+ * 4、在generator函数中，yield命令不能生效
+ */
+
+
+
+/**
+ * Object.keys() 遍历自身可枚举、非Symbol属性键名，并返回返回一个数组
+ * Object.values() 遍历自身可枚举、非Symbol属性键值，并返回一个数组
+ * Object.entries() 遍历自身可枚举、非Symbol属性，并返回一个类数组
+ * Object.getOwnPropertySymbols() 遍历自身Symbol属性，并返回一个数组
+ * Object.assign() 拷贝自身可枚举的属性（含Symbol属性）
+ * for in 遍历自身及继承的可枚举、非Symbol属性
+ * for of 遍历迭代对象
+ * JSON.stringify() 遍历自身可枚举属性
+ */
+
  /**
-  * 箭头函数 =>
-  * 1、this指向由外层作用域决定，this指向固化
-  * 2、=> 不能作为构造函数来使用
-  * 3、没有arguments对象，rest运算符代替
-  * 4、在generator函数中，yield命令不能生效
+  * bin 存放二进制目录
+  * lib 存放代码
+  * doc 存放文档目录
+  * test 存放单元测试代码
   */
