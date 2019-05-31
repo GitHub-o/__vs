@@ -1,0 +1,10 @@
+html,
+body{
+      height: 100%;
+      overflow: hidden;
+}
+
+.snake {
+      width: 810px;
+      margin: 100px auto;
+}

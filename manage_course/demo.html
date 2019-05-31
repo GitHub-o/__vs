@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+      <title>Document</title>
+      <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+      <link rel="stylesheet" href="css/common.css" />
+      <link rel="stylesheet" href="css/demo.css" />
+</head>
+
+<body>
+
+      <div class="wrap">
+            <table class="tb">
+                  <caption class="tb-hd">腾 讯 课 堂 课 程 管 理</caption>
+                  <thead>
+                        <tr>
+                              <td colspan="6">
+                                    <ul class="J_nav-list nav-list clearfix">
+                                          <li class="nav-item cur" data-field="manage">
+                                                <a href="#manage" class="nav-lk">全部课程</a>
+                                          </li>
+                                          <li class="nav-item" data-field="trash">
+                                                <a href="#trash" class="nav-lk">回收站</a>
+                                          </li>
+                                          <li class="nav-item" data-field="search">
+                                                <a href="#search" class="nav-lk">课程搜索</a>
+                                          </li>
+                                    </ul>
+                              </td>
+                        </tr>
+                        <tr class="J_search-row search-row">
+                              <td colspan="6">
+                                    <div class="search-wrap">
+                                          <input type="text" id="J_search-input" class="search-input"
+                                                placeholder="搜索课程名称" />
+                                          <label for="J_search-input" class="fa fa-search"></label>
+                                    </div>
+                              </td>
+                        </tr>
+                        <tr class="course-tt">
+                              <td>「 ID 」</td>
+                              <td>「 课程名称 」</td>
+                              <td>「 课时数 」</td>
+                              <td>「 任课老师 」</td>
+                              <td>「 课程类型 」</td>
+                              <td>「 课程操作 」</td>
+                        </tr>
+                        <tr class="J_no-data-row no-data-row">
+                              <td colspan="6">
+                                    <p class="no-data-tip">-- 暂无课程 --</p>
+                              </td>
+                        </tr>
+                  </thead>
+                  <tbody class="J_course-list"></tbody>
+                  <tfoot>
+                        <tr class="J_page-row page-row">
+                              <td colspan="6">
+                                    <ul class="J_page-list page-list"></ul>
+                              </td>
+                        </tr>
+                  </tfoot>
+            </table>
+      </div>
+
+
+      <script type="text/html" id="J_course-list-tpl">
+            <tr>
+                  <td>{{id}}</td>
+                  <td class="course-name-wrap">
+                        <span class="J_course-name course-name"
+                                  data-id="{{id}}"
+                                  data-type="course-name">{{course}}</span>
+                        <input type="text" 
+                                   class="J_course-name-input course-name-input"
+                                   data-type="course-name-input" />
+                  </td>
+                  <td>{{hour}}</td>
+                  <td>{{teacher}}</td>
+                  <td>{{field}}</td>
+                  <td>
+                        <button type="button"
+                                     class="btn {{type}}" 
+                                     data-type="{{type}}"
+                                     data-id="{{id}}">{{textType}}</button>
+                  </td>
+            </tr>
+      </script>
+      <script type="text/html" id="J_page-list-tpl">
+            <li class="page-item{{cur}}" data-page={{pageNum}}>
+                  <a href="#page_{{pageNum}}" class="page-lk">{{pageNum}}</a>
+            </li>
+      </script>
+      <script src="js/utils.js"></script>
+      <script src="js/demo.js"></script>
+</body>
+
+</html>

@@ -12,7 +12,6 @@
 
 
 
-
 //-------------------------HTMLCollection----------------------------------------------------------->>
 
 
@@ -664,7 +663,7 @@ var xhr = (function (doc) {
 			type = (opt.type || 'GET').toUpperCase(),
 			dataType = (opt.dataType || 'JSON').toUpperCase(),
 			async = opt.async === false ? false : true,
-				jsonp = opt.jsonp || 'cb',
+				jsonp = opt.jsonp || 'callback',
 				jsonpCallback = opt.jsonpCallback || 'jQuery' + randomNum(),
 				data = opt.data || null,
 				timeout = opt.timeout || 30000,
@@ -1382,8 +1381,97 @@ function render(opt, fn) {
 		})
 	}, opt.tpl);
 
-	opt.wrap.innerHTML = list;
+	return opt.wrap ? opt.wrap.innerHTML = list :  list;
 }
+
+/**
+ * 渲染翻页列表
+ * @param {当前页} curPage
+ * @param {总页数} pages
+ */
+var renderPageList = (function () {
+	var list = '';
+
+	function pageBtnTpl(type, num, cur, pages) {
+		switch (type) {
+			case 'btn':
+				return num === cur ?
+					'<span class="cur-page">' + num + '</span>' :
+					'<a class="page-btn" data-page=' + num + '>' + num + '</a>';
+				break;
+			case 'points':
+				return '<span class="points">…</span>';
+			case 'backward':
+				return cur === 1 ?
+					'<span class="disabled-btn">&lt;</span>' :
+					'<a class="backward-btn">&lt;</a>';
+			case 'forward':
+				return cur === pages ?
+					'<span class="disabled-btn">&gt;</span>' :
+					'<a class="forward-btn">&gt;</a>';
+				break;
+			default:
+				break;
+		}
+	}
+
+	function renderPageList(curPage, pages) {
+		if (pages <= 1) {
+			return '';
+		}
+		var btnGroup = pageBtnTpl('backward', '', curPage);
+		if (pages > 8) {
+			if (curPage < 3) {
+				btnGroup += makeBtns(1, 3, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(pages - 1, pages, curPage);
+			} else if (curPage >= 3 && curPage < 5) {
+				btnGroup += makeBtns(1, curPage + 1, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(pages - 1, pages, curPage);
+			} else if (curPage == 5) {
+				btnGroup += makeBtns(1, 2, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(curPage - 1, curPage + 1, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(pages - 1, pages, curPage);
+			} else if (curPage >= 6 && curPage < pages - 4) {
+				btnGroup += makeBtns(1, 2, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(curPage - 2, curPage + 2, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(pages - 1, pages, curPage);
+			} else if (curPage == pages - 4) {
+				btnGroup += makeBtns(1, 2, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(curPage - 1, curPage + 1, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(pages - 1, pages, curPage);
+			} else if (curPage >= pages - 3 && curPage <= pages - 2) {
+				btnGroup += makeBtns(1, 2, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(curPage - 1, pages, curPage);
+			} else if (curPage > pages - 2 && curPage <= pages) {
+				btnGroup += makeBtns(1, 2, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(pages - 2, pages, curPage);
+			}
+		} else {
+			btnGroup += makeBtns(1, pages, curPage);
+		}
+		return btnGroup += pageBtnTpl('forward', '', curPage, pages);
+	}
+
+	function makeBtns(start, end, curPage) {
+		list = '';
+		for (var i = start; i <= end; i++) {
+			list += pageBtnTpl('btn', i, curPage);
+		}
+		return list;
+	}
+
+	return renderPageList;
+}())
 
 
 // 替换模板正则
@@ -1803,95 +1891,6 @@ function loadScript(url, callback) {
 
 
 /**
- * 渲染翻页列表
- * @param {当前页} curPage
- * @param {总页数} pages
- */
-var renderPageList = (function () {
-	var list = '';
-
-	function pageBtnTpl(type, num, cur, pages) {
-		switch (type) {
-			case 'btn':
-				return num === cur ?
-					'<span class="cur-page">' + num + '</span>' :
-					'<a class="page-btn" data-page=' + num + '>' + num + '</a>';
-				break;
-			case 'points':
-				return '<span class="points">…</span>';
-			case 'backward':
-				return cur === 1 ?
-					'<span class="disabled-btn">&lt;</span>' :
-					'<a class="backward-btn">&lt;</a>';
-			case 'forward':
-				return cur === pages ?
-					'<span class="disabled-btn">&gt;</span>' :
-					'<a class="forward-btn">&gt;</a>';
-				break;
-			default:
-				break;
-		}
-	}
-
-	function renderPageList(curPage, pages) {
-		if (pages <= 1) {
-			return '';
-		}
-		var btnGroup = pageBtnTpl('backward', '', curPage);
-		if (pages > 8) {
-			if (curPage < 3) {
-				btnGroup += makeBtns(1, 3, curPage) +
-					pageBtnTpl('points') +
-					makeBtns(pages - 1, pages, curPage);
-			} else if (curPage >= 3 && curPage < 5) {
-				btnGroup += makeBtns(1, curPage + 1, curPage) +
-					pageBtnTpl('points') +
-					makeBtns(pages - 1, pages, curPage);
-			} else if (curPage == 5) {
-				btnGroup += makeBtns(1, 2, curPage) +
-					pageBtnTpl('points') +
-					makeBtns(curPage - 1, curPage + 1, curPage) +
-					pageBtnTpl('points') +
-					makeBtns(pages - 1, pages, curPage);
-			} else if (curPage >= 6 && curPage < pages - 4) {
-				btnGroup += makeBtns(1, 2, curPage) +
-					pageBtnTpl('points') +
-					makeBtns(curPage - 2, curPage + 2, curPage) +
-					pageBtnTpl('points') +
-					makeBtns(pages - 1, pages, curPage);
-			} else if (curPage == pages - 4) {
-				btnGroup += makeBtns(1, 2, curPage) +
-					pageBtnTpl('points') +
-					makeBtns(curPage - 1, curPage + 1, curPage) +
-					pageBtnTpl('points') +
-					makeBtns(pages - 1, pages, curPage);
-			} else if (curPage >= pages - 3 && curPage <= pages - 2) {
-				btnGroup += makeBtns(1, 2, curPage) +
-					pageBtnTpl('points') +
-					makeBtns(curPage - 1, pages, curPage);
-			} else if (curPage > pages - 2 && curPage <= pages) {
-				btnGroup += makeBtns(1, 2, curPage) +
-					pageBtnTpl('points') +
-					makeBtns(pages - 2, pages, curPage);
-			}
-		} else {
-			btnGroup += makeBtns(1, pages, curPage);
-		}
-		return btnGroup += pageBtnTpl('forward', '', curPage, pages);
-	}
-
-	function makeBtns(start, end, curPage) {
-		list = '';
-		for (var i = start; i <= end; i++) {
-			list += pageBtnTpl('btn', i, curPage);
-		}
-		return list;
-	}
-
-	return renderPageList;
-}())
-
-/**
  * cookie 写/删/读  操作
  */
 var mCookie = (function () {
@@ -1964,7 +1963,6 @@ var pointInTriangle = (function () {
 	}
 }());
 
-
 /**
  * let
  * 1、同一作用域下不可重复声明
@@ -1972,7 +1970,6 @@ var pointInTriangle = (function () {
  * 3、只在该作用域下生效
  */
 
- 
  
 /**
  * 箭头函数 =>
@@ -1989,7 +1986,7 @@ var pointInTriangle = (function () {
  * Object.values() 遍历自身可枚举、非Symbol属性键值，并返回一个数组
  * Object.entries() 遍历自身可枚举、非Symbol属性，并返回一个类数组
  * Object.getOwnPropertySymbols() 遍历自身Symbol属性，并返回一个数组
- * Object.assign() 拷贝自身可枚举的属性（含Symbol属性）
+ * Object.assign() 合并（浅拷贝）非继承、可枚举的属性（含Symbol属性）
  * for in 遍历自身及继承的可枚举、非Symbol属性
  * for of 遍历迭代对象
  * JSON.stringify() 遍历自身可枚举属性
@@ -2001,3 +1998,10 @@ var pointInTriangle = (function () {
   * doc 存放文档目录
   * test 存放单元测试代码
   */
+
+  /**
+   * 拷贝对象
+   * 1、深度克隆
+   * 2、圣杯模式
+   * 3、JSON.parse/JSON.stringify
+   */

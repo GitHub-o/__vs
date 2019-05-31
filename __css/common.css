@@ -33,7 +33,8 @@ body {
       color: #424242;
       font-size: 14px;
       font-family: '微软雅黑', Verdana, Arial, Helvetica, sans-serif;
-      -webkit-font-smoothing: antialiased; 
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
 }
 
 td,
