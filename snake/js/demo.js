@@ -623,7 +623,8 @@
                               oScore.innerText = parseInt(oScore.innerText) + rScore;
                               this.setLocalStorage(oScore.innerText);
                               this.oHScore.innerText = hs;
-                              rFoodX = rFoodY = null;
+                              clearTimeout(t);
+                              t = rFoodX = rFoodY = null;
                         }
                   }
             },
