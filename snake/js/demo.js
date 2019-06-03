@@ -1,11 +1,11 @@
 ;(function(doc) {
-      var [dir, timer, foodX, foodY, score, rFoodX, rFoodY, rScore, t, btnFlag, isStart, level, speed, hs, isBreakStr] =
-            ['Right', null, null, null, 0, null, null, 0, null, false, false, 'one', 400, '--', ''];
+      var [dir, timer, foodX, foodY, sumScore, score, rFoodX, rFoodY, rScore, t, btnFlag, isStart, level, speed, hs, isBreakStr] =
+            ['Right', null, null, null, 0, 0, null, null, 0, null, false, false, 'level_1', 400, '--', ''];
 
       var colorArr = ['#f10', '#3c3', '#9f6', '#ff0', '#060', '#000', '#603'],
             scoreArr = [
                   {title: '分数：', text: 0, class: 'J_score'},
-                  {title: '长度：', text: '0', class: 'J_len'},
+                  {title: '长度：', text: 0, class: 'J_len'},
                   {title: '最高分：', text: '--', class: 'J_heightest-score'}
             ],
             promptArr = [
@@ -123,6 +123,7 @@
                   })
                   oPromptWrap.style.marginTop = '30px';
                   oPromptWrap.appendChild(_frag);
+                  oPromptWrap.innerHTML += '<p style="margin-top: 15px; color: #999; font-size: 12px; font-weight: normal; line-height: 20px">~ 限时奖励的分数会随着关卡的难度而翻倍 ~</p>';
                   _frag = doc.createDocumentFragment();
                   oBoard.style.display = 'none';
                   oBoard.style.width = this.wrapW  * .25 + 'px';
@@ -178,11 +179,11 @@
                         <div style="display: inline-block; margin-right: 15px; padding: 10px; background-color: #fff; border: 2px  dashed #bbb;">
                               <span>模式选择：</span>
                               <select class="J_level" style="padding: 7px 15px; border: none; border-bottom: 1px outset">
-                                    <option value="one">• 极简</option>
-                                    <option value="two">• 简</option>
-                                    <option value="three">• 简 +</option>
-                                    <option value="four">• 简 ++</option>
-                                    <option value="five">• 简 +++</option>
+                                    <option value="level_1">• 极简</option>
+                                    <option value="level_2">• 简</option>
+                                    <option value="level_3">• 简 +</option>
+                                    <option value="level_4">• 简 ++</option>
+                                    <option value="level_5">• 简 +++</option>
                               </select>
                         </div>
                         <div style="display: inline-block; margin-right: 15px; padding: 10px; background-color: #fff; border: 2px  dashed #bbb; ">
@@ -211,7 +212,7 @@
             },
 
             initBarrier: function() {
-                  var arr = ['one', 'two', 'three', 'four', 'five'],
+                  var arr = ['level_1', 'level_2', 'level_3', 'level_4', 'level_5'],
                         barrierObj = this.barrierObj,
                         size = this.size,
                         i,
@@ -220,9 +221,9 @@
                   arr.jForEach(function(val) {
                         barrierObj[val] = [];
                         switch(val) {
-                              case 'one':
+                              case 'level_1':
                                     break;
-                              case 'two':
+                              case 'level_2':
                                     for(i = 0; i < 10; i ++) {
                                           x = 120;
                                           y = 160;
@@ -234,7 +235,7 @@
                                           )
                                     }
                                     break;
-                              case 'three':
+                              case 'level_3':
                                     for(i = 0; i < 7; i ++) {
                                           x = 40;
                                           y = 160;
@@ -250,7 +251,7 @@
                                           )
                                     }
                                     break;
-                              case 'four':
+                              case 'level_4':
                                     for(i = 0; i < 11; i++) {
                                           y = 20;
                                           x = 20;
@@ -266,7 +267,7 @@
                                           )
                                     }
                                     break;
-                              case 'five':
+                              case 'level_5':
                                     for(i = 1; i < 10; i++) {
                                           x = 580;
                                           y = 240;
@@ -353,17 +354,19 @@
 
                   timer && clearInterval(timer);
                   context.clearRect(0, 0, this.ctxWidth, this.wrapH);
-                  [dir, timer, foodX, foodY, score, rFoodX, rFoodY, rScore, t, btnFlag, isStart, isBreakStr] =
-                  ['Right', null, null, null, 0, null, null, 0, null, false, false, ''];
+                  [dir, timer, foodX, foodY,sumScore, score, rFoodX, rFoodY, rScore, t, btnFlag, isStart, isBreakStr] =
+                  ['Right', null, null, null, 0, 0, null, null, 0, null, false, false, ''];
                   this.bodyArr = [];
                   this.oStartBtn.innerText = '开始';
                   this.oTip.style.display = 'none';
                   this.oLevel.style.cursor = 'default';
                   this.oSpeed.style.cursor = 'default';
+                  this.oStartBtn.style.cursor = 'default';
                   this.oScore.innerText = 0;
                   this.oLen.innerText = 0;
                   this.oLevel.disabled = false;
                   this.oSpeed.disabled = false;
+                  this.oStartBtn.disabled = false;
                   this.drawBarrier(this.barrierArr);
                   context = null;
             },
@@ -539,6 +542,7 @@
                                     rScore = -50;
                               }
 
+                              rScore *= level.slice(-1);
                               rFoodX = posR.x;
                               rFoodY = posR.y;
 
@@ -612,16 +616,18 @@
                                     y: y
                               })
                               foodX = foodY = null;
-                              oScore.innerText = parseInt(oScore.innerText) + score;
+                              sumScore += score;
+                              oScore.innerText = sumScore;
                               oLen.innerText = this.bodyArr.length;
                               this.makeFood();
-                              this.setLocalStorage(oScore.innerText);
+                              this.setLocalStorage(sumScore);
                               this.oHScore.innerText = hs;
                         }
 
                         if(item.x == rFoodX && item.y == rFoodY) {
-                              oScore.innerText = parseInt(oScore.innerText) + rScore;
-                              this.setLocalStorage(oScore.innerText);
+                              sumScore += rScore;
+                              oScore.innerText = sumScore;
+                              this.setLocalStorage(sumScore);
                               this.oHScore.innerText = hs;
                               clearTimeout(t);
                               t = rFoodX = rFoodY = null;
@@ -640,9 +646,11 @@
                         item = arr[i];
                         if(item.x == headX && item.y == headY) {
                               clearInterval(timer);
+                              timer = null;
                               this.oTip.innerHTML = this.tipString(bodyLen);
                               this.oTip.style.display = 'block';
-                              timer = null;
+                              this.oStartBtn.disabled = 'true';
+                              this.oStartBtn.style.cursor = 'not-allowed';
                         }
                   }
             },
@@ -657,15 +665,15 @@
             },
 
             setLocalStorage: function(score) {
-                  score = parseInt(score);
                   if(hs == '--' && score > 0) {
-                        hs = score 
+                        hs = score;
                         isBreakStr = '恭喜，破纪录啦 </br>';
+                        localStorage.setItem('h-score', hs);
                   }else if(hs < score) {
                         hs = score;
                         isBreakStr = '恭喜，破纪录啦 </br>';
+                        localStorage.setItem('h-score', hs);
                   }
-                  localStorage.setItem('h-score', hs);
             },
 
             getLocalStorage: function() {
