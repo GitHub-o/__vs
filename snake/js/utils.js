@@ -57,24 +57,3 @@ function addEvent(elem, type, fn, capture) {
 
     addEvent(elem, type, fn, capture);
 }
-
-function removeEvent(elem, type, fn, capture) {
-    if (elem.addEventListener) {
-          removeEvent = function (elem, type, fn, capture) {
-                var capture = capture || false;
-                elem.removeEventListener(type, fn, capture);
-          }
-    } else if (elem.attachEvent) {
-          removeEvent = function (elem, type, fn) {
-                elem.detachEvent('on' + type, function () {
-                      fn.call(elem);
-                })
-          }
-    } else {
-          removeEvent = function (elem, type, fn) {
-                elem['on' + type] = null;
-          }
-    }
-
-    removeEvent(elem, type, fn, capture);
-}

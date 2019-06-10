@@ -201,14 +201,15 @@
             },
 
             getElement: function() {
-                  this.oScore = $get('.J_score')[0];
-                  this.oLen = $get('.J_len')[0];
-                  this.oHScore = $get('.J_heightest-score')[0];
-                  this.oLevel = $get('.J_level')[0];
-                  this.oSpeed = $get('.J_speed')[0];
-                  this.oStartBtn = $get('.J_start')[0];
-                  this.oResetBtn = $get('.J_reset')[0];
-                  this.oTip = $get('.J_tip')[0];
+                  var el = this.el;
+                  this.oScore = $get('.J_score', el)[0];
+                  this.oLen = $get('.J_len', el)[0];
+                  this.oHScore = $get('.J_heightest-score', el)[0];
+                  this.oLevel = $get('.J_level', el)[0];
+                  this.oSpeed = $get('.J_speed', el)[0];
+                  this.oStartBtn = $get('.J_start', el)[0];
+                  this.oResetBtn = $get('.J_reset', el)[0];
+                  this.oTip = $get('.J_tip', el)[0];
             },
 
             initBarrier: function() {
@@ -563,7 +564,12 @@
                         }, 7000);
                   }
                   
-                  !foodX && !foodY && this.makeFood();
+                  if(!foodX && !foodY) {
+                        var _self = this;
+                        setTimeout(function() {
+                              !foodX && !foodY && _self.makeFood();
+                        }, 500);
+                  }
             },
 
             setFoodPos: function(barrierArr) {
