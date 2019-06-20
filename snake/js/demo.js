@@ -18,7 +18,7 @@
             ];
 
       var Snake = function(el, opt) {
-            this.el = $get(el)[0];
+            this.el = doc.querySelector(el);
             !opt && (opt = {});
             this.wrapW = opt.wrapW || 800;
             this.wrapH = opt.wrapH || 500;
@@ -195,8 +195,8 @@
                                     <option value="100">﹒ 快 +</option>
                               </select>
                         </div>
-                        <button class="J_start" style="width: 65px; height: 65px; margin-right: 15px; background-color: #ececec; border: 3px inset #fcc; border-radius: 50%; font-size: 20px";>开始</button>
-                        <button class="J_reset" style="width: 65px; height: 65px; margin-right: 15px; background-color: #ececef; border: 3px outset #fcc; border-radius: 50%; font-size: 20px";>重玩</button>
+                        <button class="J_start" style="width: 65px; height: 65px; margin-right: 15px; background-color: #ececec; border: 3px inset #fcc; border-radius: 50%; font-size: 20px; outline:none";>开始</button>
+                        <button class="J_reset" style="width: 65px; height: 65px; margin-right: 15px; background-color: #ececef; border: 3px outset #fcc; border-radius: 50%; font-size: 20px; outline:none";>重玩</button>
                         `;
             },
 

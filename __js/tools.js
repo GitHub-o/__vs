@@ -279,7 +279,57 @@ Array.prototype.flatten = function () {
 }
 
 
+Array.prototype.bubbleSort1 = function () {
+  var len = this.length,
+    temp;
 
+  for (var i = 0; i < len - 1; i++) {
+    for (var j = 0; j < len - i - 1; j++) {
+      if (this[j] > this[j + 1]) {
+        temp = this[j + 1];
+        this[j + 1] = this[j];
+        this[j] = temp;
+      }
+    }
+  }
+  return this;
+};
+
+Array.prototype.bubbleSort2 = function () {
+  var j = this.length - 1;
+  while (j > 0) {
+    var pos = 0,
+      temp;
+    for (var i = 0; i < j; i++) {
+      if (this[i] > this[i + 1]) {
+        pos = i;
+        temp = this[i];
+        this[i] = this[i + 1];
+        this[i + 1] = temp;
+      }
+    }
+    j = pos;
+  }
+  return this;
+};
+
+Array.prototype.selectionSort = function () {
+  var len = this.length,
+    temp,
+    minIdx;
+  for (var i = 0; i < len - 1; i++) {
+    minIdx = i;
+    for (var j = i + 1; j < len; j++) {
+      if (this[minIdx] > this[j]) {
+        minIdx = j;
+      }
+    }
+    temp = this[i];
+    this[i] = this[minIdx];
+    this[minIdx] = temp;
+  }
+  return this;
+};
 
 //-----------------------String--------------------------------------------------------------------->>
 
@@ -1007,6 +1057,78 @@ function move(elem, speed) {
 	})
 }
 
+/**
+ * touch事件的封装
+ */
+;
+(function (doc) {
+  var Touch = function (selector) {
+    return Touch.prototype.init(selector);
+  }
+
+  Touch.prototype = {
+    init: function (selector) {
+      if (typeof selector === 'string') {
+        this.elem = doc.querySelector(selector);
+        return this;
+      }
+    },
+
+    tap: function (callback) {
+      this.elem.addEventListener('touchstart', fn, false);
+      this.elem.addEventListener('touchend', fn, false);
+      var sTime,
+        eTime;
+
+      function fn(e) {
+        e.preventDefault();
+        switch (e.type) {
+          case 'touchstart':
+            sTime = new Date().getTime();
+            break;
+          case 'touchend':
+            eTime = new Date().getTime();
+            if (eTime - sTime < 500) {
+              callback.call(this, e);
+            }
+            break;
+          default:
+            break;
+        }
+      }
+    },
+
+    longtap: function (callback) {
+      this.elem.addEventListener('touchstart', fn, false);
+      this.elem.addEventListener('touchmove', fn, false);
+      this.elem.addEventListener('touchend', fn, false);
+
+      var t = null,
+            _self = this;
+
+      function fn(e) {
+        switch (e.type) {
+          case 'touchstart':
+            t = setTimeout(function () {
+              callback.call(_self, e);
+              clearTimeout(t);
+              t = null;
+            }, 500)
+            break;
+          case 'touchmove':
+          case 'touchend':
+            clearTimeout(t);
+            t = null;
+            break;
+          default:
+            break;
+        }
+      }
+    }
+  }
+
+  window.$touch = window.Touch = Touch
+}(document));
 
 /**
  * 封装事件绑定
@@ -1086,7 +1208,6 @@ function removeEvent(elem, type, fn, capture) {
 
 	removeEvent(elem, type, fn, capture);
 }
-
 
 /**
  * 封装事件冒泡函数：
