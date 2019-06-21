@@ -1124,6 +1124,64 @@ function move(elem, speed) {
             break;
         }
       }
+    },
+
+    slideleft: function (callback) {
+      this.elem.addEventListener('touchstart', fn, false);
+      this.elem.addEventListener('touchend', fn, false);
+
+      var sX,
+            sY,
+            eX,
+            eY;
+
+      function fn(e) {
+        var touch = e.changedTouches[0];
+        switch (e.type) {
+          case 'touchstart':
+            sX = Math.abs(touch.pageX);
+            sY = Math.abs(touch.pageY);
+            break;
+          case 'touchend':
+            eX = Math.abs(touch.pageX);
+            eY = Math.abs(touch.pageY);
+            if (sY - eY < 30 && sX - eX > 100) {
+              callback.call(this, e);
+            }
+            break;
+          default:
+            break;
+        }
+      }
+    },
+
+    slideright: function(callback) {
+      this.elem.addEventListener('touchstart', fn, false);
+      this.elem.addEventListener('touchend', fn, false);
+
+      var sX,
+            sY,
+            eX,
+            eY;
+
+      function fn(e) {
+        var touch = e.changedTouches[0];
+        switch (e.type) {
+          case 'touchstart':
+            sX = Math.abs(touch.pageX);
+            sY = Math.abs(touch.pageY);
+            break;
+          case 'touchend':
+            eX = Math.abs(touch.pageX);
+            eY = Math.abs(touch.pageY);
+            if (eY - sY < 30 && eX - sX > 100) {
+              callback.call(this, e);
+            }
+            break;
+          default:
+            break;
+        }
+      }
     }
   }
 
