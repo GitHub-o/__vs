@@ -1061,7 +1061,7 @@ function move(elem, speed) {
  * touch事件的封装
  */
 ;
-(function (doc) {
+(function (doc, win) {
   var Touch = function (selector) {
     return Touch.prototype.init(selector);
   }
@@ -1185,8 +1185,8 @@ function move(elem, speed) {
     }
   }
 
-  window.$touch = window.Touch = Touch
-}(document));
+  win.$touch = window.Touch = Touch
+}(document, window));
 
 /**
  * 封装事件绑定
@@ -2051,22 +2051,20 @@ function loadScript(url, callback) {
 /**
  * 异步&动态创建script
  */
-(function () {
-	function async_load() {
-		var script = document.createElement('script');
-		script.type = 'text/javascript';
-		script.async = true;
-		script.src = 'tools.js'
-		document.body.appendChild(script);
-	}
-
-	if (window.attachEvent) {
-		window.attachEvent('onload', async_load);
-	} else {
-		window.addEventListener('onload', async_load, false);
-	}
-
-}())
+// (function () {
+// 	function async_load() {
+// 		var script = document.createElement('script');
+// 		script.type = 'text/javascript';
+// 		script.async = true;
+// 		script.src = url
+// 		document.head.appendChild(script);
+// 	}
+// 	if (window.attachEvent) {
+// 		window.attachEvent('onload', async_load);
+// 	} else {
+// 		window.addEventListener('load', async_load, false);
+// 	}
+// }())
 
 
 /**
