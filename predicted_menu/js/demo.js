@@ -127,8 +127,8 @@
             },
 
             doTimeout: function(cur, last) {
-                  var menuTop = elemPos(this.oWrap).left,
-                        menuLeft = elemPos(this.oWrap).top,
+                  var menuTop = elemPos(this.oWrap).top,
+                        menuLeft = elemPos(this.oWrap).left,
                         menuW = getStyle(this.oWrap, 'width'),
                         menuH = getStyle(this.oWrap, 'height');
 
