@@ -17,18 +17,17 @@
                   {bgColor: colorArr[5], text: ' ‹ 得分 -50 ›'}
             ];
 
-      var Snake = function(el, opt) {
+      var Snake = function(el, opt = {}) {
             this.el = doc.querySelector(el);
-            !opt && (opt = {});
-            this.wrapW = opt.wrapW || 800;
-            this.wrapH = opt.wrapH || 500;
+            this.wrapW = opt.wrapWidth || 800;
+            this.wrapH = opt.wrapHeight || 500;
             this.minW = 700;
             this.minH = 350;
             this.border = '5px solid #000';
             this.ctxWidth = this.wrapW * .75;
             this.canvasBgColor = opt.canvasBgColor || '#f0f0f0';
             this.boardBgColor = opt.boardBgColor || '#cff';
-            this.bodyLen = opt.bodyLen || 2;
+            this.bodyLen = opt.bodyLength || 2;
             this.initLen = this.bodyLen;
             this.bodyArr = [];
             this.barrierObj = {};
@@ -37,15 +36,6 @@
             this.headerBgColor = opt.headerBgColor || '#00f';
             this.size = opt.size || 20;
             this.context = '';
-            this.oScore = 0;
-            this.oLen = 0;
-            this.oHScore = '--';
-            this.oLevel = '';
-            this.oSpeed = '';
-            this.oStartBtn = '';
-            this.oResetBtn = '';
-            this.oTip = '';
-            
       }
 
       Snake.prototype = {
@@ -71,19 +61,20 @@
                   var frag = doc.createDocumentFragment(),
                         oWrap = document.createElement('div');
 
-                  oWrap.style.display = 'none';
-                  oWrap.style.position = 'relative';
-                  oWrap.style.border = this.border;
-                  oWrap.style.width = this.wrapW + 'px';
-                  oWrap.style.minWidth = this.minW + 'px';
-                  oWrap.style.minHeight = this.minH = 'px';
-                  oWrap.style.height = this.wrapH + 'px';
-                  oWrap.style.boxSizing = 'content-box';
-                  oWrap.style.display = 'block';
+                  oWrap.style.cssText = '\
+                        position: relative; \
+                        border: ' + this.border + '; \
+                        width: ' + this.wrapW + 'px; \
+                        min-width: ' + this.minW + 'px;\
+                        height:' + this.wrapH + 'px;\
+                        min-height: ' + this.minH + 'px;\
+                        box-sizing: content-box;\
+                  ';
+
+                  oWrap.innerHTML += this.createBoard() +
+                                                    this.createBtnControl() +
+                                                    this.createTip();
                   this.createCanvas(frag);
-                  this.createBoard(frag);
-                  this.createBtnControl(frag);
-                  this.createTip(frag);
                   oWrap.appendChild(frag);
                   this.el.appendChild(oWrap);
             },
@@ -99,117 +90,115 @@
                   frag.appendChild(canvas);
             },
 
-            createBoard: function(frag) {
-                  var _frag = doc.createDocumentFragment(),
-                        oBoard = doc.createElement('div'),
-                        oScoreWrap = doc.createElement('div'),
-                        oPromptWrap = doc.createElement('div'),
-                        item;
-
+            scoreStr: function() {
+                  var list = ''
                   scoreArr.jForEach(function(val) {
-                        item = doc.createElement('div');
-                        item.style.height = '45px';
-                        item.style.lineHeight = '45px';
-                        item.innerHTML = val.title + '<span class="' + val.class + '">' + val.text + '</span>';
-                        _frag.appendChild(item);
+                        list += '<li style="height: 45px;\
+                                                    line-height: 45px;">' + val.title + ' \
+                                          <span class="' + val.class +'"> \
+                                                '+ val.text +'\
+                                          </span>\
+                                    </li>'
                   });
-                  oScoreWrap.appendChild(_frag);
-                  _frag = doc.createDocumentFragment();
+                  return '<div>' + list + '</div>';
+            },
+
+            promptStr: function() {
+                  var list = '';
                   promptArr.jForEach(function(val) {
-                        item = doc.createElement('div');
-                        item.style.lineHeight = '35px';
-                        item.innerHTML = '<span style="display: inline-block; width: 25px; height: 25px; vertical-align: middle; background-color:' + val.bgColor + '"></span>' + val.text;
-                        _frag.appendChild(item);
-                  })
-                  oPromptWrap.style.marginTop = '30px';
-                  oPromptWrap.appendChild(_frag);
-                  oPromptWrap.innerHTML += '<p style="margin-top: 15px; color: #999; font-size: 12px; font-weight: normal; line-height: 20px">~ 限时奖励的分数会随着关卡的难度而翻倍 ~</p>';
-                  _frag = doc.createDocumentFragment();
-                  oBoard.style.display = 'none';
-                  oBoard.style.width = this.wrapW  * .25 + 'px';
-                  oBoard.style.overflow = 'hidden';
-                  oBoard.style.height = '100%';
-                  oBoard.style.padding = '20px 13px 20px';
-                  oBoard.style.backgroundColor = this.boardBgColor;
-                  oBoard.style.borderLeft = this.border;
-                  oBoard.style.boxSizing = 'border-box';
-                  oBoard.style.fontSize = '20px';
-                  oBoard.style.fontWeight = 'bold';
-                  oBoard.style.display = 'inline-block';
-                  oBoard.appendChild(oScoreWrap);
-                  oBoard.appendChild(oPromptWrap);
-                  frag.appendChild(oBoard);
+                        list += '<li style="line-height: 35px">\
+                                          <span style="display: inline-block; \
+                                                               width: 25px; \
+                                                               height: 25px; \
+                                                               vertical-align: middle; \
+                                                               background-color:' + val.bgColor +'">\
+                                          </span>\
+                                          ' + val.text + '\
+                                    </li>'
+                  });
+                  return '<div style="margin-top: 30px">' + list + '</div>';
             },
 
-            createBtnControl: function(frag) {
-                  var oDiv = doc.createElement('div');
+            createBoard: function() {
+                  var tip = '<p style="margin-top: 15px; color: #999; font-size: 12px; font-weight: normal; line-height: 20px">~ 限时奖励的分数会随着关卡的难度而翻倍 ~</p>';
 
-                  oDiv.style.display = 'none';
-                  oDiv.style.position = 'absolute';
-                  oDiv.style.bottom = '-80px';
-                  oDiv.style.left = 0;
-                  oDiv.style.width = '100%';
-                  oDiv.style.fontSize = '20px';
-                  oDiv.style.textAlign = 'center';
-                  oDiv.style.display = 'block';
-                  oDiv.innerHTML = this.elementString();
-                  frag.appendChild(oDiv);
+                  return ('<div style="width: '+ this.wrapW  * .25 + 'px;\
+                                                height: 100%;\
+                                                float: right;\
+                                                padding: 20px 13px 20px;\
+                                                background-color: ' + this.boardBgColor + ';\
+                                                border-left: ' + this.border + ';\
+                                                box-sizing: border-box;\
+                                                font-size: 20px;\
+                                                font-weight: bold;\
+                                                ">\
+                                                ' + this.scoreStr() + '\
+                                                ' + this.promptStr() + '\
+                                                ' + tip + '\
+                              </div>');
             },
 
-            createTip: function(frag) {
-                  var oP = doc.createElement('p');
-
-                  oP.className = 'J_tip';
-                  oP.style.display = 'none';
-                  oP.style.position = 'absolute';
-                  oP.style.top = '50%';
-                  oP.style.left = '40%';
-                  oP.style.padding = '20px';
-                  oP.style.backgroundColor = '#0ff';
-                  oP.style.fontSize = '20px';
-                  oP.style.fontWeight = 'bold';
-                  oP.style.transform = 'translate(-50%, -50%)';
-                  oP.style.lineHeight = '35px';
-                  frag.appendChild(oP);
-                  oP = null;
+            createBtnControl: function() {
+                  return ('<div style="position: absolute; \
+                                                 left: 0; \
+                                                 bottom: -80px; \
+                                                 width: 100%; \
+                                                 font-size: 20px; \
+                                                 text-align: center">\
+                                          ' + this.controlStr() + '\
+                              </div>');
             },
 
-            elementString: function() {
-                  return `
-                        <div style="display: inline-block; margin-right: 15px; padding: 10px; background-color: #fff; border: 2px  dashed #bbb;">
-                              <span>模式选择：</span>
-                              <select class="J_level" style="padding: 7px 15px; border: none; border-bottom: 1px outset">
-                                    <option value="level_1">• 极简</option>
-                                    <option value="level_2">• 简</option>
-                                    <option value="level_3">• 简 +</option>
-                                    <option value="level_4">• 简 ++</option>
-                                    <option value="level_5">• 简 +++</option>
-                              </select>
-                        </div>
-                        <div style="display: inline-block; margin-right: 15px; padding: 10px; background-color: #fff; border: 2px  dashed #bbb; ">
-                              <span>速度选择：</span>
-                              <select class="J_speed" style="padding: 7px 15px; border: none; border-bottom: 1px outset">
-                                    <option value="400">﹒ 极慢</option>
-                                    <option value="300">﹒ 慢</option>
-                                    <option value="200">﹒ 快</option>
-                                    <option value="100">﹒ 快 +</option>
-                              </select>
-                        </div>
-                        <button class="J_start" style="width: 65px; height: 65px; margin-right: 15px; background-color: #ececec; border: 3px inset #fcc; border-radius: 50%; font-size: 20px; outline:none";>开始</button>
-                        <button class="J_reset" style="width: 65px; height: 65px; margin-right: 15px; background-color: #ececef; border: 3px outset #fcc; border-radius: 50%; font-size: 20px; outline:none";>重玩</button>
-                        `;
+            createTip: function() {
+                  return ('<p style="display: none;\
+                                              position: absolute; \
+                                              top: 50%;\
+                                              left: 40%;\
+                                              padding: 20px;\
+                                              background-color: #0ff;\
+                                              font-size: 20px;\
+                                              font-weight: bold;\
+                                              transform: translate(-50%, -50%);\
+                                              line-height: 35px\
+                                             " class="J_tip"\
+                              ></p>');
+            },
+
+            controlStr: function() {
+                  return ('<div style="display: inline-block; margin-right: 15px; padding: 10px; background-color: #fff; border: 2px  dashed #bbb;">\
+                                    <span>模式选择：</span>\
+                                    <select class="J_level" style="padding: 7px 15px; border: none; border-bottom: 1px outset">\
+                                          <option value="level_1">• 极简</option>\
+                                          <option value="level_2">• 简</option>\
+                                          <option value="level_3">• 简 +</option>\
+                                          <option value="level_4">• 简 ++</option>\
+                                          <option value="level_5">• 简 +++</option>\
+                                    </select>\
+                                    </div>\
+                                    <div style="display: inline-block; margin-right: 15px; padding: 10px; background-color: #fff; border: 2px  dashed #bbb; ">\
+                                          <span>速度选择：</span>\
+                                          <select class="J_speed" style="padding: 7px 15px; border: none; border-bottom: 1px outset">\
+                                                <option value="400">﹒ 极慢</option>\
+                                                <option value="300">﹒ 慢</option>\
+                                                <option value="200">﹒ 快</option>\
+                                                <option value="100">﹒ 快 +</option>\
+                                          </select>\
+                                    </div>\
+                                    <button class="J_start" style="width: 65px; height: 65px; margin-right: 15px; background-color: #ececec; border: 3px inset #fcc; border-radius: 50%; font-size: 20px; outline:none";>开始</button>\
+                                    <button class="J_reset" style="width: 65px; height: 65px; margin-right: 15px; background-color: #ececef; border: 3px outset #fcc; border-radius: 50%; font-size: 20px; outline:none";>重玩</button>\
+                                    </div>');
             },
 
             getElement: function() {
                   var el = this.el;
-                  this.oScore = $get('.J_score', el)[0];
-                  this.oLen = $get('.J_len', el)[0];
-                  this.oHScore = $get('.J_heightest-score', el)[0];
-                  this.oLevel = $get('.J_level', el)[0];
-                  this.oSpeed = $get('.J_speed', el)[0];
-                  this.oStartBtn = $get('.J_start', el)[0];
-                  this.oResetBtn = $get('.J_reset', el)[0];
-                  this.oTip = $get('.J_tip', el)[0];
+                  this.oScore = el.querySelector('.J_score');
+                  this.oLen = el.querySelector('.J_len');
+                  this.oHScore = el.querySelector('.J_heightest-score');
+                  this.oLevel = el.querySelector('.J_level');
+                  this.oSpeed = el.querySelector('.J_speed');
+                  this.oStartBtn = el.querySelector('.J_start');
+                  this.oResetBtn = el.querySelector('.J_reset');
+                  this.oTip = el.querySelector('.J_tip');
             },
 
             initBarrier: function() {

@@ -33,8 +33,8 @@
       init();
 } ())
 
-;(function() {
-      var PredictedMenu = function(opt) {
+;(function(win) {
+      var PredictedMouse = function(opt) {
             this.oWrap = $get(opt.wrap)[0];
             this.oMainMenu = $get(opt.mainMenu, this.oWrap)[0];
             this.oMainItems = $get(opt.mainItem, this.oMainMenu);
@@ -51,7 +51,7 @@
             t2 = null,
             toDelay = false;
 
-      PredictedMenu.prototype = {
+      PredictedMouse.prototype = {
             init: function() {
                   this.bindEvent();
             },
@@ -169,5 +169,5 @@
             }
       }
 
-      window.PredictedMenu = PredictedMenu;
-} ())
+      win.PredictedMouse = PredictedMouse;
+} (window))

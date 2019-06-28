@@ -262,8 +262,9 @@
                   render({
                         data: data,
                         tpl: courseListTpl,
-                        wrap: oCourseList
-                  }, replaceCourseValue);
+                        wrap: oCourseList,
+                        value: replaceCourseValue
+                  });
                   noDataRowStatus(false);
                   renderPageList(pages, pageNum);
                   return;

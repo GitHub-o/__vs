@@ -113,18 +113,6 @@ function removeEvent(elem, type, fn, capture) {
     removeEvent(elem, type, fn, capture);
 }
 
-function render(opt, fn) {
-    var list = '';
-
-    opt.data.jForEach(function (val, idx, arr) {
-          list += this.replace(regTpl(), function (node, key) {
-                return fn(val, idx, arr)[key];
-          });
-    }, opt.tpl);
-
-    opt.wrap.innerHTML = list;
-}
-
 var renderPageList = (function () {
 	var list = '';
 

@@ -2,9 +2,9 @@
  * error.name 的6种错误信息:
  *  1. EvalError: eval() 的使用与定义不一致
  *  2. RangeError: 数值越界
- *  3. ReferenceError: 非法或不能识别的引用数值 *
- *  4. SyntaxError: 发生语法解析错误 *
- *  5. TypeError: 操作数类型错误
+ *  3. ReferenceError: 非法或不能识别的引用数值
+ *  4. SyntaxError: 发生语法解析错误
+ *  5. TypeError: 操作数据类型错误
  *  6. URIError: URI处理函数使用不当(地址发生错误)
  */
 
@@ -35,8 +35,10 @@ HTMLCollection.prototype.jFilter = function (fn) {
 		item;
 
 	for (var i = 0; i < len; i++) {
-		item = deepClone(arr[i], {});
-		fn.apply(arg2, [item, i, arr]) ? newArr.push(item) : '';
+		item = {}.toString.call(item) === '[object Object]' ?
+			deepClone(arr[i]) :
+			arr[i];
+		fn.apply(arg2, [item, i, arr]) && newArr.push(item);
 	}
 	return newArr;
 }
@@ -50,7 +52,9 @@ HTMLCollection.prototype.jMap = function (fn) {
 		item;
 
 	for (var i = 0; i < len; i++) {
-		item = deepClone(arr[i], {});
+		item = {}.toString.call(item) === '[object Object]' ?
+			deepClone(arr[i]) :
+			arr[i];
 		newArr.push(fn.apply(arg2, [item, i, arr]));
 	}
 	return newArr;
@@ -64,7 +68,9 @@ HTMLCollection.prototype.jEvery = function (fn) {
 		res = true,
 		item;
 	for (var i = 0; i < len; i++) {
-		item = arr[i];
+		item = {}.toString.call(item) === '[object Object]' ?
+			deepClone(arr[i]) :
+			arr[i];
 		if (!fn.apply(arg2, [item, i, arr])) {
 			return res = false;
 		};
@@ -80,7 +86,9 @@ HTMLCollection.prototype.jSome = function (fn) {
 		res = false,
 		item;
 	for (var i = 0; i < len; i++) {
-		item = arr[i];
+		item = {}.toString.call(item) === '[object Object]' ?
+			deepClone(arr[i]) :
+			arr[i];
 		if (fn.apply(arg2, [item, i, arr])) {
 			return res = true;
 		}
@@ -92,10 +100,12 @@ HTMLCollection.prototype.jSome = function (fn) {
 HTMLCollection.prototype.jReduce = function (fn, initialValue) {
 	var arr = this,
 		len = arr.length,
-		arg3 = dblWrap || window,
+		arg3 = arguments[2] || window,
 		item;
 	for (var i = 0; i < len; i++) {
-		item = deepClone(arr[i]);
+		item = {}.toString.call(item) === '[object Object]' ?
+			deepClone(arr[i]) :
+			arr[i];
 		initialValue = fn.apply(arg3, [initialValue, item, i, arr]);
 	}
 	return initialValue;
@@ -107,8 +117,10 @@ HTMLCollection.prototype.jReduceRight = function (fn, initialValue) {
 		len = arr.length,
 		arg3 = arguments[2] || window,
 		item;
-	for (var i = len - 1; i > 0; i--) {
-		item = deepClone(arr[i]);
+	for (var i = len - 1; i >= 0; i--) {
+		item = {}.toString.call(item) === '[object Object]' ?
+			deepClone(arr[i]) :
+			arr[i];
 		initialValue = fn.apply(arg3, [initialValue, item, i, arr]);
 	}
 	return initialValue;
@@ -179,7 +191,9 @@ Array.prototype.jFilter = function (fn) {
 		item;
 
 	for (var i = 0; i < len; i++) {
-		item = deepClone(arr[i], {});
+		item = {}.toString.call(item) === '[object Object]' ?
+			deepClone(arr[i]) :
+			arr[i];
 		fn.apply(arg, [item, i, arr]) ? newArr.push(item) : '';
 	}
 	return newArr;
@@ -195,7 +209,9 @@ Array.prototype.jMap = function (fn) {
 		item;
 
 	for (var i = 0; i < len; i++) {
-		item = deepClone(arr[i], {});
+		item = {}.toString.call(item) === '[object Object]' ?
+			deepClone(arr[i]) :
+			arr[i];
 		newArr.push(fn.apply(arg, [item, i, arr]));
 	}
 	return newArr;
@@ -210,7 +226,9 @@ Array.prototype.jEvery = function (fn) {
 		res = true,
 		item;
 	for (var i = 0; i < len; i++) {
-		item = deepClone(arr[i]);
+		item = {}.toString.call(item) === '[object Object]' ?
+			deepClone(arr[i]) :
+			arr[i];
 		if (!fn.apply(arg2, [item, i, arr])) {
 			return res = false;
 		};
@@ -227,7 +245,9 @@ Array.prototype.jSome = function (fn) {
 		res = false,
 		item;
 	for (var i = 0; i < len; i++) {
-		item = deepClone(arr[i]);
+		item = {}.toString.call(item) === '[object Object]' ?
+			deepClone(arr[i]) :
+			arr[i];
 		if (fn.apply(arg2, [item, i, arr])) {
 			return res = true;
 		}
@@ -243,7 +263,9 @@ Array.prototype.jReduce = function (fn, initialValue) {
 		arg3 = arguments[2] || window,
 		item;
 	for (var i = 0; i < len; i++) {
-		item = deepClone(arr[i]);
+		item = {}.toString.call(item) === '[object Object]' ?
+			deepClone(arr[i]) :
+			arr[i];
 		initialValue = fn.apply(arg3, [initialValue, item, i, arr]);
 	}
 	return initialValue;
@@ -256,8 +278,11 @@ Array.prototype.jReduceRight = function (fn, initialValue) {
 		len = arr.length,
 		arg3 = arguments[2] || window,
 		item;
-	for (var i = len - 1; i > 0; i--) {
-		item = deepClone(arr[i]);
+	for (var i = len - 1; i >= 0; i--) {
+		item = arr[i];
+		if ({}.toString.call(item) === '[object Object]') {
+			item = deepClone(arr[i]);
+		}
 		initialValue = fn.apply(arg3, [initialValue, item, i, arr]);
 	}
 	return initialValue;
@@ -280,55 +305,55 @@ Array.prototype.flatten = function () {
 
 
 Array.prototype.bubbleSort1 = function () {
-  var len = this.length,
-    temp;
+	var len = this.length,
+		temp;
 
-  for (var i = 0; i < len - 1; i++) {
-    for (var j = 0; j < len - i - 1; j++) {
-      if (this[j] > this[j + 1]) {
-        temp = this[j + 1];
-        this[j + 1] = this[j];
-        this[j] = temp;
-      }
-    }
-  }
-  return this;
+	for (var i = 0; i < len - 1; i++) {
+		for (var j = 0; j < len - i - 1; j++) {
+			if (this[j] > this[j + 1]) {
+				temp = this[j + 1];
+				this[j + 1] = this[j];
+				this[j] = temp;
+			}
+		}
+	}
+	return this;
 };
 
 Array.prototype.bubbleSort2 = function () {
-  var j = this.length - 1;
-  while (j > 0) {
-    var pos = 0,
-      temp;
-    for (var i = 0; i < j; i++) {
-      if (this[i] > this[i + 1]) {
-        pos = i;
-        temp = this[i];
-        this[i] = this[i + 1];
-        this[i + 1] = temp;
-      }
-    }
-    j = pos;
-  }
-  return this;
+	var j = this.length - 1;
+	while (j > 0) {
+		var pos = 0,
+			temp;
+		for (var i = 0; i < j; i++) {
+			if (this[i] > this[i + 1]) {
+				pos = i;
+				temp = this[i];
+				this[i] = this[i + 1];
+				this[i + 1] = temp;
+			}
+		}
+		j = pos;
+	}
+	return this;
 };
 
 Array.prototype.selectionSort = function () {
-  var len = this.length,
-    temp,
-    minIdx;
-  for (var i = 0; i < len - 1; i++) {
-    minIdx = i;
-    for (var j = i + 1; j < len; j++) {
-      if (this[minIdx] > this[j]) {
-        minIdx = j;
-      }
-    }
-    temp = this[i];
-    this[i] = this[minIdx];
-    this[minIdx] = temp;
-  }
-  return this;
+	var len = this.length,
+		temp,
+		minIdx;
+	for (var i = 0; i < len - 1; i++) {
+		minIdx = i;
+		for (var j = i + 1; j < len; j++) {
+			if (this[minIdx] > this[j]) {
+				minIdx = j;
+			}
+		}
+		temp = this[i];
+		this[i] = this[minIdx];
+		this[minIdx] = temp;
+	}
+	return this;
 };
 
 //-----------------------String--------------------------------------------------------------------->>
@@ -434,8 +459,9 @@ Element.prototype.reverseChildren = function () {
 }
 
 // 封装getElementsByClassName
-Document.prototype.getClassName =
-	Element.prototype.getClassName =
+Document.prototype.getElementsByClassName =
+	Element.prototype.getElementsByClassName =
+	document.getElementsByClassName ||
 	function (className) {
 		var allDoms = document.getElementsByTagName('*'),
 			allDomsLen = allDoms.length,
@@ -631,29 +657,6 @@ Function.prototype.partial = function () {
 
 //----------------------Fn-------------------------------------------------------------------------->>
 
-
-/**
- * 封装 $ 获取元素
- * @param {目标元素} target 
- * @param {父级元素} parent
- */
-function $get(target, parent) {
-	var _f = target.charAt(0),
-		rTarget = target.replace(_f, ''),
-		args2 = parent || document;
-
-	switch (_f) {
-		case '.':
-			return args2.getElementsByClassName(rTarget);
-			break;
-		case '#':
-			return args2.getElementById(rTarget);
-			break;
-		default:
-			return args2.getElementsByTagName(target);
-			break;
-	}
-}
 
 
 /**
@@ -935,7 +938,7 @@ function drag(opt) {
 			y = pagePos(e).y - disY,
 			maxX = getViewPort().w - getStyle(dragWrap, 'width'),
 			maxY = getViewPort().h - getStyle(dragWrap, 'height');
-		if(menuWrap) {
+		if (menuWrap) {
 			menuWrap.style.display = 'none'
 			removeEvent(document, 'click', hideMenu);
 			removeEvent(menuWrap, 'contextmenu', stopEvent);
@@ -1000,7 +1003,7 @@ function drag(opt) {
  */
 function showStatusAnimation(opt) {
 	var [t, t1, t2] = [null, null, null],
-		status = opt.status,
+	status = opt.status,
 		time = opt.time || '1s',
 		wrap = opt.wrap,
 		animation = opt.animation;
@@ -1062,130 +1065,130 @@ function move(elem, speed) {
  */
 ;
 (function (doc, win) {
-  var Touch = function (selector) {
-    return Touch.prototype.init(selector);
-  }
+	var Touch = function (selector) {
+		return Touch.prototype.init(selector);
+	}
 
-  Touch.prototype = {
-    init: function (selector) {
-      if (typeof selector === 'string') {
-        this.elem = doc.querySelector(selector);
-        return this;
-      }
-    },
+	Touch.prototype = {
+		init: function (selector) {
+			if (typeof selector === 'string') {
+				this.elem = doc.querySelector(selector);
+				return this;
+			}
+		},
 
-    tap: function (callback) {
-      this.elem.addEventListener('touchstart', fn, false);
-      this.elem.addEventListener('touchend', fn, false);
-      var sTime,
-        eTime;
+		tap: function (callback) {
+			this.elem.addEventListener('touchstart', fn, false);
+			this.elem.addEventListener('touchend', fn, false);
+			var sTime,
+				eTime;
 
-      function fn(e) {
-        e.preventDefault();
-        switch (e.type) {
-          case 'touchstart':
-            sTime = new Date().getTime();
-            break;
-          case 'touchend':
-            eTime = new Date().getTime();
-            if (eTime - sTime < 500) {
-              callback.call(this, e);
-            }
-            break;
-          default:
-            break;
-        }
-      }
-    },
+			function fn(e) {
+				e.preventDefault();
+				switch (e.type) {
+					case 'touchstart':
+						sTime = new Date().getTime();
+						break;
+					case 'touchend':
+						eTime = new Date().getTime();
+						if (eTime - sTime < 500) {
+							callback.call(this, e);
+						}
+						break;
+					default:
+						break;
+				}
+			}
+		},
 
-    longtap: function (callback) {
-      this.elem.addEventListener('touchstart', fn, false);
-      this.elem.addEventListener('touchmove', fn, false);
-      this.elem.addEventListener('touchend', fn, false);
+		longtap: function (callback) {
+			this.elem.addEventListener('touchstart', fn, false);
+			this.elem.addEventListener('touchmove', fn, false);
+			this.elem.addEventListener('touchend', fn, false);
 
-      var t = null,
-            _self = this;
+			var t = null,
+				_self = this;
 
-      function fn(e) {
-        switch (e.type) {
-          case 'touchstart':
-            t = setTimeout(function () {
-              callback.call(_self, e);
-              clearTimeout(t);
-              t = null;
-            }, 500)
-            break;
-          case 'touchmove':
-          case 'touchend':
-            clearTimeout(t);
-            t = null;
-            break;
-          default:
-            break;
-        }
-      }
-    },
+			function fn(e) {
+				switch (e.type) {
+					case 'touchstart':
+						t = setTimeout(function () {
+							callback.call(_self, e);
+							clearTimeout(t);
+							t = null;
+						}, 500)
+						break;
+					case 'touchmove':
+					case 'touchend':
+						clearTimeout(t);
+						t = null;
+						break;
+					default:
+						break;
+				}
+			}
+		},
 
-    slideleft: function (callback) {
-      this.elem.addEventListener('touchstart', fn, false);
-      this.elem.addEventListener('touchend', fn, false);
+		slideleft: function (callback) {
+			this.elem.addEventListener('touchstart', fn, false);
+			this.elem.addEventListener('touchend', fn, false);
 
-      var sX,
-            sY,
-            eX,
-            eY;
+			var sX,
+				sY,
+				eX,
+				eY;
 
-      function fn(e) {
-        var touch = e.changedTouches[0];
-        switch (e.type) {
-          case 'touchstart':
-            sX = Math.abs(touch.pageX);
-            sY = Math.abs(touch.pageY);
-            break;
-          case 'touchend':
-            eX = Math.abs(touch.pageX);
-            eY = Math.abs(touch.pageY);
-            if (sY - eY < 30 && sX - eX > 100) {
-              callback.call(this, e);
-            }
-            break;
-          default:
-            break;
-        }
-      }
-    },
+			function fn(e) {
+				var touch = e.changedTouches[0];
+				switch (e.type) {
+					case 'touchstart':
+						sX = Math.abs(touch.pageX);
+						sY = Math.abs(touch.pageY);
+						break;
+					case 'touchend':
+						eX = Math.abs(touch.pageX);
+						eY = Math.abs(touch.pageY);
+						if (sY - eY < 30 && sX - eX > 100) {
+							callback.call(this, e);
+						}
+						break;
+					default:
+						break;
+				}
+			}
+		},
 
-    slideright: function(callback) {
-      this.elem.addEventListener('touchstart', fn, false);
-      this.elem.addEventListener('touchend', fn, false);
+		slideright: function (callback) {
+			this.elem.addEventListener('touchstart', fn, false);
+			this.elem.addEventListener('touchend', fn, false);
 
-      var sX,
-            sY,
-            eX,
-            eY;
+			var sX,
+				sY,
+				eX,
+				eY;
 
-      function fn(e) {
-        var touch = e.changedTouches[0];
-        switch (e.type) {
-          case 'touchstart':
-            sX = Math.abs(touch.pageX);
-            sY = Math.abs(touch.pageY);
-            break;
-          case 'touchend':
-            eX = Math.abs(touch.pageX);
-            eY = Math.abs(touch.pageY);
-            if (eY - sY < 30 && eX - sX > 100) {
-              callback.call(this, e);
-            }
-            break;
-          default:
-            break;
-        }
-      }
-    }
-  }
+			function fn(e) {
+				var touch = e.changedTouches[0];
+				switch (e.type) {
+					case 'touchstart':
+						sX = Math.abs(touch.pageX);
+						sY = Math.abs(touch.pageY);
+						break;
+					case 'touchend':
+						eX = Math.abs(touch.pageX);
+						eY = Math.abs(touch.pageY);
+						if (eY - sY < 30 && eX - sX > 100) {
+							callback.call(this, e);
+						}
+						break;
+					default:
+						break;
+				}
+			}
+		}
+	}
 
-  win.$touch = window.Touch = Touch
+	win.$touch = window.Touch = Touch
 }(document, window));
 
 /**
@@ -1248,8 +1251,7 @@ function addEvent(elem, type, fn, capture) {
 // }
 function removeEvent(elem, type, fn, capture) {
 	if (elem.addEventListener) {
-		removeEvent = function (elem, type, fn, capture) {
-			var capture = capture || false;
+		removeEvent = function (elem, type, fn, capture = false) {
 			elem.removeEventListener(type, fn, capture);
 		}
 	} else if (elem.attachEvent) {
@@ -1370,7 +1372,11 @@ function pagePos(e) {
 
 
 // 返回该元素下的所有元素节点
-function retAllChildren(node) {
+function retAllChildren(node, childrenArr) {
+	if (typeof node !== 'object') {
+		return undefined
+	}
+
 	var child = node.childNodes,
 		len = child.length,
 		item;
@@ -1378,13 +1384,14 @@ function retAllChildren(node) {
 	for (var i = 0; i < len; i++) {
 		item = child[i];
 		if (item.nodeType == 1) {
-			retAllChildren(item);
+			childrenArr && childrenArr.push(item)
+			retAllChildren(item, childrenArr);
 		}
 	}
 
-	if (node && node.nodeType == 1) {
-		console.log(node)
-	}
+	// if (node && node.nodeType == 1) {
+	// 	console.log(node)
+	// }
 }
 
 
@@ -1491,23 +1498,106 @@ function getStyle(elem, prop) {
 	}
 }
 
-
 /**
- * 获取或者设置CSS的属性
- * @param {元素} elem 
- * @param {属性名} attr 
- * @param {属性值} value 
+ * @param {元素} el
+ * @param {配置项} opt {
+ * 															imgURL						图片地址
+ * 															magWidth       放大镜宽度
+ * 															magHeight			放大镜高度
+ * 															scale 						 放大因数
+ * 													}
  */
-function css(elem, attr, value) {
-	//获取CSS的数值  
-	if (arguments.length == 2) {
-		return getStyle(elem, attr);
+;
+(function (doc, win) {
+	var Magnifier = function (el, opt = {}) {
+		if (!opt.imgURL) {
+			throw new Error('图片地址未填写！')
+		}
+		this.oWrap = doc.querySelector(el);
+		this.oWrapW = getStyle(this.oWrap, 'width');
+		this.oWrapH = getStyle(this.oWrap, 'height');
+		this.oWrapLeft = elemPos(this.oWrap).left;
+		this.oWrapTop = elemPos(this.oWrap).top;
+		opt.magWidth = opt.magWidth || 150;
+		opt.magHeight = opt.magHeight || 150;
+		opt.scale = opt.scale || 1.5;
+		this.opt = opt;
+		this.maxX = this.oWrapW - opt.magWidth / 2;
+		this.maxY = this.oWrapH - opt.magHeight / 2;
 	}
-	//设置CSS的数值  
-	if (arguments.length == 3) {
-		elem.style[attr] = value;
+
+	Magnifier.prototype = {
+		init: function () {
+			this.bindEvent();
+			this.createElement();
+			this.getElement();
+		},
+
+		bindEvent: function () {
+			addEvent(this.oWrap, 'mouseenter', this.enterWrap.bind(this));
+			addEvent(this.oWrap, 'mouseleave', this.leaveWrap.bind(this));
+		},
+
+		createElement: function () {
+			var opt = this.opt,
+				magnifierWrapSize = 'width: ' + opt.magWidth + 'px; ' + 'height: ' + opt.magHeight + 'px;"',
+				absImgSize = 'width: ' + this.oWrapW + 'px; ' + 'height: ' + this.oWrapH + 'px"',
+				inner = '<div class="J_magnifier-wrap" style="position: relative; height: ' + this.oWrapH + 'px">' +
+				'<img src="' + opt.imgURL + '" style="display:block; height: 100%" />' +
+				'<div class="J_magnifier" style="display: none; position: absolute; top: 0; left: 0; box-shadow: 0 0 8px 1px #aaa; overflow: hidden; ' + magnifierWrapSize + '>' +
+				'<img src="' + opt.imgURL + '" class="J_abs-img" style="position: absolute; top: 0; left: 0; ' + absImgSize + ' />' +
+				'</div>' +
+				'</div>';
+
+			this.oWrap.innerHTML = inner;
+		},
+
+		getElement: function () {
+			this.oMagnifier = doc.querySelector('.J_magnifier');
+			this.oAbsImg = doc.querySelector('.J_abs-img');
+		},
+
+		magnifierStatus: function (status) {
+			if (status) {
+				this.oMagnifier.style.display = 'block';
+				this.oAbsImg.style.transform = 'scale(' + this.opt.scale + ')';
+			} else {
+				this.oMagnifier.style.display = 'none';
+				this.oAbsImg.style.transform = '';
+			}
+		},
+
+		enterWrap: function () {
+			this.magnifierStatus(true);
+			addEvent(this.oWrap, 'mousemove', this.moveWrap.bind(this));
+		},
+
+		moveWrap: function (e) {
+			var e = e || window.event,
+				magW = this.opt.magWidth / 2,
+				magH = this.opt.magHeight / 2,
+				x = pagePos(e).x - this.oWrapLeft - magW,
+				y = pagePos(e).y - this.oWrapTop - magH;
+
+			if (x < -magW || x > this.maxX || y < -magH || y > this.maxY) {
+				this.magnifierStatus(false);
+			}
+
+			this.oMagnifier.style.left = x + 'px';
+			this.oMagnifier.style.top = y + 'px';
+			this.oAbsImg.style.left = -x + 'px';
+			this.oAbsImg.style.top = -y + 'px';
+		},
+
+		leaveWrap: function () {
+			removeEvent(this.oWrap, 'mousemove', this.moveWrap);
+			this.magnifierStatus(false);
+		}
 	}
-}
+
+	win.Magnifier = Magnifier
+})(document, window)
+
 
 // 图片懒加载
 function imgLazyLoad(images) {
@@ -1550,17 +1640,24 @@ function retByteslen(target) {
 	return count;
 }
 
-
-// render渲染模板
-function render(opt, fn) {
+/**
+ * 渲染模板
+ * @param {配置项} opt : {
+ * 																	wrap					dom容器
+ * 																	data		 			 数据
+ * 																	tpl							字符串模板
+ * 																	value: {}			替换的变量
+ * }
+ */
+function render(opt) {
 	var list = '';
 	opt.data.jForEach(function (val, idx, arr) {
 		list += this.replace(regTpl(), function (node, key) {
-			return fn(val, idx, arr)[key];
+			return opt.value(val, idx, arr)[key];
 		})
 	}, opt.tpl);
 
-	return opt.wrap ? opt.wrap.innerHTML = list :  list;
+	return opt.wrap ? opt.wrap.innerHTML = list : list;
 }
 
 /**
@@ -1663,13 +1760,6 @@ function trimSpace(str) {
 	return str.replace(/\s+/g, '');
 }
 
-/**
- * 去除非法字符
- * @param {相关正则表达式} reg 
- */
-function trimIllegal(reg) {
-	this.value = this.value.replace(reg, '');
-}
 
 function ajaxReturn(opt) {
 	$.ajax({
@@ -1698,7 +1788,6 @@ var inherit = (function () {
 		Target.prototype.uber = Origin;
 	}
 }())
-
 
 
 /**
@@ -1734,26 +1823,22 @@ function deepClone(origin, target) {
 function type(target) {
 	// 1.区分原始值,引用值
 	// 2.区分引用值: 数组, 对象, 包装类
-	var res = typeof (target),
-		toStr = Object.prototype.toString,
-		temp = {
-			'[object Array]': 'array',
-			'[object Object]': 'object',
-			'[object Date]': 'date',
-			'[object RegExp]': 'regExp',
-			'[object Number]': 'object - number',
-			'[object String]': 'object - string',
-			'[object Boolean]': 'object - boolean'
-		};
-
 	if (target === null) {
 		return 'null';
-	} else if (res == 'object') {
-		var str = toStr.call(target);
-		return temp[str];
-	} else {
-		return res;
 	}
+
+	var type = typeof (target);
+	temp = {
+		'[object Array]': 'array',
+		'[object Object]': 'object',
+		'[object Date]': 'date',
+		'[object RegExp]': 'regExp',
+		'[object Number]': 'object_number',
+		'[object String]': 'object_string',
+		'[object Boolean]': 'object_boolean'
+	};
+
+	return type === 'object' ? temp[{}.toString.call(target)] : type;
 }
 
 /**
@@ -2024,47 +2109,67 @@ function networkType() {
 
 
 /**
- * JS异步加载
+ * 
+ * @param {对象} obj 
+ * @param {参数} params 
+ */
+function parse(obj, params) {
+	if (typeof params === 'string') {
+		if (!(/\.|\[.+\]/g).test(params)) {
+			return obj[params];
+		}
+		params = params.replace(/\]\[/g, '.')
+			.replace(/\[/g, '.')
+			.replace(/\]/g, '.')
+			.replace(/\.$/, '')
+			.split('.');
+	} else if (params.length === 1) {
+		return obj[params];
+	}
+	obj = obj[params[0]];
+	params.shift();
+	return parse(obj, params);
+}
+
+/**
+ * 异步加载并执行回调函数
  * @param {资源} url 
  * @param {回调函数} callback 
  */
-function loadScript(url, callback) {
-	var script = document.createElement('script');
-	script.src = "text/javascript";
-	if (script.readyState) {
-		script.onreadystatechange = function () {
-			if (script.readyState == 'complete' || script.readyState == 'loaded') {
-				tools[callback](); // callback();       
+function async_load_func(url, callback) {
+	var oS = document.createElement('script');
+	oS.type = 'text/javascript';
+	oS.async = true;
+
+	if (oS.readyState) {
+		oS.onreadystatechange = function () {
+			if (oS.readyState == 'complete' || oS.readyState == 'loaded') {
+				return parse(window, callback)();
 			}
 		}
 	} else {
-		script.onload = function () { // safari chrome firefox 
-			tools[callback](); // callback();
+		oS.onload = function () { // safari chrome firefox 
+			return parse(window, callback)();
 		}
 	}
-	script.src = url;
-	document.head.appendChild(script);
+	oS.src = url;
+	document.head.appendChild(oS);
 }
 
 
 
 /**
- * 异步&动态创建script
+ * 异步加载脚本
+ * @param {地址} url
  */
-// (function () {
-// 	function async_load() {
-// 		var script = document.createElement('script');
-// 		script.type = 'text/javascript';
-// 		script.async = true;
-// 		script.src = url
-// 		document.head.appendChild(script);
-// 	}
-// 	if (window.attachEvent) {
-// 		window.attachEvent('onload', async_load);
-// 	} else {
-// 		window.addEventListener('load', async_load, false);
-// 	}
-// }())
+
+function async_load(url) {
+	var oS = document.createElement('script');
+	oS.type = 'text/javascript';
+	oS.async = true;
+	oS.src = url;
+	document.head.appendChild(oS);
+}
 
 
 /**
@@ -2147,7 +2252,7 @@ var pointInTriangle = (function () {
  * 3、只在该作用域下生效
  */
 
- 
+
 /**
  * 箭头函数 =>
  * 1、this指向由外层作用域决定，this指向固化
@@ -2169,16 +2274,28 @@ var pointInTriangle = (function () {
  * JSON.stringify() 遍历自身可枚举属性
  */
 
- /**
-  * bin 存放二进制目录
-  * lib 存放代码
-  * doc 存放文档目录
-  * test 存放单元测试代码
-  */
+/**
+ * bin 存放二进制目录
+ * lib 存放代码
+ * doc 存放文档目录
+ * test 存放单元测试代码
+ */
 
-  /**
-   * 拷贝对象
-   * 1、深度克隆
-   * 2、圣杯模式
-   * 3、JSON.parse/JSON.stringify
-   */
+/**
+ * 拷贝对象
+ * 1、深度克隆
+ * 2、圣杯模式
+ * 3、JSON.parse/JSON.stringify
+ */
+
+
+
+/**
+ * 引起回流的因素：
+ * 1、DOM节点的增删
+ * 2、DOM节点位置
+ * 3、DOM节点的尺寸
+ * 4、DOM节点的display与否
+ * 5、页面初始渲染
+ * 6、向浏览器请求样式信息（client getComputedStyle currentStyle offset scroll）
+ */

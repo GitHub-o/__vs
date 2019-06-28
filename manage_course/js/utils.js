@@ -143,12 +143,12 @@ function removeEvent(elem, type, fn, capture) {
     removeEvent(elem, type, fn, capture);
 }
 
-function render(opt, fn) {
+function render(opt) {
     var list = '';
 
     opt.data.jForEach(function (val, idx, arr) {
           list += this.replace(regTpl(), function (node, key) {
-                return fn(val, idx, arr)[key];
+                return opt.value(val, idx, arr)[key];
           })
     }, opt.tpl);
 

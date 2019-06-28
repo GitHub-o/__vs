@@ -18,24 +18,6 @@ Array.prototype.jForEach = function (fn) {
     }
 }
 
-function $get(target, parent) {
-    var _f = target.charAt(0),
-          rTarget = target.replace(_f, ''),
-          args2 = parent || document;
-
-    switch (_f) {
-          case '.':
-                return args2.getElementsByClassName(rTarget);
-                break;
-          case '#':
-                return args2.getElementById(rTarget);
-                break;
-          default:
-                return args2.getElementsByTagName(target);
-                break;
-    }
-}
-
 
 function addEvent(elem, type, fn, capture) {
     if (elem.addEventListener) {

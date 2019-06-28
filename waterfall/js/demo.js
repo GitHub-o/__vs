@@ -1,7 +1,7 @@
-;(function(doc) {
+;(function(doc, win) {
       var t = null;
       var Waterfall = function(wrap, opt) {
-            this.wrap = $get('' + wrap)[0];
+            this.wrap = doc.querySelector(wrap);
             this.column = opt.column || 6;
             this.gap = opt.gap || 10,
             this.pages = 0;
@@ -96,5 +96,5 @@
             }
       }
 
-      window.Waterfall = Waterfall;
-} (document))
+      win.Waterfall = Waterfall;
+} (document, window))

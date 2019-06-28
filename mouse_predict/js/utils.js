@@ -18,41 +18,6 @@ Array.prototype.jForEach = function (fn) {
 	}
 }
 
-function debounce(fn, time, triggleNow) {
-	var t = null,
-		res;
-
-	function debounced() {
-		var _self = this,
-			args = arguments;
-
-		if (t) {
-			clearTimeout(t);
-		}
-		if (triggleNow) {
-			var exec = !t;
-
-			t = setTimeout(function () {
-				t = null;
-			}, time);
-
-			if (exec) {
-				res = fn.apply(_self, args);
-			}
-		} else {
-			t = setTimeout(function () {
-				res = fn.apply(_self, args);
-			}, time);
-		}
-		return res;
-	}
-	debounced.remove = function () {
-		clearTimeout(t);
-		t = null;
-	}
-	return debounced;
-}
-
 
 function $get(target, parent) {
 	var _f = target.charAt(0),
@@ -113,28 +78,6 @@ function removeEvent(elem, type, fn, capture) {
 	}
 
 	removeEvent(elem, type, fn, capture);
-}
-
-function render(opt, fn) {
-	var list = '';
-
-	opt.data.jForEach(function (val, idx, arr) {
-		list += this.replace(regTpl(), function (node, key) {
-			return fn(val, idx, arr)[key];
-		});
-	}, opt.tpl);
-
-	opt.wrap.innerHTML = list;
-}
-
-function regTpl() {
-	return new RegExp(/{{(.*?)}}/, 'gim');
-}
-
-
-function trimSpace(str) {
-	return str.replace(/\s+/g, '');
-
 }
 
 function pagePos(e) {
