@@ -411,7 +411,7 @@ Element.prototype.hasChildren = function () {
 }
 
 
-// 封装 Children
+// 封装 该节点下的元素节点Children
 Element.prototype.jChildren = function (idx) {
 	var child = this.childNodes,
 		len = child.length,
@@ -457,6 +457,64 @@ Element.prototype.reverseChildren = function () {
 		this.appendChild(child[len]);
 	}
 }
+
+
+// 返回该元素下的所有元素节点
+Element.prototype.allChildren = function(childrenArr = []) {
+	var child = this.childNodes,
+		len = child.length,
+		item;
+
+	for (var i = 0; i < len; i++) {
+		item = child[i];
+		if (item.nodeType == 1) {
+			childrenArr && childrenArr.push(item)
+			item.allChildren(childrenArr);
+		}
+	}
+	return childrenArr;
+}
+
+// 返回e元素的第n层祖先元素节点  
+Element.prototype.parent = function(n) {
+	var elem = this;
+	while (elem && n--) {
+		elem = elem.parentElement;
+	}
+	return elem;
+}
+
+// 返回元素e的第n个兄弟元素节点, n正 ,返回 nextSibling; n负,返回 previousSibling
+Element.prototype.sibling = function(n) {
+	var elem = this;
+	while (elem && n) {
+		if (n > 0) {
+			// if (leme.nextElementSibling) {
+			//     e = e.nextElementSibling;
+			// } else {
+			//     for (e = e.nextSibling; e && e.nodeType != 1; e = e.nextSibling);
+			// }
+			elem = elem.nextSibling;
+			while (elem && elem.nodeType !== 1) {
+				elem = elem.nextSibling;
+			}
+			n--;
+		} else {
+			// if (e.previousElementSibling) {
+			//     e = e.previousElementSibling;
+			// } else {
+			//     for (e = e.previousSibling; e && e.nodeType != 1; e = e.previousSibling);
+			// }
+			elem = elem.previousSibling;
+			while (elem && elem.nodeType !== 1) {
+				elem = elem.previousSibling;
+			}
+			n++;
+		}
+	}
+	return elem;
+}
+
 
 // 封装getElementsByClassName
 Document.prototype.getElementsByClassName =
@@ -671,7 +729,7 @@ function sortDatas(fields, datas) {
 	 * @param {映射的字段} mapping_field
 	 * @param {以seperator为分隔符的复合分类} seperator
 	 */
-	return function (mapping_field, seperator) {
+	return function (mapping_field, seperator = ',') {
 		fields.jForEach(function (field) {
 			var _key = field.id;
 
@@ -1032,34 +1090,6 @@ function showStatusAnimation(opt) {
 }
 
 
-//up\right\down\left 元素移动
-function move(elem, speed) {
-	speed = speed || 15;
-	addEvent(document, 'keydown', function () {
-		var e = e || window.event,
-			code = e.keyCode,
-			Left = getStyle(elem, 'left'),
-			Top = getStyle(elem, 'top');
-
-		switch (code) {
-			case 37:
-				elem.style.left = Left - speed + 'px';
-				break;
-			case 39:
-				elem.style.left = Left + speed + 'px';
-				break;
-			case 38:
-				elem.style.top = Top - speed + 'px';
-				break;
-			case 40:
-				elem.style.top = Top + speed + 'px';
-				break;
-			default:
-				break;
-		}
-	})
-}
-
 /**
  * touch事件的封装
  */
@@ -1209,10 +1239,9 @@ function move(elem, speed) {
 //         elem['on' + type] = fn;
 //     }
 // }
-function addEvent(elem, type, fn, capture) {
+function addEvent(elem, type, fn, capture = false) {
 	if (elem.addEventListener) {
 		addEvent = function (elem, type, fn, capture) {
-			var capture = capture || false;
 			elem.addEventListener(type, fn, capture);
 		}
 	} else if (elem.attachEvent) {
@@ -1274,7 +1303,7 @@ function removeEvent(elem, type, fn, capture) {
  * IE：cancelBubble
  * Firefox：stopPropagation
  */
-function stopBubble(e) {
+function cancelBubble(e) {
 	if (e.stopPropagation) {
 		e.stopPropagation();
 	} else {
@@ -1288,52 +1317,12 @@ function stopBubble(e) {
  * IE：returnValue
  * DOM：preventDefault
  */
-function stopHandler(e) {
+function preventDefault(e) {
 	if (e.preventDefault) {
-		e.preventDefault(); //非IE
+		e.preventDefault();
 	} else {
-		e.returnValue = false; //针对IE
+		e.returnValue = false;
 	}
-}
-
-
-// 返回e元素的第n层祖先元素节点  
-function retParent(elem, n) {
-	while (elem && n--) {
-		elem = elem.parentElement;
-	}
-	return elem;
-}
-
-
-// 返回元素e的第n个兄弟元素节点, n正 ,返回 nextSibling; n负,返回 previousSibling
-function retSibling(e, n) {
-	while (e && n) {
-		if (n > 0) {
-			// if (e.nextElementSibling) {
-			//     e = e.nextElementSibling;
-			// } else {
-			//     for (e = e.nextSibling; e && e.nodeType != 1; e = e.nextSibling);
-			// }
-			e = e.nextSibling;
-			while (e && e.nodeType !== 1) {
-				e = e.nextSibling;
-			}
-			n--;
-		} else {
-			// if (e.previousElementSibling) {
-			//     e = e.previousElementSibling;
-			// } else {
-			//     for (e = e.previousSibling; e && e.nodeType != 1; e = e.previousSibling);
-			// }
-			e = e.previousSibling;
-			while (e && e.nodeType !== 1) {
-				e = e.previousSibling;
-			}
-			n++;
-		}
-	}
-	return e;
 }
 
 
@@ -1371,30 +1360,6 @@ function pagePos(e) {
 }
 
 
-// 返回该元素下的所有元素节点
-function retAllChildren(node, childrenArr) {
-	if (typeof node !== 'object') {
-		return undefined
-	}
-
-	var child = node.childNodes,
-		len = child.length,
-		item;
-
-	for (var i = 0; i < len; i++) {
-		item = child[i];
-		if (item.nodeType == 1) {
-			childrenArr && childrenArr.push(item)
-			retAllChildren(item, childrenArr);
-		}
-	}
-
-	// if (node && node.nodeType == 1) {
-	// 	console.log(node)
-	// }
-}
-
-
 // 求取滚动条的纵横距离
 function getScrollOffset() {
 	if (window.pageXOffset) {
@@ -1412,23 +1377,21 @@ function getScrollOffset() {
 
 
 // 封装可视区窗口大小
-function getViewPort() {
+function getClientPort() {
 	if (window.innerWidth) {
 		return {
 			w: window.innerWidth,
 			h: window.innerHeight
 		}
+	} else if (document.compatMode == "BackCompat") {
+		return {
+			w: document.body.clientWidth,
+			h: document.body.clientHeight
+		}
 	} else {
-		if (document.compatMode == "BackCompat") {
-			return {
-				w: document.body.clientWidth,
-				h: document.body.clientHeight
-			}
-		} else {
-			return {
-				w: document.documentElement.clientWidth,
-				h: document.documentElement.clientHeight
-			}
+		return {
+			w: document.documentElement.clientWidth,
+			h: document.documentElement.clientHeight
 		}
 	}
 }
@@ -1500,12 +1463,10 @@ function getStyle(elem, prop) {
 
 /**
  * @param {元素} el
- * @param {配置项} opt {
- * 															imgURL						图片地址
- * 															magWidth       放大镜宽度
- * 															magHeight			放大镜高度
- * 															scale 						 放大因数
- * 													}
+ * @param {图片地址 -string} opt.imgURL
+ * @param {放大镜宽度 - number} opt.magWidth
+ * @param {放大镜高度 - number} opt.magHeight
+ * @param {放大因数 - number} opt.scale
  */
 ;
 (function (doc, win) {
@@ -1599,17 +1560,23 @@ function getStyle(elem, prop) {
 })(document, window)
 
 
-// 图片懒加载
-function imgLazyLoad(images) {
+/**
+ * 图片懒加载
+ * @param {图片元素集合} images
+ */
+var imgLazyLoad = (function (win, doc) {
 	var imageItem,
-		n = 0;
+				imagesLen,
+				cHeight,
+				sTop,
+				imageTop,
+				src,
+				n = 0;
 
-	return function () {
-		var cHeight = document.documentElement.clientHeight,
-			sTop = document.body.scrollTop || document.documentElement.scrollTop,
-			imagesLen = images.length,
-			imageTop,
-			src;
+	return function (images) {
+		imagesLen = images.length,
+		cHeight = win.innerHeight || doc.documentElement.clientHeight || doc.body.clientHeight,
+		sTop = win.pageYOffset || doc.body.scrollTop || doc.documentElement.scrollTop;
 
 		for (var i = n; i < imagesLen; i++) {
 			imageItem = images[i];
@@ -1624,6 +1591,65 @@ function imgLazyLoad(images) {
 			}
 		}
 	}
+})(window, document)
+
+
+/**
+ * 
+ * @param {元素} opt.elem 
+ * @param {渐变时间 ms} opt.duration
+ * @param {透明度（0~1）} opt.opacity 
+ */
+function fadeIn(opt) {
+  var o,
+    timer,
+		elemStyle = opt.elem.style,
+		duration = opt.duration || 500,
+		opacity = opt.opacity || 1;
+
+  clearInterval(timer);
+  elemStyle.display = 'block';
+  o = elemStyle.opacity = 0;
+
+  timer = setInterval(function () {
+    if (o >= opacity) {
+      elemStyle.opacity = opacity;
+      clearInterval(timer);
+    } else {
+      o += opacity / duration * 30;
+      elemStyle.opacity = o;
+    }
+  }, 30);
+}
+
+
+/**
+ * 
+ * @param {元素} opt.elem 
+ * @param {渐变时间 ms} opt.duration
+ * @param {透明度（0~1）} opt.opacity 
+ */
+function fadeOut(opt) {
+  var o,
+    timer,
+		elemStyle = opt.elem.style,
+		duration= opt.duration|| 500,
+		opacity = opt.opacity || 0;
+
+  clearInterval(timer);
+  elemStyle.display = 'block';
+  o = elemStyle.opacity = 1;
+
+  timer = setInterval(function () {
+    if (o <= opacity) {
+      elemStyle.opacity = opacity;
+      elemStyle.display = 'none';
+      clearInterval(timer);
+    } else {
+      o -= (1 - opacity) / duration* 30;
+			elemStyle.opacity = o;
+    }
+  },30);
 }
 
 
@@ -1642,12 +1668,10 @@ function retByteslen(target) {
 
 /**
  * 渲染模板
- * @param {配置项} opt : {
- * 																	wrap					dom容器
- * 																	data		 			 数据
- * 																	tpl							字符串模板
- * 																	value: {}			替换的变量
- * }
+ * @param {元素 - dom} opt.wrap
+ * @param {数据 - array} opt.data
+ * @param {字符串模板 - string} opt.tpl
+ * @param {替换的变量 - object} opt.value
  */
 function render(opt) {
 	var list = '';
