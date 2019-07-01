@@ -515,6 +515,166 @@ Element.prototype.sibling = function(n) {
 	return elem;
 }
 
+/**
+ * 拖拽函数
+ * @param {点击的元素} opt.elem 
+ * @param {双击所显示的元素} opt.dblWrap
+ * @param {右键所显示的元素} opt.menuWrap
+ */
+Element.prototype.drag = function (opt = {}) {
+	var dragWrap = opt.dragWrap || this,
+		elem = this,
+		dblWrap = opt.dblWrap,
+		menuWrap = opt.menuWrap,
+		wWidth = getClientPort().w,
+		wHeight = getClientPort().h,
+		disX,
+		disY,
+		[cbTime, ceTime, counter, t] = [null, null, 0, null];
+
+	if (menuWrap) {
+		var mWidth = getStyle(menuWrap, 'width'),
+			mHeight = getStyle(menuWrap, 'height'),
+			maxW = wWidth - mWidth,
+			maxH = wHeight - mHeight;
+		addEvent(menuWrap, 'click', stopEvent);
+	}
+	addEvent(elem, 'mousedown', mouseDown);
+	addEvent(elem, 'contextmenu', stopEvent);
+	addEvent(dragWrap, 'contextmenu', stopEvent);
+
+	function mouseDown(e) {
+		var e = e || window.event,
+			btnCode = e.button,
+			x = pagePos(e).x,
+			y = pagePos(e).y,
+			mLeft,
+			mTop;
+
+		stopEvent(e);
+
+		if (btnCode === 0) {
+			disX = x - getStyle(dragWrap, 'left');
+			disY = y - getStyle(dragWrap, 'top');
+
+			addEvent(document, 'mousemove', mouseMove);
+			addEvent(document, 'mouseup', mouseUp);
+		} else if (btnCode === 2) {
+			if (menuWrap) {
+				if (x >= maxW) {
+					mLeft = x - mWidth;
+				} else {
+					mLeft = x;
+				}
+				if (y >= maxH) {
+					mTop = y - mHeight;
+				} else {
+					mTop = y;
+				}
+				menuWrap.style.left = mLeft + 'px';
+				menuWrap.style.top = mTop + 'px';
+				menuWrap.style.display = 'block';
+				addEvent(document, 'click', hideMenu);
+				addEvent(menuWrap, 'contextmenu', stopEvent);
+			}
+		}
+	}
+
+	function mouseMove(e) {
+		var e = e || window.event,
+			x = pagePos(e).x - disX,
+			y = pagePos(e).y - disY,
+			maxX = wWidth - getStyle(dragWrap, 'width') - 1,
+			maxY = wHeight - getStyle(dragWrap, 'height') - 1;
+		if (menuWrap) {
+			menuWrap.style.display = 'none'
+			removeEvent(document, 'click', hideMenu);
+			removeEvent(menuWrap, 'contextmenu', stopEvent);
+		}
+		if (x < 0) {
+			x = 0;
+		} else if (x >= maxX) {
+			x = maxX;
+		}
+
+		if (y < 0) {
+			y = 0;
+		} else if (y >= maxY) {
+			y = maxY;
+		}
+
+		dragWrap.style.left = x + 'px';
+		dragWrap.style.top = y + 'px';
+	}
+
+	function mouseUp() {
+		if (dblWrap) {
+			var res;
+			counter++;
+			if (counter == 1) {
+				cbTime = new Date().getTime();
+			}
+			if (counter == 2) {
+				ceTime = new Date().getTime();
+			}
+			res = ceTime - cbTime;
+			if (cbTime && ceTime && res < 300) {
+				dblWrap.style.display = 'block';
+			}
+			t = setTimeout(function () {
+				cbTime = ceTime = counter = 0;
+				clearTimeout(t);
+			}, 500);
+		}
+		removeEvent(document, 'mousemove', mouseMove);
+		removeEvent(document, 'mouseup', mouseUp);
+	}
+
+	function stopEvent(e) {
+		var e = e || window.event;
+		preventDefault(e);
+		cancelBubble(e);
+	}
+
+	function hideMenu() {
+		menuWrap.style.display = 'none'
+	}
+}
+
+/**
+ * 元素显示/隐藏的动画
+ * @param {元素显示的状态 - none/block} opt.status 
+ * @param {过渡动画} opt.animation 
+ * @param {动画时间 - ms} opt.duration 
+ */
+Element.prototype.showStatusAnimation = function (opt = {}) {
+	var [t, t1, t2] = [null, null, null],
+		status = opt.status,
+		duration = opt.duration || 1000,
+		elem = this,
+		animation = opt.animation;
+
+	elem.style.animation = animation + ' ' + duration / 1000 + 's';
+
+	t = setTimeout(function () {
+		if (status == 'none') {
+			t2 = setTimeout(function () {
+				elem.style.display = status;
+				clearTimeout(t2);
+				t2 = null;
+			}, .7 * duration);
+		} else {
+			elem.style.display = status;
+		}
+		t1 = setTimeout(function () {
+			elem.style.animation = '';
+			clearTimeout(t1);
+			t1 = null;
+		}, .8 * duration);
+		clearTimeout(t);
+		t = null;
+	}, .4 * duration);
+}
 
 // 封装getElementsByClassName
 Document.prototype.getElementsByClassName =
@@ -886,7 +1046,6 @@ var xhr = (function (doc) {
 }(document))
 
 
-
 /**
  * 跨域domain
  */
@@ -920,181 +1079,16 @@ var ajaxDomain = (function (doc) {
 })(document);
 
 
-
-/**
- * 拖拽函数
- * @param {点击的元素} opt.elem 
- * @param {拖拽的元素} opt.dragWrap
- * @param {双击elem所显示的元素} opt.dblWrap
- * @param {右键elem所显示的元素} opt.menuWrap
- * @param {双击elem所显示dblWrap的动画} opt.animation
- */
-function drag(opt) {
-	var dragWrap = opt.dragWrap || opt.elem,
-		elem = opt.elem,
-		dblWrap = opt.dblWrap,
-		menuWrap = opt.menuWrap,
-		animation = opt.animation,
-		disX,
-		disY,
-		[cbTime, ceTime, counter, t] = [null, null, 0, null];
-
-	if (menuWrap) {
-		var mWidth = getStyle(menuWrap, 'width'),
-			mHeight = getStyle(menuWrap, 'height'),
-			wWidth = getViewPort().w,
-			wHeight = getViewPort().h,
-			maxW = wWidth - mWidth,
-			maxH = wHeight - mHeight;
-		addEvent(menuWrap, 'click', stopEvent);
-	}
-	addEvent(elem, 'mousedown', mouseDown);
-	addEvent(dragWrap, 'contextmenu', stopEvent);
-	addEvent(elem, 'contextmenu', stopEvent);
-
-	function mouseDown(e) {
-		var e = e || window.event,
-			btnCode = e.button,
-			x = pagePos(e).x,
-			y = pagePos(e).y,
-			mLeft,
-			mTop;
-
-		stopBubble(e);
-		stopHandler(e);
-
-		if (btnCode === 0) {
-			disX = x - getStyle(dragWrap, 'left');
-			disY = y - getStyle(dragWrap, 'top');
-
-			addEvent(document, 'mousemove', mouseMove);
-			addEvent(document, 'mouseup', mouseUp);
-		} else if (btnCode === 2) {
-			if (menuWrap) {
-				if (x >= maxW) {
-					mLeft = x - mWidth;
-				} else {
-					mLeft = x;
-				}
-				if (y >= maxH) {
-					mTop = y - mHeight;
-				} else {
-					mTop = y;
-				}
-				menuWrap.style.left = mLeft + 'px';
-				menuWrap.style.top = mTop + 'px';
-				menuWrap.style.display = 'block';
-				addEvent(document, 'click', hideMenu);
-				addEvent(menuWrap, 'contextmenu', stopEvent);
-			}
-		}
-	}
-
-	function mouseMove(e) {
-		var e = e || window.event,
-			x = pagePos(e).x - disX,
-			y = pagePos(e).y - disY,
-			maxX = getViewPort().w - getStyle(dragWrap, 'width'),
-			maxY = getViewPort().h - getStyle(dragWrap, 'height');
-		if (menuWrap) {
-			menuWrap.style.display = 'none'
-			removeEvent(document, 'click', hideMenu);
-			removeEvent(menuWrap, 'contextmenu', stopEvent);
-		}
-		if (x < 0) {
-			x = 0;
-		} else if (x >= maxX) {
-			x = maxX - 1;
-		}
-
-		if (y < 0) {
-			y = 0;
-		} else if (y >= maxY) {
-			y = maxY - 1;
-		}
-
-		dragWrap.style.left = x + 'px';
-		dragWrap.style.top = y + 'px';
-	}
-
-	function mouseUp() {
-		if (dblWrap) {
-			var res;
-			counter++;
-			if (counter == 1) {
-				cbTime = new Date().getTime();
-			}
-			if (counter == 2) {
-				ceTime = new Date().getTime();
-			}
-			res = ceTime - cbTime;
-			if (cbTime && ceTime && res < 300) {
-				animation ? showStatusAnimation('block', dblWrap, animation) : dblWrap.style.display = 'block';
-			}
-			t = setTimeout(function () {
-				cbTime = ceTime = counter = 0;
-				clearTimeout(t);
-			}, 500);
-		}
-		removeEvent(document, 'mousemove', mouseMove);
-		removeEvent(document, 'mouseup', mouseUp);
-	}
-
-	function stopEvent(e) {
-		var e = e || window.event;
-		stopHandler(e);
-		stopBubble(e);
-	}
-
-	function hideMenu() {
-		menuWrap.style.display = 'none'
-	}
-}
-
-
-/**
- * 元素显示/隐藏的动画
- * @param {元素显示的状态} opt.status 
- * @param {元素} opt.wrap 
- * @param {元素显示时的动画} opt.animation 
- * @param {动画时间} opt.time
- */
-function showStatusAnimation(opt) {
-	var [t, t1, t2] = [null, null, null],
-	status = opt.status,
-		time = opt.time || '1s',
-		wrap = opt.wrap,
-		animation = opt.animation;
-
-	wrap.style.animation = animation + ' ' + time;
-	time = parseInt(time) * 1000;
-
-	t = setTimeout(function () {
-		if (status == 'none') {
-			t2 = setTimeout(function () {
-				wrap.style.display = status;
-				clearTimeout(t2);
-				t2 = null;
-			}, .7 * time);
-		} else {
-			wrap.style.display = status;
-		}
-		t1 = setTimeout(function () {
-			wrap.style.animation = '';
-			clearTimeout(t1);
-			t1 = null;
-		}, .8 * time);
-		clearTimeout(t);
-		t = null;
-	}, .4 * time);
-}
-
-
 /**
  * touch事件的封装
+ * @param {轻触} tap 
+ * @param {长按} longtap 
+ * @param {左滑} slideleft 
+ * @param {右滑} slideright 
+ * @param {上滑} slideup 
+ * @param {下滑} slidedown 
  */
-;
-(function (doc, win) {
+;(function (doc, win) {
 	var Touch = function (selector) {
 		return Touch.prototype.init(selector);
 	}
@@ -1108,8 +1102,8 @@ function showStatusAnimation(opt) {
 		},
 
 		tap: function (callback) {
-			this.elem.addEventListener('touchstart', fn, false);
-			this.elem.addEventListener('touchend', fn, false);
+			this.elem.addEventListener('touchstart', fn);
+			this.elem.addEventListener('touchend', fn);
 			var sTime,
 				eTime;
 
@@ -1128,13 +1122,14 @@ function showStatusAnimation(opt) {
 					default:
 						break;
 				}
-			}
+      }
+      return this;
 		},
 
 		longtap: function (callback) {
-			this.elem.addEventListener('touchstart', fn, false);
-			this.elem.addEventListener('touchmove', fn, false);
-			this.elem.addEventListener('touchend', fn, false);
+			this.elem.addEventListener('touchstart', fn);
+			this.elem.addEventListener('touchmove', fn);
+			this.elem.addEventListener('touchend', fn);
 
 			var t = null,
 				_self = this;
@@ -1156,12 +1151,13 @@ function showStatusAnimation(opt) {
 					default:
 						break;
 				}
-			}
+      }
+      return this;
 		},
 
 		slideleft: function (callback) {
-			this.elem.addEventListener('touchstart', fn, false);
-			this.elem.addEventListener('touchend', fn, false);
+			this.elem.addEventListener('touchstart', fn);
+			this.elem.addEventListener('touchend', fn);
 
 			var sX,
 				sY,
@@ -1172,25 +1168,28 @@ function showStatusAnimation(opt) {
 				var touch = e.changedTouches[0];
 				switch (e.type) {
 					case 'touchstart':
-						sX = Math.abs(touch.pageX);
-						sY = Math.abs(touch.pageY);
+						sX = touch.pageX;
+						sY = touch.pageY;
 						break;
 					case 'touchend':
-						eX = Math.abs(touch.pageX);
-						eY = Math.abs(touch.pageY);
-						if (sY - eY < 30 && sX - eX > 100) {
-							callback.call(this, e);
-						}
+						eX = touch.pageX;
+						eY = touch.pageY;
+						if (sX > eX) {
+              if (Math.abs(sY - eY) < 30 && Math.abs(sX - eX) > 100) {
+                callback.call(this, e);
+              }
+            }
 						break;
 					default:
 						break;
 				}
-			}
+      }
+      return this;
 		},
 
 		slideright: function (callback) {
-			this.elem.addEventListener('touchstart', fn, false);
-			this.elem.addEventListener('touchend', fn, false);
+			this.elem.addEventListener('touchstart', fn);
+			this.elem.addEventListener('touchend', fn);
 
 			var sX,
 				sY,
@@ -1201,25 +1200,93 @@ function showStatusAnimation(opt) {
 				var touch = e.changedTouches[0];
 				switch (e.type) {
 					case 'touchstart':
-						sX = Math.abs(touch.pageX);
-						sY = Math.abs(touch.pageY);
+						sX = touch.pageX;
+						sY = touch.pageY;
 						break;
 					case 'touchend':
-						eX = Math.abs(touch.pageX);
-						eY = Math.abs(touch.pageY);
-						if (eY - sY < 30 && eX - sX > 100) {
-							callback.call(this, e);
-						}
+						eX = touch.pageX;
+						eY = touch.pageY;
+						if (eX > sX) {
+              if (Math.abs(eY - sY) < 30 && Math.abs(eX - sX) > 100) {
+                callback.call(this, e);
+              }
+            }
 						break;
 					default:
 						break;
 				}
-			}
-		}
+      }
+      return this;
+    },
+    
+    slideup: function(callback) {
+      this.elem.addEventListener('touchstart', fn);
+      this.elem.addEventListener('touchend', fn);
+
+      var sX,
+            sY,
+            eX,
+            eY;
+
+      function fn(e) {
+        var touches = e.changedTouches[0];
+        switch (e.type) {
+          case 'touchstart':
+            sX = touches.pageX;
+            sY = touches.pageY;
+            break;
+          case 'touchend':
+            eX = touches.pageX;
+            eY = touches.pageY;
+            if (eY < sY) {
+              if (Math.abs(sX - eX) < 30 && Math.abs(sY - eY) > 100) {
+                callback.call(this, e);
+              }
+            }
+            break;
+          default:
+            break;
+        }
+      }
+      return this;
+    },
+
+    slidedown: function(callback) {
+      this.elem.addEventListener('touchstart', fn);
+      this.elem.addEventListener('touchend', fn);
+
+      var sX,
+            sY,
+            eX,
+            eY;
+      
+      function fn(e) {
+        var touches = e.changedTouches[0];
+        switch (e.type) {
+          case 'touchstart':
+            sX = touches.pageX;
+            sY = touches.pageY;
+            break;
+          case 'touchend':
+            eX = touches.pageX;
+            eY = touches.pageY;
+            if (eY > sY) {
+              if (Math.abs(eX - sX) < 30 && Math.abs(eY - sY) > 100) {
+                callback(this, e);
+              }
+            }
+            break;
+          default:
+            break;
+        }
+      }
+      return this;
+    }
 	}
 
 	win.$touch = window.Touch = Touch
 }(document, window));
+
 
 /**
  * 封装事件绑定
@@ -1347,16 +1414,16 @@ function elemPos(elem) {
 
 // 获取鼠标位置
 function pagePos(e) {
-	var e = e || window.event,
-		cleft = getScrollOffset().x,
-		ctop = getScrollOffset().y,
-		cx = document.documentElement.clientLeft || 0,
-		cy = document.documentElement.clientTop || 0;
+  var e = e || window.event,
+        sTop = window.pageYOffset || document.body.scrollTop + document.documentElement.scrollTop,
+        sLeft = window.pageXOffset || document.body.scrollLeft + document.documentElement.scrollLeft,
+        cTop = document.documentElement.clientTop || 0,
+        cLeft = document.documentElement.clientLeft || 0;
 
-	return {
-		x: e.clientX + cleft - cx,
-		y: e.clientY + ctop - cy
-	}
+  return {
+    x: e.clientX + sLeft - cLeft,
+    y: e.clientY + sTop - cTop
+  }
 }
 
 
