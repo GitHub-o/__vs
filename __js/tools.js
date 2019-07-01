@@ -1135,6 +1135,7 @@ var ajaxDomain = (function (doc) {
 				_self = this;
 
 			function fn(e) {
+        e.preventDefault();
 				switch (e.type) {
 					case 'touchstart':
 						t = setTimeout(function () {
@@ -1165,6 +1166,7 @@ var ajaxDomain = (function (doc) {
 				eY;
 
 			function fn(e) {
+        e.preventDefault();
 				var touch = e.changedTouches[0];
 				switch (e.type) {
 					case 'touchstart':
@@ -1197,6 +1199,7 @@ var ajaxDomain = (function (doc) {
 				eY;
 
 			function fn(e) {
+        e.preventDefault();
 				var touch = e.changedTouches[0];
 				switch (e.type) {
 					case 'touchstart':
@@ -1229,6 +1232,7 @@ var ajaxDomain = (function (doc) {
             eY;
 
       function fn(e) {
+        e.preventDefault();
         var touches = e.changedTouches[0];
         switch (e.type) {
           case 'touchstart':
@@ -1261,6 +1265,7 @@ var ajaxDomain = (function (doc) {
             eY;
       
       function fn(e) {
+        e.preventDefault();
         var touches = e.changedTouches[0];
         switch (e.type) {
           case 'touchstart':
