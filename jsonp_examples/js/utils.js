@@ -8,43 +8,18 @@ HTMLCollection.prototype.jForEach = function (fn) {
     }
 }
 
-HTMLCollection.prototype.jFilter = function (fn) {
-    var arr = this,
-          len = this.length,
-          arg2 = arguments[1] || window,
-          newArr = [],
-          item;
-
-    for (var i = 0; i < len; i++) {
-          item = deepClone(arr[i], {});
-          fn.apply(arg2, [item, i, arr]) ? newArr.push(item) : '';
-    }
-    return newArr;
-}
-
 Array.prototype.jForEach = function (fn) {
-    var arr = this,
-          len = arr.length,
-          arg2 = arguments[1] || window;
+	var arr = this,
+		len = arr.length,
+		arg = arguments[1] || window,
+		item;
 
-    for (var i = 0; i < len; i++) {
-          fn.apply(arg2, [arr[i], i, arr]);
-    }
+	for (var i = 0; i < len; i++) {
+		item = arr[i];
+		fn.apply(arg, [item, i, arr]);
+	}
 }
 
-Array.prototype.jFilter = function (fn) {
-    var arr = this,
-          len = this.length,
-          arg = arguments[1] || window,
-          newArr = [],
-          item;
-
-    for (var i = 0; i < len; i++) {
-          item = deepClone(arr[i], {});
-          fn.apply(arg, [item, i, arr]) ? newArr.push(item) : '';
-    }
-    return newArr;
-}
 
 function debounce(fn, time, triggleNow) {
     var t = null,
@@ -165,48 +140,6 @@ function trimIllegal(reg) {
 }
 
 
-function deepClone(origin, target) {
-    var target = target || {},
-          toStr = Object.prototype.toString,
-          arrStr = '[object Array]';
-
-    for (var prop in origin) {
-          if (origin.hasOwnProperty(prop)) {
-                if ((origin[prop]) !== null && typeof (origin[prop]) == 'object') {
-                      target[prop] = toStr.call(origin[prop]) === arrStr ? [] : {};
-                      deepClone(origin[prop], target[prop]);
-                } else {
-                      target[prop] = origin[prop];
-                }
-          }
-    }
-    return target;
-}
-
-
-function showStatusAnimation(status, wrap, showAnimation, time) {
-    var [t, t1, t2] = [null, null, null];
-    time = time || '1s';
-    wrap.style.animation = showAnimation + ' ' + time;
-    time = parseInt(time) * 1000;
-
-    t = setTimeout(function () {
-          if (status == 'none') {
-                t2 = setTimeout(function () {
-                      wrap.style.display = status;
-                      clearTimeout(t2);
-                }, .7 * time);
-          } else {
-                wrap.style.display = status;
-          }
-          t1 = setTimeout(function () {
-                wrap.style.animation = '';
-                clearTimeout(t1);
-          }, .8 * time);
-          clearTimeout(t);
-    }, .1 * time);
-}
-
 var xhr = (function (doc) {
 	function _doAjax(opt) {
 		var o = window.XMLHttpRequest ?
@@ -246,7 +179,7 @@ var xhr = (function (doc) {
 					    ? url + '?' + jsonp + '=' + jsonpCallback
 					    : url + '&' + jsonp + '=' + jsonpCallback;
 			doc.body.appendChild(oScript);
-			doc.body.removeChild(oScript);
+                  doc.body.removeChild(oScript);
 			window[jsonpCallback] = function(data) {
 				success(data);
 			}
@@ -358,13 +291,5 @@ function throttle(fn, delay) {
 				fn.apply(_self, args);
 			}, delay);
 		}
-	}
-}
-
-function stopBubble(e) {
-	if (e.stopPropagation) {
-		e.stopPropagation();
-	} else {
-		e.cancelBubble = true;
 	}
 }

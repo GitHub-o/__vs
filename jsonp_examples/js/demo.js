@@ -43,7 +43,6 @@
                   dataType: 'JSONP',
                   jsonp: jsonp,
                   success: function (data) {
-                        console.log(data);
                         switch (id) {
                               case 'J_tb-search':
                                     res = data.result;

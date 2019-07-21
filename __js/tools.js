@@ -297,8 +297,8 @@ Array.prototype.flatten = function () {
 	return _self.reduce(function (prev, cur) {
 		return prev.concat(
 			toStr.call(cur) === '[object Array]' ?
-			cur.flatten() :
-			cur
+				cur.flatten() :
+				cur
 		);
 	}, []);
 }
@@ -460,7 +460,7 @@ Element.prototype.reverseChildren = function () {
 
 
 // 返回该元素下的所有元素节点
-Element.prototype.allChildren = function(childrenArr = []) {
+Element.prototype.allChildren = function (childrenArr = []) {
 	var child = this.childNodes,
 		len = child.length,
 		item;
@@ -476,7 +476,7 @@ Element.prototype.allChildren = function(childrenArr = []) {
 }
 
 // 返回e元素的第n层祖先元素节点  
-Element.prototype.parent = function(n) {
+Element.prototype.parent = function (n) {
 	var elem = this;
 	while (elem && n--) {
 		elem = elem.parentElement;
@@ -485,7 +485,7 @@ Element.prototype.parent = function(n) {
 }
 
 // 返回元素e的第n个兄弟元素节点, n正 ,返回 nextSibling; n负,返回 previousSibling
-Element.prototype.sibling = function(n) {
+Element.prototype.sibling = function (n) {
 	var elem = this;
 	while (elem && n) {
 		if (n > 0) {
@@ -543,7 +543,7 @@ Element.prototype.drag = function (opt = {}) {
 	addEvent(elem, 'contextmenu', stopEvent);
 	addEvent(dragWrap, 'contextmenu', stopEvent);
 
-	function mouseDown(e) {
+	function mouseDown (e) {
 		var e = e || window.event,
 			btnCode = e.button,
 			x = pagePos(e).x,
@@ -580,7 +580,7 @@ Element.prototype.drag = function (opt = {}) {
 		}
 	}
 
-	function mouseMove(e) {
+	function mouseMove (e) {
 		var e = e || window.event,
 			x = pagePos(e).x - disX,
 			y = pagePos(e).y - disY,
@@ -607,7 +607,7 @@ Element.prototype.drag = function (opt = {}) {
 		dragWrap.style.top = y + 'px';
 	}
 
-	function mouseUp() {
+	function mouseUp () {
 		if (dblWrap) {
 			var res;
 			counter++;
@@ -630,13 +630,13 @@ Element.prototype.drag = function (opt = {}) {
 		removeEvent(document, 'mouseup', mouseUp);
 	}
 
-	function stopEvent(e) {
+	function stopEvent (e) {
 		var e = e || window.event;
 		preventDefault(e);
 		cancelBubble(e);
 	}
 
-	function hideMenu() {
+	function hideMenu () {
 		menuWrap.style.display = 'none'
 	}
 }
@@ -676,36 +676,134 @@ Element.prototype.showStatusAnimation = function (opt = {}) {
 	}, .4 * duration);
 }
 
+/**
+ * 判断鼠标相对于元素的位置
+ * @param {事件源} e 
+ */
+Element.prototype.getDirection = function (e) {
+  var e = e || window.event,
+    elem = this,
+    elemWidth = getStyle(elem, 'width'),
+    elemHeight = getStyle(elem, 'height'),
+    x = (pagePos(e).x - elemPos(elem).left - elemWidth / 2) * (elemWidth > elemHeight ? elemHeight / elemHeight : 1),
+    y = (pagePos(e).y - elemPos(elem).top - elemHeight / 2) * (elemHeight > elemWidth ? elemWidth / elemHeight : 1),
+    angle = (Math.atan2(y, x) * 180 / Math.PI) + 180,
+    num = (Math.round(angle / 90) + 3) % 4,
+    dir;
+
+  switch (num) {
+    case 0:
+      dir = 'top';
+      break;
+    case 1:
+      dir = 'right';
+      break;
+    case 2:
+      dir = 'bottom';
+      break;
+    case 3:
+      dir = 'left';
+      break;
+    default:
+      break;
+  }
+
+  function _event (type, cb) {
+    if (type === dir) {
+      cb.call(elem);
+    }
+  }
+  return {
+    left: function (cb) {
+      _event('left', cb);
+      return this;
+    },
+
+    top: function (cb) {
+      _event('top', cb);
+      return this;
+    },
+
+    right: function (cb) {
+      _event('right', cb);
+      return this;
+    },
+
+    bottom: function (cb) {
+      _event('bottom', cb);
+      return this;
+    }
+  }
+}
+
+/**
+ * 弹性运动
+ * @param {元素属性} opt.attr
+ * @param {元素弹性变换后的位置} opt.target
+ * @param {弹性系数} opt.k
+ * @param {摩擦阻力系数} opt.z
+ */
+Element.prototype.elasticMove = function(opt) {
+  var elem = this,
+      attr = opt.attr || 'left',
+      target = opt.target === 0 ? 0 : opt.target || 250,
+      k = opt.k || .7,
+      z = opt.z || .7,
+      flexLen = target,
+      step = 0,
+      cur;
+
+  if (!elem.timer) {
+    elem.timer = {};
+  } else if (elem.timer[attr]) {
+    clearInterval(elem.timer[attr]);
+  }
+
+  elem.timer[attr] = setInterval(function() {
+    cur = getStyle(elem, attr);
+    flexLen = target - cur;
+    step += flexLen * k;
+    step *= z;
+    elem.style[attr] = cur + step + 'px';
+
+    if (Math.round(flexLen) === 0 && Math.round(step) === 0) {
+      elem.style[attr] = target + 'px';
+      clearInterval(elem.timer[attr]);
+      elem.timer[attr] = null;
+    }
+  }, 1000 / 60);
+}
+
 // 封装getElementsByClassName
-Document.prototype.getElementsByClassName =
-	Element.prototype.getElementsByClassName =
-	document.getElementsByClassName ||
-	function (className) {
-		var allDoms = document.getElementsByTagName('*'),
-			allDomsLen = allDoms.length,
-			allDomItem,
-			finalArr = [];
+// Document.prototype.getElementsByClassName =
+// 	Element.prototype.getElementsByClassName =
+// 	document.getElementsByClassName || 
+// 	function (className) {
+// 		var allDoms = document.getElementsByTagName('*'),
+// 			allDomsLen = allDoms.length,
+// 			allDomItem,
+// 			finalArr = [];
 
-		for (var i = 0; i < allDomsLen; i++) {
-			allDomItem = allDoms[i];
-			var temp = trimSpace(allDomItem.className).trim().split(' '),
-				tempLen = temp.length,
-				tempItem;
+// 		for (var i = 0; i < allDomsLen; i++) {
+// 			allDomItem = allDoms[i];
+// 			var temp = trimSpace(allDomItem.className).trim().split(' '),
+// 				tempLen = temp.length,
+// 				tempItem;
 
-			for (var j = 0; j < tempLen; j++) {
-				tempItem = temp[j];
-				if (tempItem === className) {
-					finalArr.push(allDomItem);
-					break;
-				}
-			}
-		}
-		return finalArr;
+// 			for (var j = 0; j < tempLen; j++) {
+// 				tempItem = temp[j];
+// 				if (tempItem === className) {
+// 					finalArr.push(allDomItem);
+// 					break;
+// 				}
+// 			}
+// 		}
+// 		return finalArr;
 
-		function trimSpace(tar) {
-			return tar.replace(/\s+/g, ' ');
-		}
-	}
+// 		function trimSpace (tar) {
+// 			return tar.replace(/\s+/g, ' ');
+// 		}
+// 	}
 
 
 
@@ -715,11 +813,11 @@ Document.prototype.getElementsByClassName =
 /**
  * 组合函数  --> 组合多个功能函数
  */
-function compose() {
+function compose () {
 	var args = [].slice.call(arguments);
 
 	return function (initialVal) {
-		return args.reduceRight(function (res, cb) {
+		return args.jReduceRight(function (res, cb) {
 			return cb(res);
 		}, initialVal);
 	}
@@ -731,7 +829,7 @@ function compose() {
  * @param {分步所执行的函数} fn 
  * @param {函数的形参个数} len 
  */
-function curry(fn, len) {
+function curry (fn, len) {
 	var len = len || fn.length;
 
 	var func = function (fn) {
@@ -765,9 +863,10 @@ function curry(fn, len) {
 
 /**
  * 记忆/缓存函数  --> 具有缓存池的函数
+ * 														上次的计算结果缓存起来，当下次调用时，如果遇到相同的参数，就直接返回缓存中的数据。
  * @param {具有记忆的函数} fn 
  */
-function memorize(fn) {
+function memorize (fn) {
 	var cache = {};
 
 	return function () {
@@ -780,72 +879,75 @@ function memorize(fn) {
 
 
 /**
- * 防抖函数  --> n秒内只要触发事件就会重新计时，事件处理函数永远不能被执行
+ * 防抖函数  --> 在事件被触发n秒后再执行回调，如果在这n秒内又被触发，则重新计时。
  * @param {具有防抖的函数} fn 
- * @param {time秒内频繁触发不执行} time 
- * @param {首次是否延迟执行} triggleNow 
+ * @param {time秒内频繁触发不执行 - ms} wait
+ * @param {立即执行} immediate 
  */
-function debounce(fn, time, triggleNow) {
-	var t = null,
-		res;
+function debounce(fn, wait = 800, immediate = false) {
+  var timeout,
+      res;
 
-	function debounced() {
-		var _self = this,
-			args = arguments;
+  function later (args) {
+    return setTimeout(function() {
+      timeout = null;
+      if (!immediate) {
+        res = fn.apply(this, args);
+      }
+    }.bind(this), wait);
+  }
 
-		if (t) {
-			clearTimeout(t);
-		}
-		if (triggleNow) {
-			var exec = !t;
+  var debounced = function() {
+    if (!timeout) {
+      timeout = later(arguments);
+      if (immediate) {
+        res = fn.apply(this, arguments);
+      }
 
-			t = setTimeout(function () {
-				t = null;
-			}, time);
+    } else {
+      clearTimeout(timeout);
+      timeout = later(arguments);
+    }
+    return res;
+  }
 
-			if (exec) {
-				res = fn.apply(_self, args);
-			}
-		} else {
-			t = setTimeout(function () {
-				res = fn.apply(_self, args);
-			}, time);
-		}
-		return res;
-	}
-	debounced.remove = function () {
-		clearTimeout(t);
-		t = null;
-	}
-	return debounced;
+  debounced.remove = function() {
+    clearTimeout(timeout);
+    timeout = null;
+  }
+
+  return debounced;
 }
 
 
 
 /**
- * 节流函数  --> 事件被触发n秒内只执行一次
+ * 节流函数  --> n秒内，事件被触发只执行一次
+ * 										规定一个单位时间，在这个单位时间内，只能有一次触发事件的回调函数执行，如果在同一个单位时间内某事件被触发多次，只有一次能生效。
  * @param {具有节流的函数} fn 
- * @param {delay秒内只执行一次} delay 
+ * @param {delay秒内触发 - ms} delay 
  */
-function throttle(fn, delay) {
+function throttle (fn, delay = 1000) {
 	var t = null,
-		firstTime = new Date().getTime();
+		firstTime = new Date().getTime(),
+		res;
 
 	return function () {
 		var _self = this,
 			args = arguments,
 			curTime = new Date().getTime();
 
-		clearTimeout(t);
+		t && clearTimeout(t);
 
 		if (curTime - firstTime >= delay) {
-			fn.apply(_self, args);
+			res = fn.apply(_self, args);
 			firstTime = curTime;
 		} else {
 			t = setTimeout(function () {
-				fn.apply(_self, args);
+				res = fn.apply(_self, args);
 			}, delay);
 		}
+		return res;
 	}
 }
 
@@ -880,15 +982,13 @@ Function.prototype.partial = function () {
 /**
  * 数据分类函数
  * @param {以何分类} fields 
- * @param {要分类数据} datas 
+ * @param {要分类数据 - array} datas 
+ * @param {映射的字段 - string} mapping_field
+ * @param {以seperator为分隔符的复合分类 - string} seperator
  */
-function sortDatas(fields, datas) {
+function sortDatas (fields, datas) {
 	var cache = {};
 
-	/**
-	 * @param {映射的字段} mapping_field
-	 * @param {以seperator为分隔符的复合分类} seperator
-	 */
 	return function (mapping_field, seperator = ',') {
 		fields.jForEach(function (field) {
 			var _key = field.id;
@@ -919,9 +1019,9 @@ function sortDatas(fields, datas) {
 /**
  * 封装AJAX
  */
-var xhr = (function (doc) {
-	function _doAjax(opt) {
-		var o = window.XMLHttpRequest ?
+var xhr = (function (doc, win) {
+	function _doAjax (opt) {
+		var o = win.XMLHttpRequest ?
 			new XMLHttpRequest() :
 			new ActiveXObject('Microsoft.XMLHTTP');
 
@@ -934,15 +1034,15 @@ var xhr = (function (doc) {
 			type = (opt.type || 'GET').toUpperCase(),
 			dataType = (opt.dataType || 'JSON').toUpperCase(),
 			async = opt.async === false ? false : true,
-				jsonp = opt.jsonp || 'callback',
-				jsonpCallback = opt.jsonpCallback || 'jQuery' + randomNum(),
-				data = opt.data || null,
-				timeout = opt.timeout || 30000,
-				error = opt.error || function () {},
-				success = opt.success || function () {},
-				complete = opt.compelet || function () {},
+			jsonp = opt.jsonp || 'callback',
+			jsonpCB = opt.jsonpCB || 'jQuery' + randomNum() + '_' + new Date().getTime(),
+			data = opt.data || null,
+			timeout = opt.timeout || 30000,
+			error = opt.error || function () { },
+			success = opt.success || function () { },
+			complete = opt.compelet || function () { },
 
-				t = null;
+			t = null;
 
 		if (!url) {
 			throw (new Error('您没有填写URL'));
@@ -955,11 +1055,11 @@ var xhr = (function (doc) {
 		if (dataType === 'JSONP') {
 			var oScript = doc.createElement('script');
 			oScript.src = url.indexOf('?') === -1 ?
-				url + '?' + jsonp + '=' + jsonpCallback :
-				url + '&' + jsonp + '=' + jsonpCallback;
+				url + '?' + jsonp + '=' + jsonpCB :
+				url + '&' + jsonp + '=' + jsonpCB;
 			doc.body.appendChild(oScript);
 			doc.body.removeChild(oScript);
-			window[jsonpCallback] = function (data) {
+			win[jsonpCB] = function (data) {
 				success(data);
 			}
 			return;
@@ -997,15 +1097,15 @@ var xhr = (function (doc) {
 		o.send(type === 'GET' ? null : formatDatas(data));
 
 		t = setTimeout(function () {
-			complete();
 			o.abort();
+			complete();
 			clearTimeout(t);
 			t = null;
 			o = null;
 		}, timeout);
 	}
 
-	function formatDatas(obj) {
+	function formatDatas (obj) {
 		var str = '';
 		for (key in obj) {
 			str += key + '=' + obj[key] + '&';
@@ -1013,7 +1113,7 @@ var xhr = (function (doc) {
 		return str.replace(/&$/, '');
 	}
 
-	function randomNum() {
+	function randomNum () {
 		var res = '';
 		for (var i = 0; i < 20; i++) {
 			res += Math.floor((Math.random() * 10));
@@ -1043,14 +1143,14 @@ var xhr = (function (doc) {
 			})
 		}
 	}
-}(document))
+}(document, window))
 
 
 /**
  * 跨域domain
  */
 var ajaxDomain = (function (doc) {
-	function createIframe(frameId, frameUrl) {
+	function createIframe (frameId, frameUrl) {
 		var frame = doc.createElement('iframe');
 		frame.src = frameUrl;
 		frame.id = frameId;
@@ -1088,7 +1188,7 @@ var ajaxDomain = (function (doc) {
  * @param {上滑} slideup 
  * @param {下滑} slidedown 
  */
-;(function (doc, win) {
+; (function (win, doc) {
 	var Touch = function (selector) {
 		return Touch.prototype.init(selector);
 	}
@@ -1107,7 +1207,7 @@ var ajaxDomain = (function (doc) {
 			var sTime,
 				eTime;
 
-			function fn(e) {
+			function fn (e) {
 				e.preventDefault();
 				switch (e.type) {
 					case 'touchstart':
@@ -1122,8 +1222,8 @@ var ajaxDomain = (function (doc) {
 					default:
 						break;
 				}
-      }
-      return this;
+			}
+			return this;
 		},
 
 		longtap: function (callback) {
@@ -1131,18 +1231,17 @@ var ajaxDomain = (function (doc) {
 			this.elem.addEventListener('touchmove', fn);
 			this.elem.addEventListener('touchend', fn);
 
-			var t = null,
-				_self = this;
+			var t = null;
 
-			function fn(e) {
-        e.preventDefault();
+			function fn (e) {
+				e.preventDefault();
 				switch (e.type) {
 					case 'touchstart':
 						t = setTimeout(function () {
-							callback.call(_self, e);
+							callback.call(this, e);
 							clearTimeout(t);
 							t = null;
-						}, 500)
+						}.bind(this), 500)
 						break;
 					case 'touchmove':
 					case 'touchend':
@@ -1152,44 +1251,31 @@ var ajaxDomain = (function (doc) {
 					default:
 						break;
 				}
-      }
-      return this;
+			}
+			return this;
 		},
 
 		slideleft: function (callback) {
-			this.elem.addEventListener('touchstart', fn);
-			this.elem.addEventListener('touchend', fn);
-
-			var sX,
-				sY,
-				eX,
-				eY;
-
-			function fn(e) {
-        e.preventDefault();
-				var touch = e.changedTouches[0];
-				switch (e.type) {
-					case 'touchstart':
-						sX = touch.pageX;
-						sY = touch.pageY;
-						break;
-					case 'touchend':
-						eX = touch.pageX;
-						eY = touch.pageY;
-						if (sX > eX) {
-              if (Math.abs(sY - eY) < 30 && Math.abs(sX - eX) > 100) {
-                callback.call(this, e);
-              }
-            }
-						break;
-					default:
-						break;
-				}
-      }
-      return this;
+			this._slide('left', callback);
+			return this;
 		},
 
 		slideright: function (callback) {
+			this._slide('right', callback);
+			return this;
+		},
+
+		slideup: function (callback) {
+			this._slide('up', callback);
+			return this;
+		},
+
+		slidedown: function (callback) {
+			this._slide('down', callback);
+			return this;
+		},
+
+		_slide: function (type, callback) {
 			this.elem.addEventListener('touchstart', fn);
 			this.elem.addEventListener('touchend', fn);
 
@@ -1198,99 +1284,57 @@ var ajaxDomain = (function (doc) {
 				eX,
 				eY;
 
-			function fn(e) {
-        e.preventDefault();
-				var touch = e.changedTouches[0];
+			function fn (e) {
+				e.preventDefault();
+				var touches = e.changedTouches[0];
 				switch (e.type) {
 					case 'touchstart':
-						sX = touch.pageX;
-						sY = touch.pageY;
+						sX = touches.pageX;
+						sY = touches.pageY;
 						break;
 					case 'touchend':
-						eX = touch.pageX;
-						eY = touch.pageY;
-						if (eX > sX) {
-              if (Math.abs(eY - sY) < 30 && Math.abs(eX - sX) > 100) {
-                callback.call(this, e);
-              }
-            }
+						eX = touches.pageX;
+						eY = touches.pageY;
+						switch (type) {
+							case 'left':
+								if (sX > eX) {
+									if (Math.abs(sY - eY) < 30 && Math.abs(sX - eX) > 100) {
+										callback.call(this, e);
+									}
+								}
+								break;
+							case 'right':
+								if (eX > sX) {
+									if (Math.abs(eY - sY) < 30 && Math.abs(eX - sX) > 100) {
+										callback.call(this, e);
+									}
+								}
+								break;
+							case 'up':
+								if (eY < sY) {
+									if (Math.abs(sX - eX) < 30 && Math.abs(sY - eY) > 100) {
+										callback.call(this, e);
+									}
+								}
+								break;
+							case 'down':
+								if (eY > sY) {
+									if (Math.abs(eX - sX) < 30 && Math.abs(eY - sY) > 100) {
+										callback(this, e);
+									}
+								}
+								break;
+						}
 						break;
 					default:
 						break;
 				}
-      }
-      return this;
-    },
-    
-    slideup: function(callback) {
-      this.elem.addEventListener('touchstart', fn);
-      this.elem.addEventListener('touchend', fn);
-
-      var sX,
-            sY,
-            eX,
-            eY;
-
-      function fn(e) {
-        e.preventDefault();
-        var touches = e.changedTouches[0];
-        switch (e.type) {
-          case 'touchstart':
-            sX = touches.pageX;
-            sY = touches.pageY;
-            break;
-          case 'touchend':
-            eX = touches.pageX;
-            eY = touches.pageY;
-            if (eY < sY) {
-              if (Math.abs(sX - eX) < 30 && Math.abs(sY - eY) > 100) {
-                callback.call(this, e);
-              }
-            }
-            break;
-          default:
-            break;
-        }
-      }
-      return this;
-    },
-
-    slidedown: function(callback) {
-      this.elem.addEventListener('touchstart', fn);
-      this.elem.addEventListener('touchend', fn);
-
-      var sX,
-            sY,
-            eX,
-            eY;
-      
-      function fn(e) {
-        e.preventDefault();
-        var touches = e.changedTouches[0];
-        switch (e.type) {
-          case 'touchstart':
-            sX = touches.pageX;
-            sY = touches.pageY;
-            break;
-          case 'touchend':
-            eX = touches.pageX;
-            eY = touches.pageY;
-            if (eY > sY) {
-              if (Math.abs(eX - sX) < 30 && Math.abs(eY - sY) > 100) {
-                callback(this, e);
-              }
-            }
-            break;
-          default:
-            break;
-        }
-      }
-      return this;
-    }
+			}
+		}
 	}
 
 	win.$touch = window.Touch = Touch
-}(document, window));
+}(window, document));
 
 
 /**
@@ -1311,7 +1355,7 @@ var ajaxDomain = (function (doc) {
 //         elem['on' + type] = fn;
 //     }
 // }
-function addEvent(elem, type, fn, capture = false) {
+function addEvent (elem, type, fn, capture = false) {
 	if (elem.addEventListener) {
 		addEvent = function (elem, type, fn, capture) {
 			elem.addEventListener(type, fn, capture);
@@ -1350,7 +1394,7 @@ function addEvent(elem, type, fn, capture = false) {
 //         elem['on' + type] = null;
 //     }
 // }
-function removeEvent(elem, type, fn, capture) {
+function removeEvent (elem, type, fn, capture) {
 	if (elem.addEventListener) {
 		removeEvent = function (elem, type, fn, capture = false) {
 			elem.removeEventListener(type, fn, capture);
@@ -1375,7 +1419,7 @@ function removeEvent(elem, type, fn, capture) {
  * IE：cancelBubble
  * Firefox：stopPropagation
  */
-function cancelBubble(e) {
+function cancelBubble (e) {
 	if (e.stopPropagation) {
 		e.stopPropagation();
 	} else {
@@ -1389,7 +1433,7 @@ function cancelBubble(e) {
  * IE：returnValue
  * DOM：preventDefault
  */
-function preventDefault(e) {
+function preventDefault (e) {
 	if (e.preventDefault) {
 		e.preventDefault();
 	} else {
@@ -1399,10 +1443,10 @@ function preventDefault(e) {
 
 
 // 获取元素相对于文档的位置
-function elemPos(elem) {
+function elemPos (elem) {
 	var elemParent = elem.offsetParent,
-		elemLeft = elem.offsetLeft,
-		elemTop = elem.offsetTop;
+			elemLeft = elem.offsetLeft,
+			elemTop = elem.offsetTop;
 
 	while (elemParent) {
 		elemLeft += elemParent.offsetLeft;
@@ -1418,22 +1462,22 @@ function elemPos(elem) {
 
 
 // 获取鼠标位置
-function pagePos(e) {
-  var e = e || window.event,
-        sTop = window.pageYOffset || document.body.scrollTop + document.documentElement.scrollTop,
-        sLeft = window.pageXOffset || document.body.scrollLeft + document.documentElement.scrollLeft,
-        cTop = document.documentElement.clientTop || 0,
-        cLeft = document.documentElement.clientLeft || 0;
+function pagePos (e) {
+	var e = e || window.event,
+		sTop = window.pageYOffset || document.body.scrollTop + document.documentElement.scrollTop,
+		sLeft = window.pageXOffset || document.body.scrollLeft + document.documentElement.scrollLeft,
+		cTop = document.documentElement.clientTop || 0,
+		cLeft = document.documentElement.clientLeft || 0;
 
-  return {
-    x: e.clientX + sLeft - cLeft,
-    y: e.clientY + sTop - cTop
-  }
+	return {
+		x: e.clientX + sLeft - cLeft,
+		y: e.clientY + sTop - cTop
+	}
 }
 
 
 // 求取滚动条的纵横距离
-function getScrollOffset() {
+function getScrollOffset () {
 	if (window.pageXOffset) {
 		return {
 			x: window.pageXOffset,
@@ -1449,7 +1493,7 @@ function getScrollOffset() {
 
 
 // 封装可视区窗口大小
-function getClientPort() {
+function getClientPort () {
 	if (window.innerWidth) {
 		return {
 			w: window.innerWidth,
@@ -1470,7 +1514,7 @@ function getClientPort() {
 
 
 // 获取文档的总大小
-function getScrollSize() {
+function getScrollSize () {
 	if (document.body.scrollHeight) {
 		return {
 			w: document.body.scrollWidth,
@@ -1486,7 +1530,7 @@ function getScrollSize() {
 
 
 // 封装文档解析完毕函数
-function domReady(fn) {
+function domReady (fn) {
 	if (document.addEventListener) {
 		document.addEventListener('DOMContentLoaded', function () {
 			document.removeEventListener('DOMContentLoaded', arguments.callee, false);
@@ -1517,7 +1561,7 @@ function domReady(fn) {
  * @param {元素} elem 
  * @param {属性} prop 
  */
-function getStyle(elem, prop) {
+function getStyle (elem, prop) {
 	if (window.getComputedStyle) {
 		if (prop) {
 			return parseInt(window.getComputedStyle(elem, null)[prop]);
@@ -1535,7 +1579,8 @@ function getStyle(elem, prop) {
 
 /**
  * @param {元素} el
- * @param {图片地址 -string} opt.imgURL
+ * @param {模式} mode
+ * @param {图片地址 -string} opt.imgUrl
  * @param {放大镜宽度 - number} opt.magWidth
  * @param {放大镜高度 - number} opt.magHeight
  * @param {放大因数 - number} opt.scale
@@ -1543,27 +1588,42 @@ function getStyle(elem, prop) {
 ;
 (function (doc, win) {
 	var Magnifier = function (el, opt = {}) {
-		if (!opt.imgURL) {
+		if (!opt.imgUrl) {
 			throw new Error('图片地址未填写！')
 		}
 		this.oWrap = doc.querySelector(el);
-		this.oWrapW = getStyle(this.oWrap, 'width');
-		this.oWrapH = getStyle(this.oWrap, 'height');
-		this.oWrapLeft = elemPos(this.oWrap).left;
-		this.oWrapTop = elemPos(this.oWrap).top;
-		opt.magWidth = opt.magWidth || 150;
-		opt.magHeight = opt.magHeight || 150;
-		opt.scale = opt.scale || 1.5;
+		this.wrapWidth = getStyle(this.oWrap, 'width');
+		this.wrapHeight = getStyle(this.oWrap, 'height');
+		this.wrapLeft = elemPos(this.oWrap).left;
+		this.wrapTop = elemPos(this.oWrap).top;
+		this.mode = opt.mode || 'outer';
+		this.scale = opt.scale || 1.5;
+		this.imgUrl = opt.imgUrl;
 		this.opt = opt;
-		this.maxX = this.oWrapW - opt.magWidth / 2;
-		this.maxY = this.oWrapH - opt.magHeight / 2;
 	}
 
 	Magnifier.prototype = {
 		init: function () {
 			this.bindEvent();
-			this.createElement();
+			this.initMode();
 			this.getElement();
+		},
+
+		initMode: function () {
+			if (this.mode === 'inner') {
+				this.magWidth = this.opt.magWidth ? this.opt.magWidth / this.scale : 100;
+				this.magHeight = this.opt.magHeight ? this.opt.magHeight/ this.scale : 100;
+			} else {
+				this.magWidth = this.opt.magWidth || 150;
+				this.magHeight = this.opt.magHeight || 150;
+				this.top = this.opt.top || 0;
+				this.left = (this.opt.left || 20) + this.wrapWidth;
+				this.width = this.opt.width || 256;
+				this.height = this.opt.height || 300;
+			}
+			this.maxX = this.wrapWidth - this.magWidth;
+			this.maxY = this.wrapHeight - this.magHeight;
+			this.createElement(this.mode);
 		},
 
 		bindEvent: function () {
@@ -1571,32 +1631,80 @@ function getStyle(elem, prop) {
 			addEvent(this.oWrap, 'mouseleave', this.leaveWrap.bind(this));
 		},
 
-		createElement: function () {
-			var opt = this.opt,
-				magnifierWrapSize = 'width: ' + opt.magWidth + 'px; ' + 'height: ' + opt.magHeight + 'px;"',
-				absImgSize = 'width: ' + this.oWrapW + 'px; ' + 'height: ' + this.oWrapH + 'px"',
-				inner = '<div class="J_magnifier-wrap" style="position: relative; height: ' + this.oWrapH + 'px">' +
-				'<img src="' + opt.imgURL + '" style="display:block; height: 100%" />' +
-				'<div class="J_magnifier" style="display: none; position: absolute; top: 0; left: 0; box-shadow: 0 0 8px 1px #aaa; overflow: hidden; ' + magnifierWrapSize + '>' +
-				'<img src="' + opt.imgURL + '" class="J_abs-img" style="position: absolute; top: 0; left: 0; ' + absImgSize + ' />' +
-				'</div>' +
-				'</div>';
+		createElement: function (mode) {
+			let html;
+			if (mode === 'inner') {
+				html = '<div class="J_magnifierWrap" \
+				style="position: relative;\
+				width: ' + this.wrapWidth + 'px; \
+				height: ' + this.wrapHeight + 'px; ">\
+				<img style="display:block; height: 100%" \
+				src="' + this.imgUrl + '" />\
+				<span class="J_magnifier" \
+				style="display: none; position: absolute; top: 0; left: 0; box-shadow: 0 0 8px 3px #ddd; overflow: hidden; \
+				width: ' + this.magWidth + 'px; \
+				height: ' + this.magHeight + 'px; ">\
+				<img class="J_absImg" \
+				style="position: absolute; top: 0; left: 0; cursor: pointer; \
+				width: ' + this.wrapWidth + 'px; \
+				height: ' + this.wrapHeight + 'px"\
+				src="'+ this.imgUrl + '" />\
+				</span>\
+				</div>';
+			} else {
+				html = '<div class="J_magnifierWrap" \
+				style="position: relative;\
+				width: ' + this.wrapWidth + 'px; \
+				height: ' + this.wrapHeight + 'px; ">\
+				<img style="display:block; height: 100%" \
+				src="' + this.imgUrl + '" />\
+				<span class="J_magnifier" \
+				style="display: none; position: absolute; top: 0; left: 0; background-color: rgba(0, 0, 0, .4); overflow: hidden; cursor: move; \
+				width: ' + this.magWidth + 'px; \
+				height: ' + this.magHeight + 'px; ">\
+				</span>\
+				<div class="J_absWrap"\
+				style="display: none;position: absolute; border: 1px solid #ccc; overflow: hidden; \
+				top:' + this.top + 'px;\
+				left:' + this.left + 'px;\
+				width:' + this.width + 'px;\
+				height:' + this.height + 'px; ">\
+				<img class="J_absImg" \
+				style="position: absolute; top: 0; left: 0; cursor: pointer; \
+				width: ' + this.wrapWidth * this.scale + 'px; \
+				height: ' + this.wrapHeight * this.scale + 'px;" \
+				src="'+ this.imgUrl + '" />\
+				</div>\
+				</div>';
+			}
 
-			this.oWrap.innerHTML = inner;
+			this.oWrap.innerHTML = html;
 		},
 
 		getElement: function () {
-			this.oMagnifier = doc.querySelector('.J_magnifier');
-			this.oAbsImg = doc.querySelector('.J_abs-img');
+			this.oMagnifier = this.oWrap.querySelector('.J_magnifier');
+			this.oAbsImg = this.oWrap.querySelector('.J_absImg');
+			if (this.mode === 'outer') {
+				this.oAbsWrap = this.oWrap.querySelector('.J_absWrap');
+			}
 		},
 
 		magnifierStatus: function (status) {
-			if (status) {
-				this.oMagnifier.style.display = 'block';
-				this.oAbsImg.style.transform = 'scale(' + this.opt.scale + ')';
+			if (this.mode === 'inner') {
+				if (status) {
+					this.oMagnifier.style.display = 'block';
+					this.oMagnifier.style.transform = 'scale(' + this.scale + ', '+ this.scale + ')';
+				} else {
+					this.oMagnifier.style.display = 'none';
+				}
 			} else {
-				this.oMagnifier.style.display = 'none';
-				this.oAbsImg.style.transform = '';
+				if (status) {
+					this.oMagnifier.style.display = 'block';
+					this.oAbsWrap.style.display = 'block';
+				} else {
+					this.oMagnifier.style.display = 'none';
+					this.oAbsWrap.style.display = 'none';
+				}
 			}
 		},
 
@@ -1607,19 +1715,33 @@ function getStyle(elem, prop) {
 
 		moveWrap: function (e) {
 			var e = e || window.event,
-				magW = this.opt.magWidth / 2,
-				magH = this.opt.magHeight / 2,
-				x = pagePos(e).x - this.oWrapLeft - magW,
-				y = pagePos(e).y - this.oWrapTop - magH;
+				magW = this.magWidth / 2,
+				magH = this.magHeight / 2,
+				x = pagePos(e).x - this.wrapLeft - magW,
+				y = pagePos(e).y - this.wrapTop - magH;
 
-			if (x < -magW || x > this.maxX || y < -magH || y > this.maxY) {
-				this.magnifierStatus(false);
+
+			if (x <= 0) {
+				x = 0;
+			} else if (x >= this.maxX) {
+				x = this.maxX;
+			}
+
+			if (y <= 0) {
+				y = 0;
+			} else if (y >= this.maxY) {
+				y = this.maxY;
 			}
 
 			this.oMagnifier.style.left = x + 'px';
 			this.oMagnifier.style.top = y + 'px';
-			this.oAbsImg.style.left = -x + 'px';
-			this.oAbsImg.style.top = -y + 'px';
+			if (this.mode === 'inner') {
+				this.oAbsImg.style.left = -x + 'px';
+				this.oAbsImg.style.top = -y + 'px';
+			} else {
+				this.oAbsImg.style.left = -x / this.maxX * this.width * this.scale + 'px';
+				this.oAbsImg.style.top = -y / this.maxY * this.height * this.scale + 'px';
+			}
 		},
 
 		leaveWrap: function () {
@@ -1638,17 +1760,17 @@ function getStyle(elem, prop) {
  */
 var imgLazyLoad = (function (win, doc) {
 	var imageItem,
-				imagesLen,
-				cHeight,
-				sTop,
-				imageTop,
-				src,
-				n = 0;
+		imagesLen,
+		cHeight,
+		sTop,
+		imageTop,
+		src,
+		n = 0;
 
 	return function (images) {
 		imagesLen = images.length,
-		cHeight = win.innerHeight || doc.documentElement.clientHeight || doc.body.clientHeight,
-		sTop = win.pageYOffset || doc.body.scrollTop || doc.documentElement.scrollTop;
+			cHeight = win.innerHeight || doc.documentElement.clientHeight || doc.body.clientHeight,
+			sTop = win.pageYOffset || doc.body.scrollTop || doc.documentElement.scrollTop;
 
 		for (var i = n; i < imagesLen; i++) {
 			imageItem = images[i];
@@ -1672,25 +1794,25 @@ var imgLazyLoad = (function (win, doc) {
  * @param {渐变时间 ms} opt.duration
  * @param {透明度（0~1）} opt.opacity 
  */
-function fadeIn(opt) {
-  var o,
-    timer,
+function fadeIn (opt = {}) {
+	var o,
+		timer,
 		elemStyle = opt.elem.style,
 		duration = opt.duration || 500,
 		opacity = opt.opacity || 1;
 
-  clearInterval(timer);
-  elemStyle.display = 'block';
-  o = elemStyle.opacity = 0;
+	clearInterval(timer);
+	elemStyle.display = 'block';
+	o = elemStyle.opacity = 0;
 
-  timer = setInterval(function () {
-    if (o >= opacity) {
-      elemStyle.opacity = opacity;
-      clearInterval(timer);
-    } else {
-      o += opacity / duration * 30;
-      elemStyle.opacity = o;
-    }
+	timer = setInterval(function () {
+		if (o >= opacity) {
+			elemStyle.opacity = opacity;
+			clearInterval(timer);
+		} else {
+			o += opacity / duration * 30;
+			elemStyle.opacity = o;
+		}
   }, 30);
 }
 
@@ -1701,32 +1823,32 @@ function fadeIn(opt) {
  * @param {渐变时间 ms} opt.duration
  * @param {透明度（0~1）} opt.opacity 
  */
-function fadeOut(opt) {
-  var o,
-    timer,
+function fadeOut (opt = {}) {
+	var o,
+		timer,
 		elemStyle = opt.elem.style,
-		duration= opt.duration|| 500,
+		duration = opt.duration || 500,
 		opacity = opt.opacity || 0;
 
-  clearInterval(timer);
-  elemStyle.display = 'block';
-  o = elemStyle.opacity = 1;
+	clearInterval(timer);
+	elemStyle.display = 'block';
+	o = elemStyle.opacity = 1;
 
-  timer = setInterval(function () {
-    if (o <= opacity) {
-      elemStyle.opacity = opacity;
-      elemStyle.display = 'none';
-      clearInterval(timer);
-    } else {
-      o -= (1 - opacity) / duration* 30;
+	timer = setInterval(function () {
+		if (o <= opacity) {
+			elemStyle.opacity = opacity;
+			elemStyle.display = 'none';
+			clearInterval(timer);
+		} else {
+			o -= (1 - opacity) / duration * 30;
 			elemStyle.opacity = o;
-    }
-  },30);
+		}
+	}, 30);
 }
 
 
 // 封装求取字符串长度
-function retByteslen(target) {
+function retByteslen (target) {
 	var count,
 		len,
 		count = len = target.length;
@@ -1745,7 +1867,7 @@ function retByteslen(target) {
  * @param {字符串模板 - string} opt.tpl
  * @param {替换的变量 - object} opt.value
  */
-function render(opt) {
+function render (opt) {
 	var list = '';
 	opt.data.jForEach(function (val, idx, arr) {
 		list += this.replace(regTpl(), function (node, key) {
@@ -1764,7 +1886,7 @@ function render(opt) {
 var renderPageList = (function () {
 	var list = '';
 
-	function pageBtnTpl(type, num, cur, pages) {
+	function pageBtnTpl (type, num, cur, pages) {
 		switch (type) {
 			case 'btn':
 				return num === cur ?
@@ -1787,7 +1909,7 @@ var renderPageList = (function () {
 		}
 	}
 
-	function renderPageList(curPage, pages) {
+	function renderPageList (curPage, pages) {
 		if (pages <= 1) {
 			return '';
 		}
@@ -1834,7 +1956,7 @@ var renderPageList = (function () {
 		return btnGroup += pageBtnTpl('forward', '', curPage, pages);
 	}
 
-	function makeBtns(start, end, curPage) {
+	function makeBtns (start, end, curPage) {
 		list = '';
 		for (var i = start; i <= end; i++) {
 			list += pageBtnTpl('btn', i, curPage);
@@ -1847,17 +1969,17 @@ var renderPageList = (function () {
 
 
 // 替换模板正则
-function regTpl() {
+function regTpl () {
 	return new RegExp(/{{(.*?)}}/, 'gim');
 }
 
 // 去除空格
-function trimSpace(str) {
+function trimSpace (str) {
 	return str.replace(/\s+/g, '');
 }
 
 
-function ajaxReturn(opt) {
+function ajaxReturn (opt) {
 	$.ajax({
 		url: opt.url,
 		type: 'POST',
@@ -1876,12 +1998,13 @@ function ajaxReturn(opt) {
  * @param {对象} Target 
  */
 var inherit = (function () {
-	function Buffer() {}
-	return function (Origin, Target) {
+	function Buffer () { }
+	return function (Origin, Target ) {
 		Buffer.prototype = Origin.prototype;
 		Target.prototype = new Buffer();
 		Target.prototype.constructor = Target;
-		Target.prototype.uber = Origin;
+		Target.prototype.uber = Origin.prototype;
+		return Target;
 	}
 }())
 
@@ -1896,7 +2019,7 @@ var inherit = (function () {
  * @param {模板} origin 
  * @param {对象} target 
  */
-function deepClone(origin, target) {
+function deepClone (origin, target) {
 	var target = target || {},
 		toStr = Object.prototype.toString,
 		arrStr = '[object Array]';
@@ -1916,7 +2039,7 @@ function deepClone(origin, target) {
 
 
 // 封装 typeof返回类型
-function type(target) {
+function type (target) {
 	// 1.区分原始值,引用值
 	// 2.区分引用值: 数组, 对象, 包装类
 	if (target === null) {
@@ -1940,7 +2063,7 @@ function type(target) {
 /**
  * 判断浏览器的类型
  */
-function checkBrowser() {
+function checkBrowser () {
 	var nVer = navigator.appVersion,
 		nAgt = navigator.userAgent,
 		browser = navigator.appName,
@@ -2033,109 +2156,109 @@ function checkBrowser() {
 	//系统探测
 	var os = '';
 	var clientStrings = [{
-			s: 'Windows 10',
-			r: /(Windows 10.0|Windows NT 10.0)/
-		},
-		{
-			s: 'Windows 8.1',
-			r: /(Windows 8.1|Windows NT 6.3)/
-		},
-		{
-			s: 'Windows 8',
-			r: /(Windows 8|Windows NT 6.2)/
-		},
-		{
-			s: 'Windows 7',
-			r: /(Windows 7|Windows NT 6.1)/
-		},
-		{
-			s: 'Windows Vista',
-			r: /Windows NT 6.0/
-		},
-		{
-			s: 'Windows Server 2003',
-			r: /Windows NT 5.2/
-		},
-		{
-			s: 'Windows XP',
-			r: /(Windows NT 5.1|Windows XP)/
-		},
-		{
-			s: 'Windows 2000',
-			r: /(Windows NT 5.0|Windows 2000)/
-		},
-		{
-			s: 'Windows ME',
-			r: /(Win 9x 4.90|Windows ME)/
-		},
-		{
-			s: 'Windows 98',
-			r: /(Windows 98|Win98)/
-		},
-		{
-			s: 'Windows 95',
-			r: /(Windows 95|Win95|Windows_95)/
-		},
-		{
-			s: 'Windows NT 4.0',
-			r: /(Windows NT 4.0|WinNT4.0|WinNT|Windows NT)/
-		},
-		{
-			s: 'Windows CE',
-			r: /Windows CE/
-		},
-		{
-			s: 'Windows 3.11',
-			r: /Win16/
-		},
-		{
-			s: 'Android',
-			r: /Android/
-		},
-		{
-			s: 'Open BSD',
-			r: /OpenBSD/
-		},
-		{
-			s: 'Sun OS',
-			r: /SunOS/
-		},
-		{
-			s: 'Linux',
-			r: /(Linux|X11)/
-		},
-		{
-			s: 'iOS',
-			r: /(iPhone|iPad|iPod)/
-		},
-		{
-			s: 'Mac OS X',
-			r: /Mac OS X/
-		},
-		{
-			s: 'Mac OS',
-			r: /(MacPPC|MacIntel|Mac_PowerPC|Macintosh)/
-		},
-		{
-			s: 'QNX',
-			r: /QNX/
-		},
-		{
-			s: 'UNIX',
-			r: /UNIX/
-		},
-		{
-			s: 'BeOS',
-			r: /BeOS/
-		},
-		{
-			s: 'OS/2',
-			r: /OS\/2/
-		},
-		{
-			s: 'Search Bot',
-			r: /(nuhk|Googlebot|Yammybot|Openbot|Slurp|MSNBot|Ask Jeeves\/Teoma|ia_archiver)/
-		}
+		s: 'Windows 10',
+		r: /(Windows 10.0|Windows NT 10.0)/
+	},
+	{
+		s: 'Windows 8.1',
+		r: /(Windows 8.1|Windows NT 6.3)/
+	},
+	{
+		s: 'Windows 8',
+		r: /(Windows 8|Windows NT 6.2)/
+	},
+	{
+		s: 'Windows 7',
+		r: /(Windows 7|Windows NT 6.1)/
+	},
+	{
+		s: 'Windows Vista',
+		r: /Windows NT 6.0/
+	},
+	{
+		s: 'Windows Server 2003',
+		r: /Windows NT 5.2/
+	},
+	{
+		s: 'Windows XP',
+		r: /(Windows NT 5.1|Windows XP)/
+	},
+	{
+		s: 'Windows 2000',
+		r: /(Windows NT 5.0|Windows 2000)/
+	},
+	{
+		s: 'Windows ME',
+		r: /(Win 9x 4.90|Windows ME)/
+	},
+	{
+		s: 'Windows 98',
+		r: /(Windows 98|Win98)/
+	},
+	{
+		s: 'Windows 95',
+		r: /(Windows 95|Win95|Windows_95)/
+	},
+	{
+		s: 'Windows NT 4.0',
+		r: /(Windows NT 4.0|WinNT4.0|WinNT|Windows NT)/
+	},
+	{
+		s: 'Windows CE',
+		r: /Windows CE/
+	},
+	{
+		s: 'Windows 3.11',
+		r: /Win16/
+	},
+	{
+		s: 'Android',
+		r: /Android/
+	},
+	{
+		s: 'Open BSD',
+		r: /OpenBSD/
+	},
+	{
+		s: 'Sun OS',
+		r: /SunOS/
+	},
+	{
+		s: 'Linux',
+		r: /(Linux|X11)/
+	},
+	{
+		s: 'iOS',
+		r: /(iPhone|iPad|iPod)/
+	},
+	{
+		s: 'Mac OS X',
+		r: /Mac OS X/
+	},
+	{
+		s: 'Mac OS',
+		r: /(MacPPC|MacIntel|Mac_PowerPC|Macintosh)/
+	},
+	{
+		s: 'QNX',
+		r: /QNX/
+	},
+	{
+		s: 'UNIX',
+		r: /UNIX/
+	},
+	{
+		s: 'BeOS',
+		r: /BeOS/
+	},
+	{
+		s: 'OS/2',
+		r: /OS\/2/
+	},
+	{
+		s: 'Search Bot',
+		r: /(nuhk|Googlebot|Yammybot|Openbot|Slurp|MSNBot|Ask Jeeves\/Teoma|ia_archiver)/
+	}
 	];
 	for (var id in clientStrings) {
 		var cs = clientStrings[id];
@@ -2183,7 +2306,7 @@ function checkBrowser() {
 /**
  * 判断网络状况4G/3G/2G/2G-
  */
-function networkType() {
+function networkType () {
 	var type = navigator.connection.effectiveType;
 	switch (type) {
 		case 'slow-2g':
@@ -2209,7 +2332,7 @@ function networkType() {
  * @param {对象} obj 
  * @param {参数} params 
  */
-function parse(obj, params) {
+function parse (obj, params) {
 	if (typeof params === 'string') {
 		if (!(/\.|\[.+\]/g).test(params)) {
 			return obj[params];
@@ -2232,7 +2355,7 @@ function parse(obj, params) {
  * @param {资源} url 
  * @param {回调函数} callback 
  */
-function async_load_func(url, callback) {
+function async_load_func (url, callback) {
 	var oS = document.createElement('script');
 	oS.type = 'text/javascript';
 	oS.async = true;
@@ -2259,7 +2382,7 @@ function async_load_func(url, callback) {
  * @param {地址} url
  */
 
-function async_load(url) {
+function async_load (url) {
 	var oS = document.createElement('script');
 	oS.type = 'text/javascript';
 	oS.async = true;
@@ -2314,18 +2437,18 @@ var mCookie = (function () {
  * 判断该点是否在△内
  */
 var pointInTriangle = (function () {
-	function vec(a, b) {
+	function vec (a, b) {
 		return {
 			x: b.x - a.x,
 			y: b.y - a.y
 		}
 	}
 
-	function vecProduct(v1, v2) {
+	function vecProduct (v1, v2) {
 		return v1.x * v2.y - v1.y * v2.x;
 	}
 
-	function sameSymbols(a, b) {
+	function sameSymbols (a, b) {
 		return (a ^ b) >= 0;
 	}
 
@@ -2391,7 +2514,7 @@ var pointInTriangle = (function () {
  * 1、DOM节点的增删
  * 2、DOM节点位置
  * 3、DOM节点的尺寸
- * 4、DOM节点的display与否
+ * 4、DOM节点的显示与否（display）
  * 5、页面初始渲染
  * 6、向浏览器请求样式信息（client getComputedStyle currentStyle offset scroll）
  */
