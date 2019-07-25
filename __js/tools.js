@@ -682,14 +682,14 @@ Element.prototype.showStatusAnimation = function (opt = {}) {
  */
 Element.prototype.getDirection = function (e) {
   var e = e || window.event,
-    elem = this,
-    elemWidth = getStyle(elem, 'width'),
-    elemHeight = getStyle(elem, 'height'),
-    x = (pagePos(e).x - elemPos(elem).left - elemWidth / 2) * (elemWidth > elemHeight ? elemHeight / elemHeight : 1),
-    y = (pagePos(e).y - elemPos(elem).top - elemHeight / 2) * (elemHeight > elemWidth ? elemWidth / elemHeight : 1),
-    angle = (Math.atan2(y, x) * 180 / Math.PI) + 180,
-    num = (Math.round(angle / 90) + 3) % 4,
-    dir;
+			elem = this,
+			elemWidth = getStyle(elem, 'width'),
+			elemHeight = getStyle(elem, 'height'),
+			x = (pagePos(e).x - elemPos(elem).left - elemWidth / 2) * (elemWidth > elemHeight ? elemHeight / elemWidth : 1),
+			y = (pagePos(e).y - elemPos(elem).top - elemHeight / 2) * (elemHeight > elemWidth ? elemWidth / elemHeight : 1),
+			angle = (Math.atan2(y, x) * 180 / Math.PI) + 180,
+			num = (Math.round(angle / 90) + 3) % 4,
+			dir;
 
   switch (num) {
     case 0:
@@ -742,8 +742,9 @@ Element.prototype.getDirection = function (e) {
  * @param {元素弹性变换后的位置} opt.target
  * @param {弹性系数} opt.k
  * @param {摩擦阻力系数} opt.z
+ * @param {运动结束后的回调函数} cb
  */
-Element.prototype.elasticMove = function(opt) {
+Element.prototype.elasticMove = function(opt = {}, cb) {
   var elem = this,
       attr = opt.attr || 'left',
       target = opt.target === 0 ? 0 : opt.target || 250,
@@ -769,10 +770,116 @@ Element.prototype.elasticMove = function(opt) {
     if (Math.round(flexLen) === 0 && Math.round(step) === 0) {
       elem.style[attr] = target + 'px';
       clearInterval(elem.timer[attr]);
-      elem.timer[attr] = null;
+			elem.timer[attr] = null;
+			typeof(cb) === 'function' && cb();
     }
   }, 1000 / 60);
 }
+
+/**
+ * 重力运动
+ * @param {最大活动高度} opt.activeHeight
+ * @param {最大活动宽度} opt.activeWidth
+ * @param {垂直方向上的步数} opt.stepY
+ * @param {水平方向上的步数} opt.stepX
+ * @param {最大碰撞次数} opt.maxCount
+ * @param {每次碰撞的耗能} opt.z
+ * @param {运动结束后的回调函数} cb
+ */
+Element.prototype.gravityMove = function(opt = {}, cb) {
+  var elem = this,
+      activeHeight = (opt.activeHeight === 0 ? 0 :  getClientPort().h) - getStyle(elem, 'height'),
+      activeWidth = (opt.activeWidth === 0 ? 0 : getClientPort().w) - getStyle(elem, 'width'),
+      z = opt.z || .7,
+      stepX = opt.stepX || 0,
+      stepY = opt.stepY || 2,
+      maxCount = opt.maxCount || 10,
+      x = 0, 
+      y = 0,
+      curTop,
+      curLeft,
+      count = 0;
+
+    if (elem.timer) {
+      clearInterval(elem.timer);
+    }
+
+    elem.timer = setInterval(function() {
+      curTop = getStyle(elem, 'top');
+      curLeft = getStyle(elem, 'left');
+
+      y += stepY;
+      x += stepX;
+
+      if (curTop + y > activeHeight) {
+        count++;
+        y = -y * z;
+        elem.style.top = activeHeight + 'px';
+        if (count === maxCount) {
+          clearInterval(elem.timer);
+					elem.timer = null;
+					typeof(cb) === 'function' && cb();
+        }
+      }
+
+
+      if (curLeft + x > activeWidth) {
+        count++;
+        x = -x * z;
+        if (count === maxCount) {
+          clearInterval(elem.timer);
+          elem.timer = null;
+        }
+      }
+
+      elem.style.top = curTop + y + 'px';
+      elem.style.left = curLeft + x + 'px';
+    }, 1000 / 60)
+};
+
+
+/**
+ * @param {css属性} opt
+ * @param {运动时长} duration
+ * @param {运动结束后的回调函数} cb
+ */
+Element.prototype.startMove = function(opt = {}, duration = 1000, cb) {
+  var elem = this,
+      speed = 100,
+      step;
+
+  if (elem.timer) {
+    clearInterval(elem.timer);
+  }
+
+  elem.timer = setInterval(function() {
+    var flag = true;
+    for (var prop in opt) {
+      var curProp = getStyle(elem, prop);
+      
+      step = (opt[prop] - curProp) / duration * speed;
+
+      if (prop == 'opacity') {
+        step *= 10
+        elem.style[prop] = curProp + step;
+      } else {
+        step = step > 0 ? Math.ceil(step) : Math.floor(step);
+        elem.style[prop] = curProp + step + 'px';
+      }
+
+      if (curProp + step !== opt[prop]) {
+        flag = false;
+      }
+    }
+
+    if (flag) {
+      clearInterval(elem.timer);
+      elem.timer = null;
+      typeof(cb) == 'function' && cb();
+    }
+  }, 30)
+}
+
 
 // 封装getElementsByClassName
 // Document.prototype.getElementsByClassName =
@@ -1539,7 +1646,7 @@ function domReady (fn) {
 	} else if (document.attachEvent) {
 		document.attachEvent('onreadystatechange', function () {
 			if (this.readyState === 'complete') {
-				document.attachEvent('onreadystatechange', arguments.callee);
+				document.detachEvent('onreadystatechange', arguments.callee);
 				fn();
 			}
 		});
@@ -1796,14 +1903,13 @@ var imgLazyLoad = (function (win, doc) {
  */
 function fadeIn (opt = {}) {
 	var o,
-		timer,
-		elemStyle = opt.elem.style,
-		duration = opt.duration || 500,
-		opacity = opt.opacity || 1;
+			timer,
+			elemStyle = opt.elem.style,
+			duration = opt.duration || 500,
+			opacity = opt.opacity || 1;
 
 	clearInterval(timer);
-	elemStyle.display = 'block';
-	o = elemStyle.opacity = 0;
+	o = elemStyle.opacity = getStyle(opt.elem, 'opacity');
 
 	timer = setInterval(function () {
 		if (o >= opacity) {
@@ -1825,22 +1931,21 @@ function fadeIn (opt = {}) {
  */
 function fadeOut (opt = {}) {
 	var o,
-		timer,
-		elemStyle = opt.elem.style,
-		duration = opt.duration || 500,
-		opacity = opt.opacity || 0;
+			timer,
+			elemStyle = opt.elem.style,
+			duration = opt.duration || 500,
+			opacity = opt.opacity || 0,
+			c;
 
 	clearInterval(timer);
-	elemStyle.display = 'block';
-	o = elemStyle.opacity = 1;
+	c = o = elemStyle.opacity = getStyle(opt.elem, 'opacity');
 
 	timer = setInterval(function () {
 		if (o <= opacity) {
 			elemStyle.opacity = opacity;
-			elemStyle.display = 'none';
 			clearInterval(timer);
 		} else {
-			o -= (1 - opacity) / duration * 30;
+			o -= (c - opacity) / duration * 30;
 			elemStyle.opacity = o;
 		}
 	}, 30);
@@ -2338,10 +2443,10 @@ function parse (obj, params) {
 			return obj[params];
 		}
 		params = params.replace(/\]\[/g, '.')
-			.replace(/\[/g, '.')
-			.replace(/\]/g, '.')
-			.replace(/\.$/, '')
-			.split('.');
+						.replace(/\[/g, '.')
+						.replace(/\]/g, '.')
+						.replace(/\.$/, '')
+						.split('.');
 	} else if (params.length === 1) {
 		return obj[params];
 	}
@@ -2416,8 +2521,8 @@ var mCookie = (function () {
 					item,
 					tempArr;
 				for (var prop in cookieArr) {
-					item = cookieArr[prop];
-					if (typeof (item) === 'string') {
+					if (cookieArr.hasOwnProperty(prop)) {
+						item = cookieArr[prop];
 						tempArr = item.split('=');
 						if (tempArr[0] == key) {
 							cb(tempArr[1]);
