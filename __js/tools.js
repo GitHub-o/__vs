@@ -530,7 +530,7 @@ Element.prototype.drag = function (opt = {}) {
 		wHeight = getClientPort().h,
 		disX,
 		disY,
-		[cbTime, ceTime, counter, t] = [null, null, 0, null];
+		[callbackTime, ceTime, counter, t] = [null, null, 0, null];
 
 	if (menuWrap) {
 		var mWidth = getStyle(menuWrap, 'width'),
@@ -612,17 +612,17 @@ Element.prototype.drag = function (opt = {}) {
 			var res;
 			counter++;
 			if (counter == 1) {
-				cbTime = new Date().getTime();
+				callbackTime = new Date().getTime();
 			}
 			if (counter == 2) {
 				ceTime = new Date().getTime();
 			}
-			res = ceTime - cbTime;
-			if (cbTime && ceTime && res < 300) {
+			res = ceTime - callbackTime;
+			if (callbackTime && ceTime && res < 300) {
 				dblWrap.style.display = 'block';
 			}
 			t = setTimeout(function () {
-				cbTime = ceTime = counter = 0;
+				callbackTime = ceTime = counter = 0;
 				clearTimeout(t);
 			}, 500);
 		}
@@ -679,6 +679,10 @@ Element.prototype.showStatusAnimation = function (opt = {}) {
 /**
  * 判断鼠标相对于元素的位置
  * @param {事件源} e 
+ * @param {左侧} left
+ * @param {上部} top
+ * @param {右侧} right
+ * @param {底部} bottom
  */
 Element.prototype.getDirection = function (e) {
   var e = e || window.event,
@@ -688,53 +692,54 @@ Element.prototype.getDirection = function (e) {
 			x = (pagePos(e).x - elemPos(elem).left - elemWidth / 2) * (elemWidth > elemHeight ? elemHeight / elemWidth : 1),
 			y = (pagePos(e).y - elemPos(elem).top - elemHeight / 2) * (elemHeight > elemWidth ? elemWidth / elemHeight : 1),
 			angle = (Math.atan2(y, x) * 180 / Math.PI) + 180,
-			num = (Math.round(angle / 90) + 3) % 4,
-			dir;
+			num = (Math.round(angle / 90) + 3) % 4;
 
-  switch (num) {
-    case 0:
-      dir = 'top';
-      break;
-    case 1:
-      dir = 'right';
-      break;
-    case 2:
-      dir = 'bottom';
-      break;
-    case 3:
-      dir = 'left';
-      break;
-    default:
-      break;
-  }
-
-  function _event (type, cb) {
+  function _getDir (type, callback) {
+		var dir;
+		switch (num) {
+			case 0:
+				dir = 'top';
+				break;
+			case 1:
+				dir = 'right';
+				break;
+			case 2:
+				dir = 'bottom';
+				break;
+			case 3:
+				dir = 'left';
+				break;
+			default:
+				break;
+		}
     if (type === dir) {
-      cb.call(elem);
+      callback.call(elem);
     }
-  }
+	}
+	
   return {
-    left: function (cb) {
-      _event('left', cb);
+    left: function (callback) {
+      _getDir('left', callback);
       return this;
     },
 
-    top: function (cb) {
-      _event('top', cb);
+    top: function (callback) {
+      _getDir('top', callback);
       return this;
     },
 
-    right: function (cb) {
-      _event('right', cb);
+    right: function (callback) {
+      _getDir('right', callback);
       return this;
     },
 
-    bottom: function (cb) {
-      _event('bottom', cb);
+    bottom: function (callback) {
+      _getDir('bottom', callback);
       return this;
     }
   }
 }
+
 
 /**
  * 弹性运动
@@ -742,9 +747,9 @@ Element.prototype.getDirection = function (e) {
  * @param {元素弹性变换后的位置} opt.target
  * @param {弹性系数} opt.k
  * @param {摩擦阻力系数} opt.z
- * @param {运动结束后的回调函数} cb
+ * @param {运动结束后的回调函数} callback
  */
-Element.prototype.elasticMove = function(opt = {}, cb) {
+Element.prototype.elasticMove = function(opt = {}, callback) {
   var elem = this,
       attr = opt.attr || 'left',
       target = opt.target === 0 ? 0 : opt.target || 250,
@@ -771,7 +776,7 @@ Element.prototype.elasticMove = function(opt = {}, cb) {
       elem.style[attr] = target + 'px';
       clearInterval(elem.timer[attr]);
 			elem.timer[attr] = null;
-			typeof(cb) === 'function' && cb();
+			typeof(callback) === 'function' && callback();
     }
   }, 1000 / 60);
 }
@@ -784,9 +789,9 @@ Element.prototype.elasticMove = function(opt = {}, cb) {
  * @param {水平方向上的步数} opt.stepX
  * @param {最大碰撞次数} opt.maxCount
  * @param {每次碰撞的耗能} opt.z
- * @param {运动结束后的回调函数} cb
+ * @param {运动结束后的回调函数} callback
  */
-Element.prototype.gravityMove = function(opt = {}, cb) {
+Element.prototype.gravityMove = function(opt = {}, callback) {
   var elem = this,
       activeHeight = (opt.activeHeight === 0 ? 0 :  getClientPort().h) - getStyle(elem, 'height'),
       activeWidth = (opt.activeWidth === 0 ? 0 : getClientPort().w) - getStyle(elem, 'width'),
@@ -818,7 +823,7 @@ Element.prototype.gravityMove = function(opt = {}, cb) {
         if (count === maxCount) {
           clearInterval(elem.timer);
 					elem.timer = null;
-					typeof(cb) === 'function' && cb();
+					typeof(callback) === 'function' && callback();
         }
       }
 
@@ -841,9 +846,9 @@ Element.prototype.gravityMove = function(opt = {}, cb) {
 /**
  * @param {css属性} opt
  * @param {运动时长} duration
- * @param {运动结束后的回调函数} cb
+ * @param {运动结束后的回调函数} callback
  */
-Element.prototype.startMove = function(opt = {}, duration = 1000, cb) {
+Element.prototype.startMove = function(opt = {}, duration = 1000, callback) {
   var elem = this,
       speed = 100,
       step;
@@ -875,11 +880,158 @@ Element.prototype.startMove = function(opt = {}, duration = 1000, cb) {
     if (flag) {
       clearInterval(elem.timer);
       elem.timer = null;
-      typeof(cb) == 'function' && cb();
+      typeof(callback) == 'function' && callback();
     }
   }, 30)
 }
 
+/**
+ * 移动端触屏事件的封装
+ * @param {轻触} tap 
+ * @param {长按} longtap 
+ * @param {左滑} slideleft 
+ * @param {右滑} slideright 
+ * @param {上滑} slideup 
+ * @param {下滑} slidedown 
+ */
+Element.prototype.touch = function() {
+  var elem = this,
+      activeHeight = getStyle(elem, 'height') / 3;
+
+  function tap(callback) {
+    elem.addEventListener('touchstart', fn, false);
+    elem.addEventListener('touchend', fn, false);
+
+    var bTime, eTime;
+
+    function fn(e) {
+      e.preventDefault();
+
+      switch (e.type) {
+        case 'touchstart':
+          bTime = new Date().getTime();
+          break;
+        case 'touchend':
+          eTime = new Date().getTime();
+
+          if (eTime - bTime < 500) {
+            callback.call(elem, e);
+          }
+          break;
+        default:
+          break;
+      }
+    }
+    return this;
+  }
+
+  function longtap(callback) {
+    elem.addEventListener('touchstart', fn, false);
+    elem.addEventListener('touchmove', fn, false);
+    elem.addEventListener('touchend', fn, false);
+
+    var t = null;
+
+    function fn(e) {
+      e.preventDefault();
+      t && clearTimeout(t);
+
+      switch (e.type) {
+        case 'touchstart':
+          t = setTimeout(function() {
+            callback.call(elem, e);
+            clearTimeout(t);
+            t = null;
+          }, 500);
+          break;
+        case 'touchmove':
+        case 'touchend':
+          clearTimeout(t);
+          break;
+        default:
+          break;
+      }
+    }
+    return this;
+  }
+
+  function _slide(type, callback) {
+    elem.addEventListener('touchstart', fn, false);
+    elem.addEventListener('touchend', fn, false);
+
+    var bX, bY, eX, eY;
+
+    function fn(e) {
+      var touch = e.changedTouches[0];
+      e.preventDefault();
+      
+      switch (e.type) {
+        case 'touchstart':
+          bX = touch.pageX;
+          bY = touch.pageY;
+          break;
+        case 'touchend':
+          eX = touch.pageX;
+          eY = touch.pageY;
+          _slideDir(e, eX - bX, eY - bY);
+          break;
+        default:
+          break;
+      }
+    }
+
+    function _slideDir(e, x, y) {
+      switch (type) {
+        case 'left':
+          if (x > activeHeight && Math.abs(y) < 30) {
+            callback.call(elem, e);
+          }
+          break;
+        case 'up':
+          if (Math.abs(x) < 30 && -y > activeHeight) {
+            callback.call(elem, e);
+          }
+          break;
+        case 'right':
+          if (-x > activeHeight && Math.abs(y) < 30) {
+            callback.call(elem, e);
+          }
+          break;
+        case 'down':
+          if (Math.abs(x) < 30 && y > activeHeight) {
+            callback.call(elem, e);
+          }
+          break;
+      }
+    }
+  }
+
+  function slideleft(callback) {
+    _slide('left', callback);
+    return this;
+  }
+  function slideright(callback) {
+    _slide('right', callback);
+    return this;
+  }
+  function slideup(callback) {
+    _slide('up', callback);
+    return this;
+  }
+  function slidedown(callback) {
+    _slide('down', callback);
+    return this;
+  }
+
+  return {
+    tap: tap,
+    longtap: longtap,
+    slideleft: slideleft,
+    slideright: slideright,
+    slideup: slideup,
+    slidedown: slidedown
+  };
+};
 
 // 封装getElementsByClassName
 // Document.prototype.getElementsByClassName =
@@ -924,8 +1076,8 @@ function compose () {
 	var args = [].slice.call(arguments);
 
 	return function (initialVal) {
-		return args.jReduceRight(function (res, cb) {
-			return cb(res);
+		return args.jReduceRight(function (res, callback) {
+			return callback(res);
 		}, initialVal);
 	}
 }
@@ -1120,328 +1272,6 @@ function sortDatas (fields, datas) {
 		return cache;
 	}
 }
-
-
-
-/**
- * 封装AJAX
- */
-var xhr = (function (doc, win) {
-	function _doAjax (opt) {
-		var o = win.XMLHttpRequest ?
-			new XMLHttpRequest() :
-			new ActiveXObject('Microsoft.XMLHTTP');
-
-		if (!o) {
-			throw (new Error('您的浏览器不支持异步发起HTTP请求'));
-		}
-
-		var opt = opt || {},
-			url = opt.url,
-			type = (opt.type || 'GET').toUpperCase(),
-			dataType = (opt.dataType || 'JSON').toUpperCase(),
-			async = opt.async === false ? false : true,
-			jsonp = opt.jsonp || 'callback',
-			jsonpCB = opt.jsonpCB || 'jQuery' + randomNum() + '_' + new Date().getTime(),
-			data = opt.data || null,
-			timeout = opt.timeout || 30000,
-			error = opt.error || function () { },
-			success = opt.success || function () { },
-			complete = opt.compelet || function () { },
-
-			t = null;
-
-		if (!url) {
-			throw (new Error('您没有填写URL'));
-		}
-
-		if (dataType === 'JSONP' && type !== 'GET') {
-			throw new Error('数据类型为"JSONP"的话，请求方式必须为"GET"或者不设置');
-		}
-
-		if (dataType === 'JSONP') {
-			var oScript = doc.createElement('script');
-			oScript.src = url.indexOf('?') === -1 ?
-				url + '?' + jsonp + '=' + jsonpCB :
-				url + '&' + jsonp + '=' + jsonpCB;
-			doc.body.appendChild(oScript);
-			doc.body.removeChild(oScript);
-			win[jsonpCB] = function (data) {
-				success(data);
-			}
-			return;
-		}
-
-		o.onreadystatechange = function () {
-			if (o.readyState === 4) {
-				if ((o.status >= 200 && o.status < 300) || o.status === 304) {
-					switch (dataType) {
-						case 'JSON':
-							success(JSON.parse(o.responseText));
-							break;
-						case 'TEXT':
-							success(o.responseText);
-							break;
-						case 'XML':
-							success(o.responseXML);
-							break;
-						default:
-							success(JSON.parse(o.responseText));
-							break;
-					}
-				} else {
-					error();
-				}
-
-				complete();
-				clearTimeout(t);
-				t = null;
-				o = null;
-			}
-		}
-		o.open(type, url, async);
-		type === 'POST' && o.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		o.send(type === 'GET' ? null : formatDatas(data));
-
-		t = setTimeout(function () {
-			o.abort();
-			complete();
-			clearTimeout(t);
-			t = null;
-			o = null;
-		}, timeout);
-	}
-
-	function formatDatas (obj) {
-		var str = '';
-		for (key in obj) {
-			str += key + '=' + obj[key] + '&';
-		}
-		return str.replace(/&$/, '');
-	}
-
-	function randomNum () {
-		var res = '';
-		for (var i = 0; i < 20; i++) {
-			res += Math.floor((Math.random() * 10));
-		}
-		return res + '_' + new Date().getTime();
-	}
-
-	return {
-		ajax: function (opt) {
-			_doAjax(opt);
-		},
-
-		post: function (url, data, successCB) {
-			_doAjax({
-				url: url,
-				type: 'POST',
-				data: data,
-				success: successCB
-			})
-		},
-
-		get: function (url, successCB) {
-			_doAjax({
-				url: url,
-				type: 'GET',
-				success: successCB
-			})
-		}
-	}
-}(document, window))
-
-
-/**
- * 跨域domain
- */
-var ajaxDomain = (function (doc) {
-	function createIframe (frameId, frameUrl) {
-		var frame = doc.createElement('iframe');
-		frame.src = frameUrl;
-		frame.id = frameId;
-		frame.style.display = 'none';
-
-		return frame;
-	}
-
-	return function (opt) {
-		doc.domain = opt.basicDomain;
-		var frame = createIframe(opt.frameId, opt.frameUrl);
-
-		frame.onload = function () {
-			var $$ = doc.getElementById(opt.frameId).contentWindow.xhr;
-			$$.ajax({
-				url: opt.url,
-				type: opt.type,
-				dataType: opt.dataType,
-				data: opt.data,
-				success: opt.success,
-				error: opt.error
-			})
-		}
-		doc.body.appendChild(frame);
-	}
-})(document);
-
-
-/**
- * touch事件的封装
- * @param {轻触} tap 
- * @param {长按} longtap 
- * @param {左滑} slideleft 
- * @param {右滑} slideright 
- * @param {上滑} slideup 
- * @param {下滑} slidedown 
- */
-; (function (win, doc) {
-	var Touch = function (selector) {
-		return Touch.prototype.init(selector);
-	}
-
-	Touch.prototype = {
-		init: function (selector) {
-			if (typeof selector === 'string') {
-				this.elem = doc.querySelector(selector);
-				return this;
-			}
-		},
-
-		tap: function (callback) {
-			this.elem.addEventListener('touchstart', fn);
-			this.elem.addEventListener('touchend', fn);
-			var sTime,
-				eTime;
-
-			function fn (e) {
-				e.preventDefault();
-				switch (e.type) {
-					case 'touchstart':
-						sTime = new Date().getTime();
-						break;
-					case 'touchend':
-						eTime = new Date().getTime();
-						if (eTime - sTime < 500) {
-							callback.call(this, e);
-						}
-						break;
-					default:
-						break;
-				}
-			}
-			return this;
-		},
-
-		longtap: function (callback) {
-			this.elem.addEventListener('touchstart', fn);
-			this.elem.addEventListener('touchmove', fn);
-			this.elem.addEventListener('touchend', fn);
-
-			var t = null;
-
-			function fn (e) {
-				e.preventDefault();
-				switch (e.type) {
-					case 'touchstart':
-						t = setTimeout(function () {
-							callback.call(this, e);
-							clearTimeout(t);
-							t = null;
-						}.bind(this), 500)
-						break;
-					case 'touchmove':
-					case 'touchend':
-						clearTimeout(t);
-						t = null;
-						break;
-					default:
-						break;
-				}
-			}
-			return this;
-		},
-
-		slideleft: function (callback) {
-			this._slide('left', callback);
-			return this;
-		},
-
-		slideright: function (callback) {
-			this._slide('right', callback);
-			return this;
-		},
-
-		slideup: function (callback) {
-			this._slide('up', callback);
-			return this;
-		},
-
-		slidedown: function (callback) {
-			this._slide('down', callback);
-			return this;
-		},
-
-		_slide: function (type, callback) {
-			this.elem.addEventListener('touchstart', fn);
-			this.elem.addEventListener('touchend', fn);
-
-			var sX,
-				sY,
-				eX,
-				eY;
-
-			function fn (e) {
-				e.preventDefault();
-				var touches = e.changedTouches[0];
-				switch (e.type) {
-					case 'touchstart':
-						sX = touches.pageX;
-						sY = touches.pageY;
-						break;
-					case 'touchend':
-						eX = touches.pageX;
-						eY = touches.pageY;
-						switch (type) {
-							case 'left':
-								if (sX > eX) {
-									if (Math.abs(sY - eY) < 30 && Math.abs(sX - eX) > 100) {
-										callback.call(this, e);
-									}
-								}
-								break;
-							case 'right':
-								if (eX > sX) {
-									if (Math.abs(eY - sY) < 30 && Math.abs(eX - sX) > 100) {
-										callback.call(this, e);
-									}
-								}
-								break;
-							case 'up':
-								if (eY < sY) {
-									if (Math.abs(sX - eX) < 30 && Math.abs(sY - eY) > 100) {
-										callback.call(this, e);
-									}
-								}
-								break;
-							case 'down':
-								if (eY > sY) {
-									if (Math.abs(eX - sX) < 30 && Math.abs(eY - sY) > 100) {
-										callback(this, e);
-									}
-								}
-								break;
-						}
-						break;
-					default:
-						break;
-				}
-			}
-		}
-	}
-
-	win.$touch = window.Touch = Touch
-}(window, document));
 
 
 /**
@@ -1684,216 +1514,6 @@ function getStyle (elem, prop) {
 	}
 }
 
-/**
- * @param {元素} el
- * @param {模式} mode
- * @param {图片地址 -string} opt.imgUrl
- * @param {放大镜宽度 - number} opt.magWidth
- * @param {放大镜高度 - number} opt.magHeight
- * @param {放大因数 - number} opt.scale
- */
-;
-(function (doc, win) {
-	var Magnifier = function (el, opt = {}) {
-		if (!opt.imgUrl) {
-			throw new Error('图片地址未填写！')
-		}
-		this.oWrap = doc.querySelector(el);
-		this.wrapWidth = getStyle(this.oWrap, 'width');
-		this.wrapHeight = getStyle(this.oWrap, 'height');
-		this.wrapLeft = elemPos(this.oWrap).left;
-		this.wrapTop = elemPos(this.oWrap).top;
-		this.mode = opt.mode || 'outer';
-		this.scale = opt.scale || 1.5;
-		this.imgUrl = opt.imgUrl;
-		this.opt = opt;
-	}
-
-	Magnifier.prototype = {
-		init: function () {
-			this.bindEvent();
-			this.initMode();
-			this.getElement();
-		},
-
-		initMode: function () {
-			if (this.mode === 'inner') {
-				this.magWidth = this.opt.magWidth ? this.opt.magWidth / this.scale : 100;
-				this.magHeight = this.opt.magHeight ? this.opt.magHeight/ this.scale : 100;
-			} else {
-				this.magWidth = this.opt.magWidth || 150;
-				this.magHeight = this.opt.magHeight || 150;
-				this.top = this.opt.top || 0;
-				this.left = (this.opt.left || 20) + this.wrapWidth;
-				this.width = this.opt.width || 256;
-				this.height = this.opt.height || 300;
-			}
-			this.maxX = this.wrapWidth - this.magWidth;
-			this.maxY = this.wrapHeight - this.magHeight;
-			this.createElement(this.mode);
-		},
-
-		bindEvent: function () {
-			addEvent(this.oWrap, 'mouseenter', this.enterWrap.bind(this));
-			addEvent(this.oWrap, 'mouseleave', this.leaveWrap.bind(this));
-		},
-
-		createElement: function (mode) {
-			let html;
-			if (mode === 'inner') {
-				html = '<div class="J_magnifierWrap" \
-				style="position: relative;\
-				width: ' + this.wrapWidth + 'px; \
-				height: ' + this.wrapHeight + 'px; ">\
-				<img style="display:block; height: 100%" \
-				src="' + this.imgUrl + '" />\
-				<span class="J_magnifier" \
-				style="display: none; position: absolute; top: 0; left: 0; box-shadow: 0 0 8px 3px #ddd; overflow: hidden; \
-				width: ' + this.magWidth + 'px; \
-				height: ' + this.magHeight + 'px; ">\
-				<img class="J_absImg" \
-				style="position: absolute; top: 0; left: 0; cursor: pointer; \
-				width: ' + this.wrapWidth + 'px; \
-				height: ' + this.wrapHeight + 'px"\
-				src="'+ this.imgUrl + '" />\
-				</span>\
-				</div>';
-			} else {
-				html = '<div class="J_magnifierWrap" \
-				style="position: relative;\
-				width: ' + this.wrapWidth + 'px; \
-				height: ' + this.wrapHeight + 'px; ">\
-				<img style="display:block; height: 100%" \
-				src="' + this.imgUrl + '" />\
-				<span class="J_magnifier" \
-				style="display: none; position: absolute; top: 0; left: 0; background-color: rgba(0, 0, 0, .4); overflow: hidden; cursor: move; \
-				width: ' + this.magWidth + 'px; \
-				height: ' + this.magHeight + 'px; ">\
-				</span>\
-				<div class="J_absWrap"\
-				style="display: none;position: absolute; border: 1px solid #ccc; overflow: hidden; \
-				top:' + this.top + 'px;\
-				left:' + this.left + 'px;\
-				width:' + this.width + 'px;\
-				height:' + this.height + 'px; ">\
-				<img class="J_absImg" \
-				style="position: absolute; top: 0; left: 0; cursor: pointer; \
-				width: ' + this.wrapWidth * this.scale + 'px; \
-				height: ' + this.wrapHeight * this.scale + 'px;" \
-				src="'+ this.imgUrl + '" />\
-				</div>\
-				</div>';
-			}
-
-			this.oWrap.innerHTML = html;
-		},
-
-		getElement: function () {
-			this.oMagnifier = this.oWrap.querySelector('.J_magnifier');
-			this.oAbsImg = this.oWrap.querySelector('.J_absImg');
-			if (this.mode === 'outer') {
-				this.oAbsWrap = this.oWrap.querySelector('.J_absWrap');
-			}
-		},
-
-		magnifierStatus: function (status) {
-			if (this.mode === 'inner') {
-				if (status) {
-					this.oMagnifier.style.display = 'block';
-					this.oMagnifier.style.transform = 'scale(' + this.scale + ', '+ this.scale + ')';
-				} else {
-					this.oMagnifier.style.display = 'none';
-				}
-			} else {
-				if (status) {
-					this.oMagnifier.style.display = 'block';
-					this.oAbsWrap.style.display = 'block';
-				} else {
-					this.oMagnifier.style.display = 'none';
-					this.oAbsWrap.style.display = 'none';
-				}
-			}
-		},
-
-		enterWrap: function () {
-			this.magnifierStatus(true);
-			addEvent(this.oWrap, 'mousemove', this.moveWrap.bind(this));
-		},
-
-		moveWrap: function (e) {
-			var e = e || window.event,
-				magW = this.magWidth / 2,
-				magH = this.magHeight / 2,
-				x = pagePos(e).x - this.wrapLeft - magW,
-				y = pagePos(e).y - this.wrapTop - magH;
-
-
-			if (x <= 0) {
-				x = 0;
-			} else if (x >= this.maxX) {
-				x = this.maxX;
-			}
-
-			if (y <= 0) {
-				y = 0;
-			} else if (y >= this.maxY) {
-				y = this.maxY;
-			}
-
-			this.oMagnifier.style.left = x + 'px';
-			this.oMagnifier.style.top = y + 'px';
-			if (this.mode === 'inner') {
-				this.oAbsImg.style.left = -x + 'px';
-				this.oAbsImg.style.top = -y + 'px';
-			} else {
-				this.oAbsImg.style.left = -x / this.maxX * this.width * this.scale + 'px';
-				this.oAbsImg.style.top = -y / this.maxY * this.height * this.scale + 'px';
-			}
-		},
-
-		leaveWrap: function () {
-			removeEvent(this.oWrap, 'mousemove', this.moveWrap);
-			this.magnifierStatus(false);
-		}
-	}
-
-	win.Magnifier = Magnifier
-})(document, window)
-
-
-/**
- * 图片懒加载
- * @param {图片元素集合} images
- */
-var imgLazyLoad = (function (win, doc) {
-	var imageItem,
-		imagesLen,
-		cHeight,
-		sTop,
-		imageTop,
-		src,
-		n = 0;
-
-	return function (images) {
-		imagesLen = images.length,
-			cHeight = win.innerHeight || doc.documentElement.clientHeight || doc.body.clientHeight,
-			sTop = win.pageYOffset || doc.body.scrollTop || doc.documentElement.scrollTop;
-
-		for (var i = n; i < imagesLen; i++) {
-			imageItem = images[i];
-			imageTop = elemPos(imageItem).top;
-			if (imageTop < cHeight + sTop) {
-				src = imageItem.getAttribute('data-src');
-				if (src) {
-					imageItem.src = src;
-					imageItem.removeAttribute('data-src');
-					n++;
-				}
-			}
-		}
-	}
-})(window, document)
-
 
 /**
  * 
@@ -1983,95 +1603,6 @@ function render (opt) {
 	return opt.wrap ? opt.wrap.innerHTML = list : list;
 }
 
-/**
- * 渲染翻页列表
- * @param {当前页} curPage
- * @param {总页数} pages
- */
-var renderPageList = (function () {
-	var list = '';
-
-	function pageBtnTpl (type, num, cur, pages) {
-		switch (type) {
-			case 'btn':
-				return num === cur ?
-					'<span class="cur-page">' + num + '</span>' :
-					'<a class="page-btn" data-page=' + num + '>' + num + '</a>';
-				break;
-			case 'points':
-				return '<span class="points">…</span>';
-			case 'backward':
-				return cur === 1 ?
-					'<span class="disabled-btn">&lt;</span>' :
-					'<a class="backward-btn">&lt;</a>';
-			case 'forward':
-				return cur === pages ?
-					'<span class="disabled-btn">&gt;</span>' :
-					'<a class="forward-btn">&gt;</a>';
-				break;
-			default:
-				break;
-		}
-	}
-
-	function renderPageList (curPage, pages) {
-		if (pages <= 1) {
-			return '';
-		}
-		var btnGroup = pageBtnTpl('backward', '', curPage);
-		if (pages > 8) {
-			if (curPage < 3) {
-				btnGroup += makeBtns(1, 3, curPage) +
-					pageBtnTpl('points') +
-					makeBtns(pages - 1, pages, curPage);
-			} else if (curPage >= 3 && curPage < 5) {
-				btnGroup += makeBtns(1, curPage + 1, curPage) +
-					pageBtnTpl('points') +
-					makeBtns(pages - 1, pages, curPage);
-			} else if (curPage == 5) {
-				btnGroup += makeBtns(1, 2, curPage) +
-					pageBtnTpl('points') +
-					makeBtns(curPage - 1, curPage + 1, curPage) +
-					pageBtnTpl('points') +
-					makeBtns(pages - 1, pages, curPage);
-			} else if (curPage >= 6 && curPage < pages - 4) {
-				btnGroup += makeBtns(1, 2, curPage) +
-					pageBtnTpl('points') +
-					makeBtns(curPage - 2, curPage + 2, curPage) +
-					pageBtnTpl('points') +
-					makeBtns(pages - 1, pages, curPage);
-			} else if (curPage == pages - 4) {
-				btnGroup += makeBtns(1, 2, curPage) +
-					pageBtnTpl('points') +
-					makeBtns(curPage - 1, curPage + 1, curPage) +
-					pageBtnTpl('points') +
-					makeBtns(pages - 1, pages, curPage);
-			} else if (curPage >= pages - 3 && curPage <= pages - 2) {
-				btnGroup += makeBtns(1, 2, curPage) +
-					pageBtnTpl('points') +
-					makeBtns(curPage - 1, pages, curPage);
-			} else if (curPage > pages - 2 && curPage <= pages) {
-				btnGroup += makeBtns(1, 2, curPage) +
-					pageBtnTpl('points') +
-					makeBtns(pages - 2, pages, curPage);
-			}
-		} else {
-			btnGroup += makeBtns(1, pages, curPage);
-		}
-		return btnGroup += pageBtnTpl('forward', '', curPage, pages);
-	}
-
-	function makeBtns (start, end, curPage) {
-		list = '';
-		for (var i = start; i <= end; i++) {
-			list += pageBtnTpl('btn', i, curPage);
-		}
-		return list;
-	}
-
-	return renderPageList;
-}())
-
 
 // 替换模板正则
 function regTpl () {
@@ -2082,36 +1613,6 @@ function regTpl () {
 function trimSpace (str) {
 	return str.replace(/\s+/g, '');
 }
-
-
-function ajaxReturn (opt) {
-	$.ajax({
-		url: opt.url,
-		type: 'POST',
-		dataType: 'JSON',
-		data: opt.data,
-		timeout: 100000,
-		success: opt.success,
-		error: opt.error
-	});
-}
-
-
-/**
- * 圣杯模式
- * @param {模板} Origin 
- * @param {对象} Target 
- */
-var inherit = (function () {
-	function Buffer () { }
-	return function (Origin, Target ) {
-		Buffer.prototype = Origin.prototype;
-		Target.prototype = new Buffer();
-		Target.prototype.constructor = Target;
-		Target.prototype.uber = Origin.prototype;
-		return Target;
-	}
-}())
 
 
 /**
@@ -2481,12 +1982,10 @@ function async_load_func (url, callback) {
 }
 
 
-
 /**
  * 异步加载脚本
  * @param {地址} url
  */
-
 function async_load (url) {
 	var oS = document.createElement('script');
 	oS.type = 'text/javascript';
@@ -2494,6 +1993,491 @@ function async_load (url) {
 	oS.src = url;
 	document.head.appendChild(oS);
 }
+
+
+
+
+//------------------------------------------------------------------------------------------------>>
+
+/**
+ * 放大镜
+ * @param {元素} el
+ * @param {模式} mode
+ * @param {图片地址 -string} opt.imgUrl
+ * @param {放大镜宽度 - number} opt.magWidth
+ * @param {放大镜高度 - number} opt.magHeight
+ * @param {放大因数 - number} opt.scale
+ */
+var Magnifier = (function (doc) {
+	var Magnifier = function (el, opt = {}) {
+		if (!opt.imgUrl) {
+			throw new Error('图片地址未填写！')
+		}
+		this.oWrap = doc.querySelector(el);
+		this.wrapWidth = getStyle(this.oWrap, 'width');
+		this.wrapHeight = getStyle(this.oWrap, 'height');
+		this.wrapLeft = elemPos(this.oWrap).left;
+		this.wrapTop = elemPos(this.oWrap).top;
+		this.mode = opt.mode || 'outer';
+		this.scale = opt.scale || 1.5;
+		this.imgUrl = opt.imgUrl;
+		this.opt = opt;
+	}
+
+	Magnifier.prototype = {
+		init: function () {
+			this.bindEvent();
+			this.initMode();
+			this.getElement();
+		},
+
+		initMode: function () {
+			if (this.mode === 'inner') {
+				this.magWidth = this.opt.magWidth ? this.opt.magWidth / this.scale : 100;
+				this.magHeight = this.opt.magHeight ? this.opt.magHeight/ this.scale : 100;
+			} else {
+				this.magWidth = this.opt.magWidth || 150;
+				this.magHeight = this.opt.magHeight || 150;
+				this.top = this.opt.top || 0;
+				this.left = (this.opt.left || 20) + this.wrapWidth;
+				this.width = this.opt.width || 256;
+				this.height = this.opt.height || 300;
+			}
+			this.maxX = this.wrapWidth - this.magWidth;
+			this.maxY = this.wrapHeight - this.magHeight;
+			this.createElement(this.mode);
+		},
+
+		bindEvent: function () {
+			addEvent(this.oWrap, 'mouseenter', this.enterWrap.bind(this));
+			addEvent(this.oWrap, 'mouseleave', this.leaveWrap.bind(this));
+		},
+
+		createElement: function (mode) {
+			let html;
+			if (mode === 'inner') {
+				html = '<div class="J_magnifierWrap" \
+				style="position: relative;\
+				width: ' + this.wrapWidth + 'px; \
+				height: ' + this.wrapHeight + 'px; ">\
+				<img style="display:block; height: 100%" \
+				src="' + this.imgUrl + '" />\
+				<span class="J_magnifier" \
+				style="display: none; position: absolute; top: 0; left: 0; box-shadow: 0 0 8px 3px #ddd; overflow: hidden; \
+				width: ' + this.magWidth + 'px; \
+				height: ' + this.magHeight + 'px; ">\
+				<img class="J_absImg" \
+				style="position: absolute; top: 0; left: 0; cursor: pointer; \
+				width: ' + this.wrapWidth + 'px; \
+				height: ' + this.wrapHeight + 'px"\
+				src="'+ this.imgUrl + '" />\
+				</span>\
+				</div>';
+			} else {
+				html = '<div class="J_magnifierWrap" \
+				style="position: relative;\
+				width: ' + this.wrapWidth + 'px; \
+				height: ' + this.wrapHeight + 'px; ">\
+				<img style="display:block; height: 100%" \
+				src="' + this.imgUrl + '" />\
+				<span class="J_magnifier" \
+				style="display: none; position: absolute; top: 0; left: 0; background-color: rgba(0, 0, 0, .4); overflow: hidden; cursor: move; \
+				width: ' + this.magWidth + 'px; \
+				height: ' + this.magHeight + 'px; ">\
+				</span>\
+				<div class="J_absWrap"\
+				style="display: none;position: absolute; border: 1px solid #ccc; overflow: hidden; \
+				top:' + this.top + 'px;\
+				left:' + this.left + 'px;\
+				width:' + this.width + 'px;\
+				height:' + this.height + 'px; ">\
+				<img class="J_absImg" \
+				style="position: absolute; top: 0; left: 0; cursor: pointer; \
+				width: ' + this.wrapWidth * this.scale + 'px; \
+				height: ' + this.wrapHeight * this.scale + 'px;" \
+				src="'+ this.imgUrl + '" />\
+				</div>\
+				</div>';
+			}
+
+			this.oWrap.innerHTML = html;
+		},
+
+		getElement: function () {
+			this.oMagnifier = this.oWrap.querySelector('.J_magnifier');
+			this.oAbsImg = this.oWrap.querySelector('.J_absImg');
+			if (this.mode === 'outer') {
+				this.oAbsWrap = this.oWrap.querySelector('.J_absWrap');
+			}
+		},
+
+		magnifierStatus: function (status) {
+			if (this.mode === 'inner') {
+				if (status) {
+					this.oMagnifier.style.display = 'block';
+					this.oMagnifier.style.transform = 'scale(' + this.scale + ', '+ this.scale + ')';
+				} else {
+					this.oMagnifier.style.display = 'none';
+				}
+			} else {
+				if (status) {
+					this.oMagnifier.style.display = 'block';
+					this.oAbsWrap.style.display = 'block';
+				} else {
+					this.oMagnifier.style.display = 'none';
+					this.oAbsWrap.style.display = 'none';
+				}
+			}
+		},
+
+		enterWrap: function () {
+			this.magnifierStatus(true);
+			addEvent(this.oWrap, 'mousemove', this.moveWrap.bind(this));
+		},
+
+		moveWrap: function (e) {
+			var e = e || window.event,
+				magW = this.magWidth / 2,
+				magH = this.magHeight / 2,
+				x = pagePos(e).x - this.wrapLeft - magW,
+				y = pagePos(e).y - this.wrapTop - magH;
+
+
+			if (x <= 0) {
+				x = 0;
+			} else if (x >= this.maxX) {
+				x = this.maxX;
+			}
+
+			if (y <= 0) {
+				y = 0;
+			} else if (y >= this.maxY) {
+				y = this.maxY;
+			}
+
+			this.oMagnifier.style.left = x + 'px';
+			this.oMagnifier.style.top = y + 'px';
+			if (this.mode === 'inner') {
+				this.oAbsImg.style.left = -x + 'px';
+				this.oAbsImg.style.top = -y + 'px';
+			} else {
+				this.oAbsImg.style.left = -x / this.maxX * this.width * this.scale + 'px';
+				this.oAbsImg.style.top = -y / this.maxY * this.height * this.scale + 'px';
+			}
+		},
+
+		leaveWrap: function () {
+			removeEvent(this.oWrap, 'mousemove', this.moveWrap);
+			this.magnifierStatus(false);
+		}
+	}
+
+	return Magnifier;
+})(document);
+
+
+/**
+ * 渲染页脚
+ * @param {当前页} curPage
+ * @param {总页数} pages
+ */
+var renderPageList = (function () {
+	var list = '';
+
+	function pageBtnTpl (type, num, cur, pages) {
+		switch (type) {
+			case 'btn':
+				return num === cur ?
+					'<span class="cur-page">' + num + '</span>' :
+					'<a class="page-btn" data-page=' + num + '>' + num + '</a>';
+				break;
+			case 'points':
+				return '<span class="points">…</span>';
+			case 'backward':
+				return cur === 1 ?
+					'<span class="disabled-btn">&lt;</span>' :
+					'<a class="backward-btn">&lt;</a>';
+			case 'forward':
+				return cur === pages ?
+					'<span class="disabled-btn">&gt;</span>' :
+					'<a class="forward-btn">&gt;</a>';
+				break;
+			default:
+				break;
+		}
+	}
+
+	function renderPageList (curPage, pages) {
+		if (pages <= 1) {
+			return '';
+		}
+		var btnGroup = pageBtnTpl('backward', '', curPage);
+		if (pages > 8) {
+			if (curPage < 3) {
+				btnGroup += makeBtns(1, 3, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(pages - 1, pages, curPage);
+			} else if (curPage >= 3 && curPage < 5) {
+				btnGroup += makeBtns(1, curPage + 1, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(pages - 1, pages, curPage);
+			} else if (curPage == 5) {
+				btnGroup += makeBtns(1, 2, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(curPage - 1, curPage + 1, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(pages - 1, pages, curPage);
+			} else if (curPage >= 6 && curPage < pages - 4) {
+				btnGroup += makeBtns(1, 2, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(curPage - 2, curPage + 2, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(pages - 1, pages, curPage);
+			} else if (curPage == pages - 4) {
+				btnGroup += makeBtns(1, 2, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(curPage - 1, curPage + 1, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(pages - 1, pages, curPage);
+			} else if (curPage >= pages - 3 && curPage <= pages - 2) {
+				btnGroup += makeBtns(1, 2, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(curPage - 1, pages, curPage);
+			} else if (curPage > pages - 2 && curPage <= pages) {
+				btnGroup += makeBtns(1, 2, curPage) +
+					pageBtnTpl('points') +
+					makeBtns(pages - 2, pages, curPage);
+			}
+		} else {
+			btnGroup += makeBtns(1, pages, curPage);
+		}
+		return btnGroup += pageBtnTpl('forward', '', curPage, pages);
+	}
+
+	function makeBtns (start, end, curPage) {
+		list = '';
+		for (var i = start; i <= end; i++) {
+			list += pageBtnTpl('btn', i, curPage);
+		}
+		return list;
+	}
+
+	return renderPageList;
+}());
+
+
+/**
+ * 圣杯模式
+ * @param {模板} Origin 
+ * @param {对象} Target 
+ */
+var inherit = (function () {
+	function Buffer () { }
+	return function (Origin, Target ) {
+		Buffer.prototype = Origin.prototype;
+		Target.prototype = new Buffer();
+		Target.prototype.constructor = Target;
+		Target.prototype.uber = Origin.prototype;
+		return Target;
+	}
+}());
+
+
+/**
+ * 图片懒加载
+ * @param {图片元素集合} images
+ */
+var imgLazyLoad = (function (win, doc) {
+	var imageItem,
+		imagesLen,
+		cHeight,
+		sTop,
+		imageTop,
+		src,
+		n = 0;
+
+	return function (images) {
+		imagesLen = images.length,
+			cHeight = win.innerHeight || doc.documentElement.clientHeight || doc.body.clientHeight,
+			sTop = win.pageYOffset || doc.body.scrollTop || doc.documentElement.scrollTop;
+
+		for (var i = n; i < imagesLen; i++) {
+			imageItem = images[i];
+			imageTop = elemPos(imageItem).top;
+			if (imageTop < cHeight + sTop) {
+				src = imageItem.getAttribute('data-src');
+				if (src) {
+					imageItem.src = src;
+					imageItem.removeAttribute('data-src');
+					n++;
+				}
+			}
+		}
+	}
+})(window, document);
+
+
+/**
+ * 封装AJAX
+ */
+var xhr = (function (doc, win) {
+	function _doAjax (opt) {
+		var o = win.XMLHttpRequest ?
+			new XMLHttpRequest() :
+			new ActiveXObject('Microsoft.XMLHTTP');
+
+		if (!o) {
+			throw (new Error('您的浏览器不支持异步发起HTTP请求'));
+		}
+
+		var opt = opt || {},
+			url = opt.url,
+			type = (opt.type || 'GET').toUpperCase(),
+			dataType = (opt.dataType || 'JSON').toUpperCase(),
+			async = opt.async === false ? false : true,
+			jsonp = opt.jsonp || 'callback',
+			jsonpCB = opt.jsonpCB || 'jQuery' + randomNum() + '_' + new Date().getTime(),
+			data = opt.data || null,
+			timeout = opt.timeout || 30000,
+			error = opt.error || function () { },
+			success = opt.success || function () { },
+			complete = opt.compelet || function () { },
+
+			t = null;
+
+		if (!url) {
+			throw (new Error('您没有填写URL'));
+		}
+
+		if (dataType === 'JSONP' && type !== 'GET') {
+			throw new Error('数据类型为"JSONP"的话，请求方式必须为"GET"或者不设置');
+		}
+
+		if (dataType === 'JSONP') {
+			var oScript = doc.createElement('script');
+			oScript.src = url.indexOf('?') === -1 ?
+				url + '?' + jsonp + '=' + jsonpCB :
+				url + '&' + jsonp + '=' + jsonpCB;
+			doc.body.appendChild(oScript);
+			doc.body.removeChild(oScript);
+			win[jsonpCB] = function (data) {
+				success(data);
+			}
+			return;
+		}
+
+		o.onreadystatechange = function () {
+			if (o.readyState === 4) {
+				if ((o.status >= 200 && o.status < 300) || o.status === 304) {
+					switch (dataType) {
+						case 'JSON':
+							success(JSON.parse(o.responseText));
+							break;
+						case 'TEXT':
+							success(o.responseText);
+							break;
+						case 'XML':
+							success(o.responseXML);
+							break;
+						default:
+							success(JSON.parse(o.responseText));
+							break;
+					}
+				} else {
+					error();
+				}
+
+				complete();
+				clearTimeout(t);
+				t = null;
+				o = null;
+			}
+		}
+		o.open(type, url, async);
+		type === 'POST' && o.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		o.send(type === 'GET' ? null : formatDatas(data));
+
+		t = setTimeout(function () {
+			o.abort();
+			complete();
+			clearTimeout(t);
+			t = null;
+			o = null;
+		}, timeout);
+	}
+
+	function formatDatas (obj) {
+		var str = '';
+		for (key in obj) {
+			str += key + '=' + obj[key] + '&';
+		}
+		return str.replace(/&$/, '');
+	}
+
+	function randomNum () {
+		var res = '';
+		for (var i = 0; i < 20; i++) {
+			res += Math.floor((Math.random() * 10));
+		}
+		return res + '_' + new Date().getTime();
+	}
+
+	return {
+		ajax: function (opt) {
+			_doAjax(opt);
+		},
+
+		post: function (url, data, successCB) {
+			_doAjax({
+				url: url,
+				type: 'POST',
+				data: data,
+				success: successCB
+			})
+		},
+
+		get: function (url, successCB) {
+			_doAjax({
+				url: url,
+				type: 'GET',
+				success: successCB
+			})
+		}
+	}
+}(document, window));
+
+
+/**
+ * 跨域domain
+ */
+var ajaxDomain = (function (doc) {
+	function createIframe (frameId, frameUrl) {
+		var frame = doc.createElement('iframe');
+		frame.src = frameUrl;
+		frame.id = frameId;
+		frame.style.display = 'none';
+
+		return frame;
+	}
+
+	return function (opt) {
+		doc.domain = opt.basicDomain;
+		var frame = createIframe(opt.frameId, opt.frameUrl);
+
+		frame.onload = function () {
+			var $$ = doc.getElementById(opt.frameId).contentWindow.xhr;
+			$$.ajax({
+				url: opt.url,
+				type: opt.type,
+				dataType: opt.dataType,
+				data: opt.data,
+				success: opt.success,
+				error: opt.error
+			})
+		}
+		doc.body.appendChild(frame);
+	}
+})(document);
 
 
 /**
@@ -2513,7 +2497,7 @@ var mCookie = (function () {
 			this.set(key, '', -1);
 		},
 
-		get: function (key, cb) {
+		get: function (key, callback) {
 			var cookieStr = document.cookie;
 
 			if (cookieStr) {
@@ -2525,13 +2509,13 @@ var mCookie = (function () {
 						item = cookieArr[prop];
 						tempArr = item.split('=');
 						if (tempArr[0] == key) {
-							cb(tempArr[1]);
+							callback(tempArr[1]);
 							return this;
 						}
 					}
 				}
 			}
-			cb(undefined);
+			callback(undefined);
 			return this;
 		}
 	}
@@ -2569,6 +2553,9 @@ var pointInTriangle = (function () {
 	}
 }());
 
+
+
+
 /**
  * let
  * 1、同一作用域下不可重复声明
@@ -2598,12 +2585,6 @@ var pointInTriangle = (function () {
  * JSON.stringify() 遍历自身可枚举属性
  */
 
-/**
- * bin 存放二进制目录
- * lib 存放代码
- * doc 存放文档目录
- * test 存放单元测试代码
- */
 
 /**
  * 拷贝对象
