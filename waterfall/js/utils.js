@@ -20,6 +20,41 @@ Array.prototype.jForEach = function (fn) {
 	}
 }
 
+function debounce(fn, wait = 800, immediate = false) {
+  var timeout,
+      res;
+
+  function later (args) {
+    return setTimeout(function() {
+      timeout = null;
+      if (!immediate) {
+				res = fn.apply(this, args);
+      }
+    }.bind(this), wait);
+  }
+
+  var debounced = function() {
+    if (!timeout) {
+      timeout = later(arguments);
+      if (immediate) {
+        res = fn.apply(this, arguments);
+      }
+
+    } else {
+      clearTimeout(timeout);
+      timeout = later(arguments);
+    }
+    return res;
+  }
+
+  debounced.remove = function() {
+    clearTimeout(timeout);
+    timeout = null;
+  }
+
+  return debounced;
+}
+
 function throttle(fn, delay) {
 	var t = null,
 		firstTime = new Date().getTime();
