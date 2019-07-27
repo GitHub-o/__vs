@@ -2179,6 +2179,7 @@ var Magnifier = (function (doc) {
 /**
  * 图片瀑布流
  * @param {元素} wrap
+ * @param {地址} opt.url
  * @param {列数} opt.column
  * @param {图片间隙} opt.gap
  */
