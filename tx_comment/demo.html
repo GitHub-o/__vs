@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<title>Document</title>
+	<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="css/login_reg.css" />
+	<link rel="stylesheet" href="css/common.css" />
+	<link rel="stylesheet" href="css/demo.css" />
+</head>
+
+<body>
+
+	<div class="wrap">
+		<header class="hd">
+			<div class="J_user-status user-status">
+				<a href="#login" class="user-lk" data-type="login">登录</a>
+				<a href="#register" class="user-lk" data-type="register">注册</a>
+			</div>
+		</header>
+		<div class="J_mod-mask mod-mask">
+			<div class="mod">
+				<div class="J_mode-hd mod-hd">
+					<h4 class="mod-tt">
+						<a href="#login" class="tt-lk cur" data-type="login">登录</a> ·
+						<a href="#register" class="tt-lk" data-type="register">注册</a>
+						<i class="fa fa-times" title="关闭"></i>
+					</h4>
+				</div>
+				<p class="J_error-tip error-tip"></p>
+				<div class="J_login-wrap login-wrap">
+					<form action="http://localhost/api_for_study/User/login" id="J_login-form" method="post">
+						<div class="input-wrap">
+							<input type="text" id="J_admin" placeholder="用户名 | 手机号" maxlength="20" />
+							<label class="fa fa-user-o"></label>
+						</div>
+						<div class="input-wrap">
+							<input type="password" id="J_password" placeholder="密码" maxlength="20" />
+							<label class="fa fa-unlock-alt"></label>
+						</div>
+						<div class="input-wrap">
+							<div class="remeber-wrap">
+								<input type="checkbox" id="J_remeber-btn" data-type="persisted" />
+								<label for="J_remeber-btn" class="J_persisted"
+									data-value="http://localhost/api_for_study/User/checkAuth" data-type="persisted">持续登录30天</label>
+							</div>
+						</div>
+						<div class="input-wrap">
+							<button type="button" class="J_login-btn" data-type="login">登 录</button>
+						</div>
+					</form>
+				</div>
+				<div class="J_register-wrap register-wrap">
+					<form action="http://localhost/api_for_study/User/register" id="J_register-form" method="post">
+						<div class="input-wrap">
+							<input type="text" id="J_handphone" placeholder="手机号" maxlength="11" />
+							<label class="fa fa-user-circle"></label>
+						</div>
+						<div class="input-wrap">
+							<input type="password" id="J_spassword" placeholder="密码" maxlength="20" />
+							<label class="fa fa-lock"></label>
+						</div>
+						<div class="input-wrap">
+							<input type="text" id="J_hdcode" placeholder="短信验证码" maxlength="6" />
+							<label class="fa fa-mobile"></label>
+							<button type="button" class="J_hdcode-btn fr" data-type="send-hpcode"
+								value="http://localhost/api_for_study/User/sendTelCode">获取验证码</button>
+						</div>
+						<div class="input-wrap">
+							<input type="text" id="J_imgcode" placeholder="图片验证码" maxlength="4" />
+							<label class="fa fa-unlock"></label>
+							<img src="http://localhost/api_for_study/User/verify" class="J_imgcode-btn" data-type="imgcode"
+								alt="图片验证码" title="图片验证码">
+						</div>
+						<div class="input-wrap">
+							<button type="button" data-type="register">注 册</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<a href="jjavascript:;" class="J_open-comment-btn open-comment-btn">立即评论</a>
+		<div class="J_comment-mod comment-mod">
+			<h3 class="comment-hd">
+				<span>课程评论</span>
+				<span>『</span>
+				<span class="course-name">深度DOM案例-疯狂的贪吃蛇【JS++前端】</span>
+				<span>』</span>
+				<a class="fa fa-times J_close-comment-btn"></a>
+			</h3>
+			<p class="comment-tt">您觉得课程怎么样？</p>
+			<form action="http://localhost/api_for_study/Comment/getComments" id="J_comment-form" class="comment-form"
+				onsubmit="return false">
+				<div class="comment-stars">
+					<ul class="J_stars-list stars-list">
+						<i class="fa fa-star active J_hover-star" data-count="1" data-text="差评！课程太差了，我要吐槽！"></i>
+						<i class="fa fa-star active J_hover-star" data-count="2" data-text="勉强中评！课程不满意"></i>
+						<i class="fa fa-star active J_hover-star" data-count="3" data-text="中评！课程一般"></i>
+						<i class="fa fa-star active J_hover-star" data-count="4" data-text="好评！课程还不错，继续保持！"></i>
+						<i class="fa fa-star active J_hover-star" data-count="5" data-text="五星好评！课程非常棒，点赞！"></i>
+					</ul>
+					<span class="J_star-txt star-txt">五星好评！课程非常棒，点赞！</span>
+				</div>
+				<div class="comment-container">
+					<div class="comment-txt-wrap">
+						<textarea class="J_comment-txt comment-txt" id=""
+							placeholder="请尽可能详尽描述您的学习经历，例如学习成果、老师讲课风格、课程内容等"></textarea>
+						<p class="comment-txt-count-wrap"><span class="J_txt-count txt-count">0</span>/1000
+						</p>
+					</div>
+					<p class="comment-des">不可少于15字。评价多于100字将有机会获得200积分奖励哦~</p>
+					<button class="J_submit-comment-btn submit-comment-btn">提交评论</button>
+				</div>
+			</form>
+		</div>
+
+		<div class="main">
+			<div class="main-tt">
+				<ul class="J_main-nav-list main-nav-list clearfix">
+					<h3 class="main-nav-item">课程概述</h3>
+					<h3 class="main-nav-item">目录</h3>
+					<h3 class="main-nav-item cur">评论(<span class="J_comment-total comment-total">0</span>)
+					</h3>
+				</ul>
+			</div>
+			<div class="page">
+				<div class="page-item">
+					<div class="text-intro">
+						<div class="text-hd">简 介</div>
+						<p class="intro">
+							本就业班是针对零基础、技术提升者的一
+							套完整的前端开发学习体系，通过深度课
+							程的学习，使学员掌握最完整最有深度的
+							理论知识和实战技能。该体系包括网页设
+							计、深度JS基础与进阶、H5/CSS3技术、
+							JS框架应用及就业必修技术课程。通过5
+							个月的系统学习，学员可以轻松通过优质
+							互联网公司的笔面试，并迅速适应企业级
+							开发任务。
+						</p>
+					</div>
+					<div class="pic-intro">
+						<div class="img-wrap"><img src="img/pure.jpg" data-src="img/intro-course_1.jfif" alt="" /></div>
+						<div class="img-wrap"><img src="img/pure.jpg" data-src="img/intro-course_2.jfif" alt="" /></div>
+						<div class="img-wrap"><img src="img/pure.jpg" data-src="img/intro-course_3.jfif" alt="" /></div>
+						<div class="img-wrap"><img src="img/pure.jpg" data-src="img/intro-course_4.jfif" alt="" /></div>
+						<div class="img-wrap"><img src="img/pure.jpg" data-src="img/intro-course_5.jfif" alt="" /></div>
+						<div class="img-wrap"><img src="img/pure.jpg" data-src="img/intro-course_6.jfif" alt="" /></div>
+						<div class="img-wrap"><img src="img/pure.jpg" data-src="img/intro-course_7.jfif" alt="" /></div>
+						<div class="img-wrap"><img src="img/pure.jpg" data-src="img/intro-course_8.jfif" alt="" /></div>
+						<div class="img-wrap"><img src="img/pure.jpg" data-src="img/intro-course_9.jfif" alt="" /></div>
+					</div>
+				</div>
+				<div class="page-item">目录</div>
+				<div class="page-item cur">
+					<div class="comment-page">
+						<div class="comment-filter clearfix">
+							<div class="comment-statics">
+								<span class="J_statics-persent statics-persent">–</span>
+								好评率
+							</div>
+							<div class="J_comment-rank-list comment-rank-list">
+								<label class="comment-rank-item cur" data-field="0">
+									<i class="circle"></i>
+									<span class="comment-rk-txt">全部评论(<span class="J_comment-rk-count">0</span>)</span>
+								</label>
+								<label class="comment-rank-item" data-field="1">
+									<i class="circle"></i>
+									<span class="comment-rk-txt">好评(<span class="J_comment-rk-count">0</span>)</span>
+								</label>
+								<label class="comment-rank-item" data-field="2">
+									<i class="circle"></i>
+									<span class="comment-rk-txt">中评(<span class="J_comment-rk-count">0</span>)</span>
+								</label>
+								<label class="comment-rank-item" data-field="3">
+									<i class="circle"></i>
+									<span class="comment-rk-txt">差评(<span class="J_comment-rk-count">0</span>)</span>
+								</label>
+							</div>
+						</div>
+						<div class="J_comment-list comment-list"></div>
+						<div class="J_comment-tip comment-tip">
+							<i class="fa fa-check-circle fa-5x"></i>
+							<span class="text">评论成功</span>
+						</div>
+						<div class="J_loading-wrap loading-wrap">
+							<i class="fa fa-spinner fa-pulse"></i>
+						</div>
+						<div class="J_mes-info mes-info">
+							<i class="fa fa-exclamation-circle"></i>
+							<span class="mes-txt">暂无评论</span>
+						</div>
+						<div class="page-wrap">
+							<div class="J_page-list page-list"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/html" id="J_login-in">
+            <a href="#login" class="lk" data-type="login">登录</a>
+            <a href="#register" class="lk" data-type="register">注册</a>
+      </script>
+	<script type="text/html" id="J_login-out">
+            <span class="nickname-wrap">「 欢迎您，<span class="nickname">{{nickname}}</span> 」</span>
+            <a href="http://localhost/api_for_study/User/logout" class="user-lk js_logout">退出</a>
+      </script>
+	<script type="text/html" id="J_comment-list-tpl">
+            <div class="comment-item">
+                  <div class="item-left">
+                        <img src="{{avatar}}" alt="用户头像" class="user-avatar" />
+                        <p class="user-name">{{nickname}}</p>
+                  </div>
+                  <div class="item-right">
+                        <div class="user-star-list">
+                              <i class="fa fa-star {{active}}"></i>
+                              <i class="fa fa-star {{active}}"></i>
+                              <i class="fa fa-star {{active}}"></i>
+                              <i class="fa fa-star {{active}}"></i>
+                              <i class="fa fa-star {{active}}"></i>
+                        </div>
+                        <div class="comment-wrap">
+                              <p class="comment-bd">{{comment}}</p>
+                              <div class="comment-footer">
+                                    <span>已上课</span><span>{{when}}</span><span>分钟时评论</span>
+                                    <span class="comment-time">{{uptime}}</span>
+                                    <span class="comment-report">举报</span>
+                              </div>
+                        </div>
+                        <div class="add-comment-wrap {{show}}">
+                              <span>追加评论：</span>
+                              <div class="add-comment-bd">{{add_comment}}</div>
+                              <div class="comment-footer">
+                                    <span>已上课</span><span class="where">***分钟时</span><span>追评</span>
+                                    <span class="comment-time">{{add_uptime}}</span>
+                              </div>
+                        </div>
+                  </div>
+            </div>
+      </script>
+	<script src="js/utils.js"></script>
+	<script src="js/login_reg.js"></script>
+	<script src="js/comment.js"></script>
+	<script src="js/demo.js"></script>
+</body>
+
+</html>

@@ -685,16 +685,16 @@ Element.prototype.showStatusAnimation = function (opt = {}) {
  * @param {底部} bottom
  */
 Element.prototype.getDirection = function (e) {
-  var e = e || window.event,
-			elem = this,
-			elemWidth = getStyle(elem, 'width'),
-			elemHeight = getStyle(elem, 'height'),
-			x = (pagePos(e).x - elemPos(elem).left - elemWidth / 2) * (elemWidth > elemHeight ? elemHeight / elemWidth : 1),
-			y = (pagePos(e).y - elemPos(elem).top - elemHeight / 2) * (elemHeight > elemWidth ? elemWidth / elemHeight : 1),
-			angle = (Math.atan2(y, x) * 180 / Math.PI) + 180,
-			num = (Math.round(angle / 90) + 3) % 4;
+	var e = e || window.event,
+		elem = this,
+		elemWidth = getStyle(elem, 'width'),
+		elemHeight = getStyle(elem, 'height'),
+		x = (pagePos(e).x - elemPos(elem).left - elemWidth / 2) * (elemWidth > elemHeight ? elemHeight / elemWidth : 1),
+		y = (pagePos(e).y - elemPos(elem).top - elemHeight / 2) * (elemHeight > elemWidth ? elemWidth / elemHeight : 1),
+		angle = (Math.atan2(y, x) * 180 / Math.PI) + 180,
+		num = (Math.round(angle / 90) + 3) % 4;
 
-  function _getDir (type, callback) {
+	function _getDir (type, callback) {
 		var dir;
 		switch (num) {
 			case 0:
@@ -712,32 +712,32 @@ Element.prototype.getDirection = function (e) {
 			default:
 				break;
 		}
-    if (type === dir) {
-      callback.call(elem);
-    }
+		if (type === dir) {
+			callback.call(elem);
+		}
 	}
-	
-  return {
-    left: function (callback) {
-      _getDir('left', callback);
-      return this;
-    },
 
-    top: function (callback) {
-      _getDir('top', callback);
-      return this;
-    },
+	return {
+		left: function (callback) {
+			_getDir('left', callback);
+			return this;
+		},
 
-    right: function (callback) {
-      _getDir('right', callback);
-      return this;
-    },
+		top: function (callback) {
+			_getDir('top', callback);
+			return this;
+		},
 
-    bottom: function (callback) {
-      _getDir('bottom', callback);
-      return this;
-    }
-  }
+		right: function (callback) {
+			_getDir('right', callback);
+			return this;
+		},
+
+		bottom: function (callback) {
+			_getDir('bottom', callback);
+			return this;
+		}
+	}
 }
 
 
@@ -749,36 +749,36 @@ Element.prototype.getDirection = function (e) {
  * @param {摩擦阻力系数} opt.z
  * @param {运动结束后的回调函数} callback
  */
-Element.prototype.elasticMove = function(opt = {}, callback) {
-  var elem = this,
-      attr = opt.attr || 'left',
-      target = opt.target === 0 ? 0 : opt.target || 250,
-      k = opt.k || .7,
-      z = opt.z || .7,
-      flexLen = target,
-      step = 0,
-      cur;
+Element.prototype.elasticMove = function (opt = {}, callback) {
+	var elem = this,
+		attr = opt.attr || 'left',
+		target = opt.target === 0 ? 0 : opt.target || 250,
+		k = opt.k || .7,
+		z = opt.z || .7,
+		flexLen = target,
+		step = 0,
+		cur;
 
-  if (!elem.timer) {
-    elem.timer = {};
-  } else if (elem.timer[attr]) {
-    clearInterval(elem.timer[attr]);
-  }
+	if (!elem.timer) {
+		elem.timer = {};
+	} else if (elem.timer[attr]) {
+		clearInterval(elem.timer[attr]);
+	}
 
-  elem.timer[attr] = setInterval(function() {
-    cur = getStyle(elem, attr);
-    flexLen = target - cur;
-    step += flexLen * k;
-    step *= z;
-    elem.style[attr] = cur + step + 'px';
+	elem.timer[attr] = setInterval(function () {
+		cur = getStyle(elem, attr);
+		flexLen = target - cur;
+		step += flexLen * k;
+		step *= z;
+		elem.style[attr] = cur + step + 'px';
 
-    if (Math.round(flexLen) === 0 && Math.round(step) === 0) {
-      elem.style[attr] = target + 'px';
-      clearInterval(elem.timer[attr]);
+		if (Math.round(flexLen) === 0 && Math.round(step) === 0) {
+			elem.style[attr] = target + 'px';
+			clearInterval(elem.timer[attr]);
 			elem.timer[attr] = null;
-			typeof(callback) === 'function' && callback();
-    }
-  }, 1000 / 60);
+			typeof (callback) === 'function' && callback();
+		}
+	}, 1000 / 60);
 }
 
 /**
@@ -791,55 +791,55 @@ Element.prototype.elasticMove = function(opt = {}, callback) {
  * @param {每次碰撞的耗能} opt.z
  * @param {运动结束后的回调函数} callback
  */
-Element.prototype.gravityMove = function(opt = {}, callback) {
-  var elem = this,
-      activeHeight = (opt.activeHeight === 0 ? 0 :  getClientPort().h) - getStyle(elem, 'height'),
-      activeWidth = (opt.activeWidth === 0 ? 0 : getClientPort().w) - getStyle(elem, 'width'),
-      z = opt.z || .7,
-      stepX = opt.stepX || 0,
-      stepY = opt.stepY || 2,
-      maxCount = opt.maxCount || 10,
-      x = 0, 
-      y = 0,
-      curTop,
-      curLeft,
-      count = 0;
+Element.prototype.gravityMove = function (opt = {}, callback) {
+	var elem = this,
+		activeHeight = (opt.activeHeight === 0 ? 0 : getClientPort().h) - getStyle(elem, 'height'),
+		activeWidth = (opt.activeWidth === 0 ? 0 : getClientPort().w) - getStyle(elem, 'width'),
+		z = opt.z || .7,
+		stepX = opt.stepX || 0,
+		stepY = opt.stepY || 2,
+		maxCount = opt.maxCount || 10,
+		x = 0,
+		y = 0,
+		curTop,
+		curLeft,
+		count = 0;
 
-    if (elem.timer) {
-      clearInterval(elem.timer);
-    }
+	if (elem.timer) {
+		clearInterval(elem.timer);
+	}
 
-    elem.timer = setInterval(function() {
-      curTop = getStyle(elem, 'top');
-      curLeft = getStyle(elem, 'left');
+	elem.timer = setInterval(function () {
+		curTop = getStyle(elem, 'top');
+		curLeft = getStyle(elem, 'left');
 
-      y += stepY;
-      x += stepX;
+		y += stepY;
+		x += stepX;
 
-      if (curTop + y > activeHeight) {
-        count++;
-        y = -y * z;
-        elem.style.top = activeHeight + 'px';
-        if (count === maxCount) {
-          clearInterval(elem.timer);
-					elem.timer = null;
-					typeof(callback) === 'function' && callback();
-        }
-      }
+		if (curTop + y > activeHeight) {
+			count++;
+			y = -y * z;
+			elem.style.top = activeHeight + 'px';
+			if (count === maxCount) {
+				clearInterval(elem.timer);
+				elem.timer = null;
+				typeof (callback) === 'function' && callback();
+			}
+		}
 
 
-      if (curLeft + x > activeWidth) {
-        count++;
-        x = -x * z;
-        if (count === maxCount) {
-          clearInterval(elem.timer);
-          elem.timer = null;
-        }
-      }
+		if (curLeft + x > activeWidth) {
+			count++;
+			x = -x * z;
+			if (count === maxCount) {
+				clearInterval(elem.timer);
+				elem.timer = null;
+			}
+		}
 
-      elem.style.top = curTop + y + 'px';
-      elem.style.left = curLeft + x + 'px';
-    }, 1000 / 60)
+		elem.style.top = curTop + y + 'px';
+		elem.style.left = curLeft + x + 'px';
+	}, 1000 / 60)
 };
 
 
@@ -848,41 +848,41 @@ Element.prototype.gravityMove = function(opt = {}, callback) {
  * @param {运动时长} duration
  * @param {运动结束后的回调函数} callback
  */
-Element.prototype.startMove = function(opt = {}, duration = 1000, callback) {
-  var elem = this,
-      speed = 100,
-      step;
+Element.prototype.startMove = function (opt = {}, duration = 1000, callback) {
+	var elem = this,
+		speed = 100,
+		step;
 
-  if (elem.timer) {
-    clearInterval(elem.timer);
-  }
+	if (elem.timer) {
+		clearInterval(elem.timer);
+	}
 
-  elem.timer = setInterval(function() {
-    var flag = true;
-    for (var prop in opt) {
-      var curProp = getStyle(elem, prop);
-      
-      step = (opt[prop] - curProp) / duration * speed;
+	elem.timer = setInterval(function () {
+		var flag = true;
+		for (var prop in opt) {
+			var curProp = getStyle(elem, prop);
 
-      if (prop == 'opacity') {
-        step *= 10
-        elem.style[prop] = curProp + step;
-      } else {
-        step = step > 0 ? Math.ceil(step) : Math.floor(step);
-        elem.style[prop] = curProp + step + 'px';
-      }
+			step = (opt[prop] - curProp) / duration * speed;
 
-      if (curProp + step !== opt[prop]) {
-        flag = false;
-      }
-    }
+			if (prop == 'opacity') {
+				step *= 10
+				elem.style[prop] = curProp + step;
+			} else {
+				step = step > 0 ? Math.ceil(step) : Math.floor(step);
+				elem.style[prop] = curProp + step + 'px';
+			}
 
-    if (flag) {
-      clearInterval(elem.timer);
-      elem.timer = null;
-      typeof(callback) == 'function' && callback();
-    }
-  }, 30)
+			if (curProp + step !== opt[prop]) {
+				flag = false;
+			}
+		}
+
+		if (flag) {
+			clearInterval(elem.timer);
+			elem.timer = null;
+			typeof (callback) == 'function' && callback();
+		}
+	}, 30)
 }
 
 /**
@@ -894,143 +894,143 @@ Element.prototype.startMove = function(opt = {}, duration = 1000, callback) {
  * @param {上滑} slideup 
  * @param {下滑} slidedown 
  */
-Element.prototype.touch = function() {
-  var elem = this,
-      activeHeight = getStyle(elem, 'height') / 3;
+Element.prototype.touch = function () {
+	var elem = this,
+		activeHeight = getStyle(elem, 'height') / 3;
 
-  function tap(callback) {
-    elem.addEventListener('touchstart', fn, false);
-    elem.addEventListener('touchend', fn, false);
+	function tap (callback) {
+		elem.addEventListener('touchstart', fn, false);
+		elem.addEventListener('touchend', fn, false);
 
-    var bTime, eTime;
+		var bTime, eTime;
 
-    function fn(e) {
-      e.preventDefault();
+		function fn (e) {
+			e.preventDefault();
 
-      switch (e.type) {
-        case 'touchstart':
-          bTime = new Date().getTime();
-          break;
-        case 'touchend':
-          eTime = new Date().getTime();
+			switch (e.type) {
+				case 'touchstart':
+					bTime = new Date().getTime();
+					break;
+				case 'touchend':
+					eTime = new Date().getTime();
 
-          if (eTime - bTime < 500) {
-            callback.call(elem, e);
-          }
-          break;
-        default:
-          break;
-      }
-    }
-    return this;
-  }
+					if (eTime - bTime < 500) {
+						callback.call(elem, e);
+					}
+					break;
+				default:
+					break;
+			}
+		}
+		return this;
+	}
 
-  function longtap(callback) {
-    elem.addEventListener('touchstart', fn, false);
-    elem.addEventListener('touchmove', fn, false);
-    elem.addEventListener('touchend', fn, false);
+	function longtap (callback) {
+		elem.addEventListener('touchstart', fn, false);
+		elem.addEventListener('touchmove', fn, false);
+		elem.addEventListener('touchend', fn, false);
 
-    var t = null;
+		var t = null;
 
-    function fn(e) {
-      e.preventDefault();
-      t && clearTimeout(t);
+		function fn (e) {
+			e.preventDefault();
+			t && clearTimeout(t);
 
-      switch (e.type) {
-        case 'touchstart':
-          t = setTimeout(function() {
-            callback.call(elem, e);
-            clearTimeout(t);
-            t = null;
-          }, 500);
-          break;
-        case 'touchmove':
-        case 'touchend':
-          clearTimeout(t);
-          break;
-        default:
-          break;
-      }
-    }
-    return this;
-  }
+			switch (e.type) {
+				case 'touchstart':
+					t = setTimeout(function () {
+						callback.call(elem, e);
+						clearTimeout(t);
+						t = null;
+					}, 500);
+					break;
+				case 'touchmove':
+				case 'touchend':
+					clearTimeout(t);
+					break;
+				default:
+					break;
+			}
+		}
+		return this;
+	}
 
-  function _slide(type, callback) {
-    elem.addEventListener('touchstart', fn, false);
-    elem.addEventListener('touchend', fn, false);
+	function _slide (type, callback) {
+		elem.addEventListener('touchstart', fn, false);
+		elem.addEventListener('touchend', fn, false);
 
-    var bX, bY, eX, eY;
+		var bX, bY, eX, eY;
 
-    function fn(e) {
-      var touch = e.changedTouches[0];
-      e.preventDefault();
-      
-      switch (e.type) {
-        case 'touchstart':
-          bX = touch.pageX;
-          bY = touch.pageY;
-          break;
-        case 'touchend':
-          eX = touch.pageX;
-          eY = touch.pageY;
-          _slideDir(e, eX - bX, eY - bY);
-          break;
-        default:
-          break;
-      }
-    }
+		function fn (e) {
+			var touch = e.changedTouches[0];
+			e.preventDefault();
 
-    function _slideDir(e, x, y) {
-      switch (type) {
-        case 'left':
-          if (x > activeHeight && Math.abs(y) < 30) {
-            callback.call(elem, e);
-          }
-          break;
-        case 'up':
-          if (Math.abs(x) < 30 && -y > activeHeight) {
-            callback.call(elem, e);
-          }
-          break;
-        case 'right':
-          if (-x > activeHeight && Math.abs(y) < 30) {
-            callback.call(elem, e);
-          }
-          break;
-        case 'down':
-          if (Math.abs(x) < 30 && y > activeHeight) {
-            callback.call(elem, e);
-          }
-          break;
-      }
-    }
-  }
+			switch (e.type) {
+				case 'touchstart':
+					bX = touch.pageX;
+					bY = touch.pageY;
+					break;
+				case 'touchend':
+					eX = touch.pageX;
+					eY = touch.pageY;
+					_slideDir(e, eX - bX, eY - bY);
+					break;
+				default:
+					break;
+			}
+		}
 
-  function slideleft(callback) {
-    _slide('left', callback);
-    return this;
-  }
-  function slideright(callback) {
-    _slide('right', callback);
-    return this;
-  }
-  function slideup(callback) {
-    _slide('up', callback);
-    return this;
-  }
-  function slidedown(callback) {
-    _slide('down', callback);
-    return this;
-  }
+		function _slideDir (e, x, y) {
+			switch (type) {
+				case 'left':
+					if (x > activeHeight && Math.abs(y) < 30) {
+						callback.call(elem, e);
+					}
+					break;
+				case 'up':
+					if (Math.abs(x) < 30 && -y > activeHeight) {
+						callback.call(elem, e);
+					}
+					break;
+				case 'right':
+					if (-x > activeHeight && Math.abs(y) < 30) {
+						callback.call(elem, e);
+					}
+					break;
+				case 'down':
+					if (Math.abs(x) < 30 && y > activeHeight) {
+						callback.call(elem, e);
+					}
+					break;
+			}
+		}
+	}
 
-  return {
-    tap: tap,
-    longtap: longtap,
-    slideleft: slideleft,
-    slideright: slideright,
-    slideup: slideup,
-    slidedown: slidedown
-  };
+	function slideleft (callback) {
+		_slide('left', callback);
+		return this;
+	}
+	function slideright (callback) {
+		_slide('right', callback);
+		return this;
+	}
+	function slideup (callback) {
+		_slide('up', callback);
+		return this;
+	}
+	function slidedown (callback) {
+		_slide('down', callback);
+		return this;
+	}
+
+	return {
+		tap: tap,
+		longtap: longtap,
+		slideleft: slideleft,
+		slideright: slideright,
+		slideup: slideup,
+		slidedown: slidedown
+	};
 };
 
 // 封装getElementsByClassName
@@ -1143,39 +1143,39 @@ function memorize (fn) {
  * @param {time秒内频繁触发不执行 - ms} wait
  * @param {立即执行} immediate 
  */
-function debounce(fn, wait = 800, immediate = false) {
-  var timeout,
-      res;
+function debounce (fn, wait = 800, immediate = false) {
+	var timeout,
+		res;
 
-  function later (args) {
-    return setTimeout(function() {
-      timeout = null;
-      if (!immediate) {
-        res = fn.apply(this, args);
-      }
-    }.bind(this), wait);
-  }
+	function later (args) {
+		return setTimeout(function () {
+			timeout = null;
+			if (!immediate) {
+				res = fn.apply(this, args);
+			}
+		}.bind(this), wait);
+	}
 
-  var debounced = function() {
-    if (!timeout) {
-      timeout = later(arguments);
-      if (immediate) {
-        res = fn.apply(this, arguments);
-      }
+	var debounced = function () {
+		if (!timeout) {
+			timeout = later(arguments);
+			if (immediate) {
+				res = fn.apply(this, arguments);
+			}
 
-    } else {
-      clearTimeout(timeout);
-      timeout = later(arguments);
-    }
-    return res;
-  }
+		} else {
+			clearTimeout(timeout);
+			timeout = later(arguments);
+		}
+		return res;
+	}
 
-  debounced.remove = function() {
-    clearTimeout(timeout);
-    timeout = null;
-  }
+	debounced.remove = function () {
+		clearTimeout(timeout);
+		timeout = null;
+	}
 
-  return debounced;
+	return debounced;
 }
 
 
@@ -1382,8 +1382,8 @@ function preventDefault (e) {
 // 获取元素相对于文档的位置
 function elemPos (elem) {
 	var elemParent = elem.offsetParent,
-			elemLeft = elem.offsetLeft,
-			elemTop = elem.offsetTop;
+		elemLeft = elem.offsetLeft,
+		elemTop = elem.offsetTop;
 
 	while (elemParent) {
 		elemLeft += elemParent.offsetLeft;
@@ -1523,10 +1523,10 @@ function getStyle (elem, prop) {
  */
 function fadeIn (opt = {}) {
 	var o,
-			timer,
-			elemStyle = opt.elem.style,
-			duration = opt.duration || 500,
-			opacity = opt.opacity || 1;
+		timer,
+		elemStyle = opt.elem.style,
+		duration = opt.duration || 500,
+		opacity = opt.opacity || 1;
 
 	clearInterval(timer);
 	o = elemStyle.opacity = getStyle(opt.elem, 'opacity');
@@ -1539,7 +1539,7 @@ function fadeIn (opt = {}) {
 			o += opacity / duration * 30;
 			elemStyle.opacity = o;
 		}
-  }, 30);
+	}, 30);
 }
 
 
@@ -1551,11 +1551,11 @@ function fadeIn (opt = {}) {
  */
 function fadeOut (opt = {}) {
 	var o,
-			timer,
-			elemStyle = opt.elem.style,
-			duration = opt.duration || 500,
-			opacity = opt.opacity || 0,
-			c;
+		timer,
+		elemStyle = opt.elem.style,
+		duration = opt.duration || 500,
+		opacity = opt.opacity || 0,
+		c;
 
 	clearInterval(timer);
 	c = o = elemStyle.opacity = getStyle(opt.elem, 'opacity');
@@ -1944,12 +1944,12 @@ function parse (obj, params) {
 			return obj[params];
 		}
 		params = params.replace(/\]\[/g, '.')
-						.replace(/\[/g, '.')
-						.replace(/\]/g, '.')
-						.replace(/\.$/, '')
-						.split('.');
-		} else if (params.length === 1) {
-			return obj[params];
+			.replace(/\[/g, '.')
+			.replace(/\]/g, '.')
+			.replace(/\.$/, '')
+			.split('.');
+	} else if (params.length === 1) {
+		return obj[params];
 	}
 	obj = obj[params[0]];
 	params.shift();
@@ -2034,7 +2034,7 @@ var Magnifier = (function (doc) {
 		initMode: function () {
 			if (this.mode === 'inner') {
 				this.magWidth = this.opt.magWidth ? this.opt.magWidth / this.scale : 100;
-				this.magHeight = this.opt.magHeight ? this.opt.magHeight/ this.scale : 100;
+				this.magHeight = this.opt.magHeight ? this.opt.magHeight / this.scale : 100;
 			} else {
 				this.magWidth = this.opt.magWidth || 150;
 				this.magHeight = this.opt.magHeight || 150;
@@ -2115,7 +2115,7 @@ var Magnifier = (function (doc) {
 			if (this.mode === 'inner') {
 				if (status) {
 					this.oMagnifier.style.display = 'block';
-					this.oMagnifier.style.transform = 'scale(' + this.scale + ', '+ this.scale + ')';
+					this.oMagnifier.style.transform = 'scale(' + this.scale + ', ' + this.scale + ')';
 				} else {
 					this.oMagnifier.style.display = 'none';
 				}
@@ -2183,120 +2183,120 @@ var Magnifier = (function (doc) {
  * @param {列数} opt.column
  * @param {图片间隙} opt.gap
  */
-var Waterfall = (function(doc, win) {
-  var t = null;
-  var Waterfall = function(wrap, opt) {
-    this.oWrap = doc.querySelector(wrap);
-    this.column = opt.column || 6;
-    this.gap = opt.gap || 10;
-    this.pages = 0;
-    this.curPage = 0;
-    this.heightArr = [];
-    this.API = opt.url;
-    this.oWrap.style.position = 'relative';
-    if (!this.API) {
-      throw new Error('url未填写');
-    }
-  };
+var Waterfall = (function (doc, win) {
+	var t = null;
+	var Waterfall = function (wrap, opt) {
+		this.oWrap = doc.querySelector(wrap);
+		this.column = opt.column || 6;
+		this.gap = opt.gap || 10;
+		this.pages = 0;
+		this.curPage = 0;
+		this.heightArr = [];
+		this.API = opt.url;
+		this.oWrap.style.position = 'relative';
+		if (!this.API) {
+			throw new Error('url未填写');
+		}
+	};
 
-  Waterfall.prototype = {
-    init: function() {
-      this.bindEvent();
-      this.getImgDatas(this.curPage);
-      t = setTimeout(function() {
-        win.scroll(0, 0);
-        clearTimeout(t);
-        t = null;
-      }, 400);
-    },
+	Waterfall.prototype = {
+		init: function () {
+			this.bindEvent();
+			this.getImgDatas(this.curPage);
+			t = setTimeout(function () {
+				win.scroll(0, 0);
+				clearTimeout(t);
+				t = null;
+			}, 400);
+		},
 
-    bindEvent: function() {
+		bindEvent: function () {
 			var _moreImagDatas = throttle(this.moreImgDatas, 500).bind(this),
-					_resetWaterfall = debounce(this.resetWaterfall.bind(this), 500);
+				_resetWaterfall = debounce(this.resetWaterfall.bind(this), 500);
 
 			addEvent(win, 'scroll', _moreImagDatas);
 			addEvent(win, 'resize', _resetWaterfall);
-    },
+		},
 
-    moreImgDatas: function() {
-      if (getViewPort().h + getScrollOffset().y >= getScrollSize().h) {
-        this.curPage++;
-        if (this.curPage <= this.pages - 1) {
-          this.getImgDatas(this.curPage);
-        }
-      }
-    },
+		moreImgDatas: function () {
+			if (getViewPort().h + getScrollOffset().y >= getScrollSize().h) {
+				this.curPage++;
+				if (this.curPage <= this.pages - 1) {
+					this.getImgDatas(this.curPage);
+				}
+			}
+		},
 
-    getImgDatas: function(curPage) {
-      var _self = this;
-      xhr.ajax({
-        url: this.API,
-        type: 'POST',
-        data: {
-          pageNum: curPage
-        },
-        success: function(data) {
-          _self.res = JSON.parse(data.pageData);
-          _self.pages = data.pageSize;
+		getImgDatas: function (curPage) {
+			var _self = this;
+			xhr.ajax({
+				url: this.API,
+				type: 'POST',
+				data: {
+					pageNum: curPage
+				},
+				success: function (data) {
+					_self.res = JSON.parse(data.pageData);
+					_self.pages = data.pageSize;
 					_self.renderImgs(_self.res, curPage);
-        }
-      });
-    },
+				}
+			});
+		},
 
-    renderImgs: function(data, curPage) {
-      var _self = this,
-        wrapWidth = getStyle(this.oWrap, 'width'),
-        liWidth = Math.round(
-          (wrapWidth - this.gap * (this.column - 1)) / this.column
-        ),
-        liHeight,
-        oLi,
-        oImg,
-        minIdx;
+		renderImgs: function (data, curPage) {
+			var _self = this,
+				wrapWidth = getStyle(this.oWrap, 'width'),
+				liWidth = Math.round(
+					(wrapWidth - this.gap * (this.column - 1)) / this.column
+				),
+				liHeight,
+				oLi,
+				oImg,
+				minIdx;
 
-      data.jForEach(function(val, idx) {
+			data.jForEach(function (val, idx) {
 				liHeight = Math.round((liWidth * val.height) / val.width);
 				oLi = doc.createElement('li');
 				liStyle = oLi.style;
-        liStyle.position = 'absolute';
-        liStyle.width = liWidth + 'px';
-        liStyle.height = liHeight + 'px';
-        oImg = new Image();
-        oImg.src = val.img;
-        oImg.style.opacity = 0;
-        oImg.style.transition = 'opacity 1s';
-        oLi.appendChild(oImg);
-        _self.oWrap.appendChild(oLi);
+				liStyle.position = 'absolute';
+				liStyle.width = liWidth + 'px';
+				liStyle.height = liHeight + 'px';
+				oImg = new Image();
+				oImg.src = val.img;
+				oImg.style.opacity = 0;
+				oImg.style.transition = 'opacity 1s';
+				oLi.appendChild(oImg);
+				_self.oWrap.appendChild(oLi);
 
-        if (_self.column > idx && curPage === 0) {
-          liStyle.top = 0;
+				if (_self.column > idx && curPage === 0) {
+					liStyle.top = 0;
 					liStyle.left = (liWidth + _self.gap) * idx + 'px';
-          _self.heightArr.push(liHeight + _self.gap);
-        } else {
-          minIdx = _self.getArrIdx(_self.heightArr);
-          liStyle.left = (liWidth + _self.gap) * minIdx + 'px';
-          liStyle.top = _self.heightArr[minIdx] + 'px';
-          _self.heightArr[minIdx] += oLi.offsetHeight + _self.gap;
-        }
-        oImg.style.opacity = 1;
-      });
-      _self.oWrap.style.height = Math.max.apply(null, _self.heightArr) + 'px';
-    },
-
-    getArrIdx: function(arr) {
-      return [].indexOf.call(arr, Math.min.apply(null, arr));
+					_self.heightArr.push(liHeight + _self.gap);
+				} else {
+					minIdx = _self.getArrIdx(_self.heightArr);
+					liStyle.left = (liWidth + _self.gap) * minIdx + 'px';
+					liStyle.top = _self.heightArr[minIdx] + 'px';
+					_self.heightArr[minIdx] += oLi.offsetHeight + _self.gap;
+				}
+				oImg.style.opacity = 1;
+			});
+			_self.oWrap.style.height = Math.max.apply(null, _self.heightArr) + 'px';
 		},
-		
-		resetWaterfall: function() {
+
+		getArrIdx: function (arr) {
+			return [].indexOf.call(arr, Math.min.apply(null, arr));
+		},
+
+		resetWaterfall: function () {
 			this.oWrap.innerHTML = '';
 			this.heightArr = [];
 			this.res = [];
 			this.curPage = 0;
 			this.getImgDatas(this.curPage);
 		}
-  };
+	};
 
-  return Waterfall;
+	return Waterfall;
 })(document, window);
 
 
@@ -2397,7 +2397,7 @@ var renderPageList = (function () {
  */
 var inherit = (function () {
 	function Buffer () { }
-	return function (Origin, Target ) {
+	return function (Origin, Target) {
 		Buffer.prototype = Origin.prototype;
 		Target.prototype = new Buffer();
 		Target.prototype.constructor = Target;
@@ -2446,28 +2446,28 @@ var imgLazyLoad = (function (win, doc) {
  */
 var xhr = (function (doc, win) {
 	function _doAjax (opt) {
-		var o = win.XMLHttpRequest ?
-			new XMLHttpRequest() :
-			new ActiveXObject('Microsoft.XMLHTTP');
+		var o = win.XMLHttpRequest
+					? new XMLHttpRequest() 
+					: new ActiveXObject('Microsoft.XMLHTTP');
 
 		if (!o) {
 			throw (new Error('您的浏览器不支持异步发起HTTP请求'));
 		}
 
 		var opt = opt || {},
-			url = opt.url,
-			type = (opt.type || 'GET').toUpperCase(),
-			dataType = (opt.dataType || 'JSON').toUpperCase(),
-			async = opt.async === false ? false : true,
-			jsonp = opt.jsonp || 'callback',
-			jsonpCB = opt.jsonpCB || 'jQuery' + randomNum() + '_' + new Date().getTime(),
-			data = opt.data || null,
-			timeout = opt.timeout || 30000,
-			error = opt.error || function () { },
-			success = opt.success || function () { },
-			complete = opt.compelet || function () { },
+				url = opt.url,
+				type = (opt.type || 'GET').toUpperCase(),
+				dataType = (opt.dataType || 'JSON').toUpperCase(),
+				async = opt.async === false ? false : true,
+				jsonp = opt.jsonp || 'callback',
+				jsonpCB = opt.jsonpCB || 'jQuery' + randomNum() + '_' + new Date().getTime(),
+				data = opt.data || null,
+				timeout = opt.timeout || 30000,
+				error = opt.error || function () { },
+				success = opt.success || function () { },
+				complete = opt.compelet || function () { },
 
-			t = null;
+				t = null;
 
 		if (!url) {
 			throw (new Error('您没有填写URL'));
@@ -2479,9 +2479,9 @@ var xhr = (function (doc, win) {
 
 		if (dataType === 'JSONP') {
 			var oScript = doc.createElement('script');
-			oScript.src = url.indexOf('?') === -1 ?
-				url + '?' + jsonp + '=' + jsonpCB :
-				url + '&' + jsonp + '=' + jsonpCB;
+			oScript.src = url.indexOf('?') === -1
+									? url + '?' + jsonp + '=' + jsonpCB
+									: url + '&' + jsonp + '=' + jsonpCB;
 			doc.body.appendChild(oScript);
 			doc.body.removeChild(oScript);
 			win[jsonpCB] = function (data) {
@@ -2577,9 +2577,9 @@ var xhr = (function (doc, win) {
 var ajaxDomain = (function (doc) {
 	function createIframe (frameId, frameUrl) {
 		var frame = doc.createElement('iframe');
-		frame.src = frameUrl;
-		frame.id = frameId;
-		frame.style.display = 'none';
+				frame.src = frameUrl;
+				frame.id = frameId;
+				frame.style.display = 'none';
 
 		return frame;
 	}

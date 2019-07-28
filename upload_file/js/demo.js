@@ -1,19 +1,19 @@
 ; (function () {
 	var oOpenModBtn = $get('.J_open-mod-btn')[0],
-		oCloseModBtn = $get('.J_close-mod-btn')[0],
-		oUploadModMask = $get('.J_upload-mask')[0],
-		oUploadArea = $get('.J_upload-area')[0],
-		oProgressBar = $get('.J_progress-bar')[0],
-		oPersent = $get('.J_persent')[0],
-		oFile = $get('#J_file'),
-		oFileInfo = $get('.J_upload-file-info')[0],
-		oFileName = $get('.J_file-name')[0],
-		oFileSize = $get('.J_file-size')[0],
-		oBtnGroup = $get('.J_btn-group')[0],
-		oBtns = $get('button', oBtnGroup),
+			oCloseModBtn = $get('.J_close-mod-btn')[0],
+			oUploadModMask = $get('.J_upload-mask')[0],
+			oUploadArea = $get('.J_upload-area')[0],
+			oProgressBar = $get('.J_progress-bar')[0],
+			oPersent = $get('.J_persent')[0],
+			oFile = $get('#J_file'),
+			oFileInfo = $get('.J_upload-file-info')[0],
+			oFileName = $get('.J_file-name')[0],
+			oFileSize = $get('.J_file-size')[0],
+			oBtnGroup = $get('.J_btn-group')[0],
+			oBtns = $get('button', oBtnGroup),
 
-		maxSize = 3221225472,
-		isUploadFile = true;
+			maxSize = 3221225472,
+			isUploadFile = true;
 
 	function init () {
 		bindEvent();

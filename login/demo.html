@@ -2,103 +2,99 @@
 <html lang="en">
 
 <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-      <title>Document</title>
-      <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
-      <link rel="stylesheet" href="css/common.css" />
-      <link rel="stylesheet" href="css/demo.css" />
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<title>Document</title>
+	<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="css/common.css" />
+	<link rel="stylesheet" href="css/demo.css" />
 </head>
 
 <body>
 
-      <div class="wrap">
-            <header class="hd">
-                  <div class="J_user-status user-status">
-                        <a href="#login" class="user-lk" data-type="login">登录</a>
-                        <a href="#register" class="user-lk" data-type="register">注册</a>
-                  </div>
-            </header>
-            <div class="J_mod-mask mod-mask">
-                  <div class="mod">
-                        <div class="J_mode-hd mod-hd">
-                              <h4 class="mod-tt">
-                                    <a href="#login" class="tt-lk cur" data-type="login">登录</a> ·
-                                    <a href="#register" class="tt-lk" data-type="register">注册</a>
-                                    <i class="fa fa-times" title="关闭"></i>
-                              </h4>
-                        </div>
-                        <p class="J_error-tip error-tip"></p>
-                        <div class="J_login-wrap login-wrap">
-                              <form action="http://localhost/api_for_study/User/login" id="J_login-form" method="post">
-                                    <div class="input-wrap">
-                                          <input type="text" id="J_admin" placeholder="用户名 | 手机号" maxlength="20" />
-                                          <label class="fa fa-user-o"></label>
-                                    </div>
-                                    <div class="input-wrap">
-                                          <input type="password" id="J_password" placeholder="密码" maxlength="20" />
-                                          <label class="fa fa-unlock-alt"></label>
-                                    </div>
-                                    <div class="input-wrap">
-                                          <div class="remeber-wrap">
-                                                <input type="checkbox" id="J_remeber-btn" data-type="persisted" />
-                                                <label for="J_remeber-btn" 
-                                                          class="J_persisted" 
-                                                          data-value="http://localhost/api_for_study/User/checkAuth" 
-                                                          data-type="persisted">持续登录30天</label>
-                                          </div>
-                                    </div>
-                                    <div class="input-wrap">
-                                          <button type="button" class="J_login-btn" data-type="login">登 录</button>
-                                    </div>
-                              </form>
-                        </div>
-                        <div class="J_register-wrap register-wrap">
-                              <form action="http://localhost/api_for_study/User/register" id="J_register-form" method="post">
-                                    <div class="input-wrap">
-                                          <input type="text" id="J_handphone" placeholder="手机号" maxlength="11" />
-                                          <label class="fa fa-user-circle"></label>
-                                    </div>
-                                    <div class="input-wrap">
-                                          <input type="password" id="J_spassword" placeholder="密码" maxlength="20" />
-                                          <label class="fa fa-lock"></label>
-                                    </div>
-                                    <div class="input-wrap">
-                                          <input type="text" id="J_hdcode" placeholder="短信验证码" maxlength="6" />
-                                          <label class="fa fa-mobile"></label>
-                                          <button type="button" 
-                                                       class="J_hdcode-btn fr"
-                                                       data-type="send-hpcode" 
-                                                       value="http://localhost/api_for_study/User/sendTelCode">获取验证码</button>
-                                    </div>
-                                    <div class="input-wrap">
-                                          <input type="text" id="J_imgcode" placeholder="图片验证码" maxlength="4" />
-                                          <label class="fa fa-unlock"></label>
-                                          <img src="http://localhost/api_for_study/User/verify" class="J_imgcode-btn" data-type="imgcode" alt="图片验证码"
-                                                title="图片验证码">
-                                    </div>
-                                    <div class="input-wrap">
-                                          <button type="button" data-type="register">注 册</button>
-                                    </div>
-                              </form>
-                        </div>
-                  </div>
-            </div>
-      </div>
+	<div class="wrap">
+		<header class="hd">
+			<div class="J_user-status user-status">
+				<a href="#login" class="user-lk" data-type="login">登录</a>
+				<a href="#register" class="user-lk" data-type="register">注册</a>
+			</div>
+		</header>
+		<div class="J_mod-mask mod-mask">
+			<div class="mod">
+				<div class="J_mode-hd mod-hd">
+					<h4 class="mod-tt">
+						<a href="#login" class="tt-lk cur" data-type="login">登录</a> ·
+						<a href="#register" class="tt-lk" data-type="register">注册</a>
+						<i class="fa fa-times" title="关闭"></i>
+					</h4>
+				</div>
+				<p class="J_error-tip error-tip"></p>
+				<div class="J_login-wrap login-wrap">
+					<form action="http://localhost/api_for_study/User/login" id="J_login-form" method="post">
+						<div class="input-wrap">
+							<input type="text" id="J_admin" placeholder="用户名 | 手机号" maxlength="20" />
+							<label class="fa fa-user-o"></label>
+						</div>
+						<div class="input-wrap">
+							<input type="password" id="J_password" placeholder="密码" maxlength="20" />
+							<label class="fa fa-unlock-alt"></label>
+						</div>
+						<div class="input-wrap">
+							<div class="remeber-wrap">
+								<input type="checkbox" id="J_remeber-btn" data-type="persisted" />
+								<label for="J_remeber-btn" class="J_persisted"
+									data-value="http://localhost/api_for_study/User/checkAuth" data-type="persisted">持续登录30天</label>
+							</div>
+						</div>
+						<div class="input-wrap">
+							<button type="button" class="J_login-btn" data-type="login">登 录</button>
+						</div>
+					</form>
+				</div>
+				<div class="J_register-wrap register-wrap">
+					<form action="http://localhost/api_for_study/User/register" id="J_register-form" method="post">
+						<div class="input-wrap">
+							<input type="text" id="J_handphone" placeholder="手机号" maxlength="11" />
+							<label class="fa fa-user-circle"></label>
+						</div>
+						<div class="input-wrap">
+							<input type="password" id="J_spassword" placeholder="密码" maxlength="20" />
+							<label class="fa fa-lock"></label>
+						</div>
+						<div class="input-wrap">
+							<input type="text" id="J_hdcode" placeholder="短信验证码" maxlength="6" />
+							<label class="fa fa-mobile"></label>
+							<button type="button" class="J_hdcode-btn fr" data-type="send-hpcode"
+								value="http://localhost/api_for_study/User/sendTelCode">获取验证码</button>
+						</div>
+						<div class="input-wrap">
+							<input type="text" id="J_imgcode" placeholder="图片验证码" maxlength="4" />
+							<label class="fa fa-unlock"></label>
+							<img src="http://localhost/api_for_study/User/verify" class="J_imgcode-btn" data-type="imgcode"
+								alt="图片验证码" title="图片验证码">
+						</div>
+						<div class="input-wrap">
+							<button type="button" data-type="register">注 册</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 
-      <script type="text/html" id="J_login-in">
+	<script type="text/html" id="J_login-in">
             <a href="#login" class="lk" data-type="login">登录</a>
             <a href="#register" class="lk" data-type="register">注册</a>
       </script>
-      <script type="text/html" id="J_login-out">
+	<script type="text/html" id="J_login-out">
             <span class="nickname-wrap">「 欢迎您，<span class="nickname">{{nickname}}</span> 」</span>
   	      <a href="http://localhost/api_for_study/User/logout" class="user-lk js_logout">退出</a>
       </script>
 
-      <script src="js/utils.js"></script>
-      <script src="js/user.js"></script>
-      <script src="js/demo.js"></script>
+	<script src="js/utils.js"></script>
+	<script src="js/user.js"></script>
+	<script src="js/demo.js"></script>
 </body>
 
 </html>

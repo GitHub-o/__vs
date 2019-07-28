@@ -44,7 +44,6 @@ var initLogin = (function () {
 		t = null,
 		t1 = null;
 
-
 	function restoreLoginModStatus () {
 		oAdmin.value = oPwd.value = '';
 		oPersisted.checked = false;
@@ -98,13 +97,13 @@ var initLogin = (function () {
 						oErrorTip.className += ' success';
 						t = setTimeout(function () {
 							location.reload();
+							clearTimeout(t);
+							t = null;
 							t1 = setTimeout(function () {
 								oErrorTip.className = 'J_error-tip error-tip';
 								clearTimeout(t1);
 								t1 = null;
 							}, 300);
-							clearTimeout(t);
-							t = null;
 						}, 500);
 						break;
 				}
@@ -121,25 +120,26 @@ var initLogin = (function () {
 
 var initRegister = (function (Login) {
 	var oErrorTip = $get('.J_error-tip')[0],
-		registerUrl = $get('#J_register-form').action,
-		oHandphone = $get('#J_handphone'),
-		oSPwd = $get('#J_spassword'),
-		oHpcode = $get('#J_hdcode'),
-		oImgcode = $get('#J_imgcode'),
-		oHpcodeBtn = $get('.J_hdcode-btn')[0],
-		oImgcodeBtn = $get('.J_imgcode-btn')[0],
-		sendHpcodeUrl = oHpcodeBtn.value,
+			registerUrl = $get('#J_register-form').action,
+			oHandphone = $get('#J_handphone'),
+			oSPwd = $get('#J_spassword'),
+			oHpcode = $get('#J_hdcode'),
+			oImgcode = $get('#J_imgcode'),
+			oHpcodeBtn = $get('.J_hdcode-btn')[0],
+			oImgcodeBtn = $get('.J_imgcode-btn')[0],
+			sendHpcodeUrl = oHpcodeBtn.value,
 
-		isSend = true,
-		s = 60,
-		os = 60,
-		t = null,
-		timer = null;
+			isSend = true,
+			s = 60,
+			os = 60,
+			t = null,
+			timer = null,
+			t1 = null;
 
 	function regBdClick (e) {
 		var e = e || window.event,
-			tar = e.target || e.srcElement,
-			type = tar.getAttribute('data-type');
+				tar = e.target || e.srcElement,
+				type = tar.getAttribute('data-type');
 
 		type && multiOperation(type);
 	}
@@ -258,10 +258,16 @@ var initRegister = (function (Login) {
 						break;
 					case '200':
 						errorInfo = '注册成功';
+						oErrorTip.className += ' success';
 						t = setTimeout(function () {
 							location.reload();
 							clearTimeout(t);
 							t = null;
+							t1 = setTimeout(function () {
+								oErrorTip.className = 'J_error-tip error-tip';
+								clearTimeout(t1);
+								t1 = null;
+							}, 300);
 						}, 500);
 						return;
 						break;
@@ -313,4 +319,4 @@ var initRegister = (function (Login) {
 		restoreModStatus: restoreModStatus
 	}
 
-}(initLogin));
+}(initLogin))

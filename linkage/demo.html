@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
 </head>
+
 <body>
   <div class="wrap"></div>
   <script src="./js/utils.js"></script>
   <script src="./js/demo.js"></script>
   <script>
-  var c = new Linkage('.wrap', {
+    var c = new Linkage('.wrap', {
       selectWidth: '90px',
-			callback(res) {
-				console.log(res);
-			}
+      callback(res) {
+        console.log(res);
+      }
     }).init();
   </script>
 </body>
+
 </html>

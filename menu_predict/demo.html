@@ -1,86 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-      <title>Document</title>
-      <link rel="stylesheet" href="css/common.css" />
-      <link rel="stylesheet" href="css/demo.css" />
-</head>
-<body>
-      
-      <div class="J_wrap wrap">
-            <div class="main-menu">
-                  <ul class="J_main-menu-list main-menu-list"></ul>
-            </div>
-            <div class="submenu">
-                  <ul class="J_submenu-list submenu-list">
-                        <li class="submenu-item">1abc</li>
-                        <li class="submenu-item">2abc</li>
-                        <li class="submenu-item">3abc</li>
-                        <li class="submenu-item">4abc</li>
-                        <li class="submenu-item">5abc</li>
-                        <li class="submenu-item">6abc</li>
-                        <li class="submenu-item">7abc</li>
-                        <li class="submenu-item">8abc</li>
-                        <li class="submenu-item">9abc</li>
-                        <li class="submenu-item">10abc</li>
-                        <li class="submenu-item">11abc</li>
-                        <li class="submenu-item">12abc</li>
-                        <li class="submenu-item">13abc</li>
-                        <li class="submenu-item">14abc</li>
-                        <li class="submenu-item">15abc</li>
-                        <li class="submenu-item">16abc</li>
-                        <li class="submenu-item">17abc</li>
-                        <li class="submenu-item">18abc</li>
-                  </ul>
-            </div>
-      </div>
-      <div id="J_main-menu-data" style="display: none">
-            [
-                  {"menu_text_1": "家用电器", "menu_text_2": "", "menu_text_3": "", "menu_text_4": "", "text_num": "1"},
-                  {"menu_text_1": "手机", "menu_text_2": "运营商", "menu_text_3": "数码", "menu_text_4": "", "text_num": "5"},
-                  {"menu_text_1": "电脑", "menu_text_2": "办公", "menu_text_3": "", "menu_text_4": "", "text_num": "3"},
-                  {"menu_text_1": "家具", "menu_text_2": "家居", "menu_text_3": "家装", "menu_text_4": "厨具", "text_num": "7"},
-                  {"menu_text_1": "男装", "menu_text_2": "女装", "menu_text_3": "童装", "menu_text_4": "内衣", "text_num": "7"},
-                  {"menu_text_1": "美妆", "menu_text_2": "个人清洁", "menu_text_3": "宠物", "menu_text_4": "", "text_num": "5"},
-                  {"menu_text_1": "女鞋", "menu_text_2": "箱包", "menu_text_3": "钟表", "menu_text_4": "珠宝", "text_num": "5"},
-                  {"menu_text_1": "男鞋", "menu_text_2": "运动", "menu_text_3": "户外", "menu_text_4": "", "text_num": "5"},
-                  {"menu_text_1": "房产", "menu_text_2": "汽车", "menu_text_3": "汽车用品", "menu_text_4": "", "text_num": "5"},
-                  {"menu_text_1": "母婴", "menu_text_2": "玩具乐器", "menu_text_3": "", "menu_text_4": "", "text_num": "3"},
-                  {"menu_text_1": "食品", "menu_text_2": "酒类", "menu_text_3": "生鲜", "menu_text_4": "特产", "text_num": "7"},
-                  {"menu_text_1": "艺术", "menu_text_2": "礼品鲜花", "menu_text_3": "农资绿植", "menu_text_4": "", "text_num": "5"},
-                  {"menu_text_1": "医药保健", "menu_text_2": "计生情趣", "menu_text_3": "", "menu_text_4": "", "text_num": "3"},
-                  {"menu_text_1": "图书", "menu_text_2": "文娱", "menu_text_3": "电子书", "menu_text_4": "", "text_num": "5"},
-                  {"menu_text_1": "机票", "menu_text_2": "酒店", "menu_text_3": "旅游", "menu_text_4": "生活", "text_num": "7"},
-                  {"menu_text_1": "理财", "menu_text_2": "众筹", "menu_text_3": "白条", "menu_text_4": "保险", "text_num": "7"},
-                  {"menu_text_1": "安装", "menu_text_2": "维修", "menu_text_3": "清洗", "menu_text_4": "二手", "text_num": "7"},
-                  {"menu_text_1": "工业品", "menu_text_2": "", "menu_text_3": "", "menu_text_4": "", "text_num": "1"}
-            ]
-      </div>
 
-      <script type="text/html" id="J_main-menu-tpl">
-            <li class="menu-item"">
-                  <a href="javascript:;" class="menu-item-lk {{show}}">{{menu_text_1}}</a>
-                  <span class="menu-line {{show}}">/</span>
-                  <a href="javascript:;" class="menu-item-lk {{show}}">{{menu_text_2}}</a>
-                  <span class="menu-line {{show}}">/</span>
-                  <a href="javascript:;" class="menu-item-lk {{show}}">{{menu_text_3}}</a>
-                  <span class="menu-line {{show}}">/</span>
-                  <a href="javascript:;" class="menu-item-lk {{show}}">{{menu_text_4}}</a>
-            </li>
-      </script>
-      <script src="js/utils.js"></script>
-      <script src="js/demo.js"></script>
-      <script>
-            var predictedMenu = new PredictedMenu({
-                  wrap: '.J_wrap',
-                  mainMenu: '.J_main-menu-list',
-                  mainItem: '.menu-item',
-                  subMenu: '.J_submenu-list',
-                  subItem: '.submenu-item'
-            }).init();
-      </script>
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<title>Document</title>
+	<link rel="stylesheet" href="css/common.css" />
+	<link rel="stylesheet" href="css/demo.css" />
+</head>
+
+<body>
+
+	<div class="J_wrap wrap">
+		<div class="main-menu">
+			<ul class="J_main-menu-list main-menu-list"></ul>
+		</div>
+		<div class="submenu">
+			<ul class="J_submenu-list submenu-list">
+				<li class="submenu-item">1abc</li>
+				<li class="submenu-item">2abc</li>
+				<li class="submenu-item">3abc</li>
+				<li class="submenu-item">4abc</li>
+				<li class="submenu-item">5abc</li>
+				<li class="submenu-item">6abc</li>
+				<li class="submenu-item">7abc</li>
+				<li class="submenu-item">8abc</li>
+				<li class="submenu-item">9abc</li>
+				<li class="submenu-item">10abc</li>
+				<li class="submenu-item">11abc</li>
+				<li class="submenu-item">12abc</li>
+				<li class="submenu-item">13abc</li>
+				<li class="submenu-item">14abc</li>
+				<li class="submenu-item">15abc</li>
+				<li class="submenu-item">16abc</li>
+				<li class="submenu-item">17abc</li>
+				<li class="submenu-item">18abc</li>
+			</ul>
+		</div>
+	</div>
+	<div id="J_main-menu-data" style="display: none">
+		[
+		{"menu_text_1": "家用电器", "menu_text_2": "", "menu_text_3": "", "menu_text_4": "", "text_num": "1"},
+		{"menu_text_1": "手机", "menu_text_2": "运营商", "menu_text_3": "数码", "menu_text_4": "", "text_num": "5"},
+		{"menu_text_1": "电脑", "menu_text_2": "办公", "menu_text_3": "", "menu_text_4": "", "text_num": "3"},
+		{"menu_text_1": "家具", "menu_text_2": "家居", "menu_text_3": "家装", "menu_text_4": "厨具", "text_num": "7"},
+		{"menu_text_1": "男装", "menu_text_2": "女装", "menu_text_3": "童装", "menu_text_4": "内衣", "text_num": "7"},
+		{"menu_text_1": "美妆", "menu_text_2": "个人清洁", "menu_text_3": "宠物", "menu_text_4": "", "text_num": "5"},
+		{"menu_text_1": "女鞋", "menu_text_2": "箱包", "menu_text_3": "钟表", "menu_text_4": "珠宝", "text_num": "5"},
+		{"menu_text_1": "男鞋", "menu_text_2": "运动", "menu_text_3": "户外", "menu_text_4": "", "text_num": "5"},
+		{"menu_text_1": "房产", "menu_text_2": "汽车", "menu_text_3": "汽车用品", "menu_text_4": "", "text_num": "5"},
+		{"menu_text_1": "母婴", "menu_text_2": "玩具乐器", "menu_text_3": "", "menu_text_4": "", "text_num": "3"},
+		{"menu_text_1": "食品", "menu_text_2": "酒类", "menu_text_3": "生鲜", "menu_text_4": "特产", "text_num": "7"},
+		{"menu_text_1": "艺术", "menu_text_2": "礼品鲜花", "menu_text_3": "农资绿植", "menu_text_4": "", "text_num": "5"},
+		{"menu_text_1": "医药保健", "menu_text_2": "计生情趣", "menu_text_3": "", "menu_text_4": "", "text_num": "3"},
+		{"menu_text_1": "图书", "menu_text_2": "文娱", "menu_text_3": "电子书", "menu_text_4": "", "text_num": "5"},
+		{"menu_text_1": "机票", "menu_text_2": "酒店", "menu_text_3": "旅游", "menu_text_4": "生活", "text_num": "7"},
+		{"menu_text_1": "理财", "menu_text_2": "众筹", "menu_text_3": "白条", "menu_text_4": "保险", "text_num": "7"},
+		{"menu_text_1": "安装", "menu_text_2": "维修", "menu_text_3": "清洗", "menu_text_4": "二手", "text_num": "7"},
+		{"menu_text_1": "工业品", "menu_text_2": "", "menu_text_3": "", "menu_text_4": "", "text_num": "1"}
+		]
+	</div>
+
+	<script type="text/html" id="J_main-menu-tpl">
+		<li class="menu-item"">
+			<a href="javascript:;" class="menu-item-lk {{show}}">{{menu_text_1}}</a>
+			<span class="menu-line {{show}}">/</span>
+			<a href="javascript:;" class="menu-item-lk {{show}}">{{menu_text_2}}</a>
+			<span class="menu-line {{show}}">/</span>
+			<a href="javascript:;" class="menu-item-lk {{show}}">{{menu_text_3}}</a>
+			<span class="menu-line {{show}}">/</span>
+			<a href="javascript:;" class="menu-item-lk {{show}}">{{menu_text_4}}</a>
+		</li>
+	</script>
+	<script src="js/utils.js"></script>
+	<script src="js/demo.js"></script>
+	<script>
+		var predictedMenu = new PredictedMenu({
+			wrap: '.J_wrap',
+			mainMenu: '.J_main-menu-list',
+			mainItem: '.menu-item',
+			subMenu: '.J_submenu-list',
+			subItem: '.submenu-item'
+		}).init();
+	</script>
 </body>
+
 </html>
