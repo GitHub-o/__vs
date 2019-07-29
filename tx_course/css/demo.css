@@ -1,201 +1,201 @@
 body {
-      background: linear-gradient(#ffffff 50%, rgba(255, 255, 255, 0) 0) 0 0,
-            radial-gradient(circle closest-side, #FFFFFF 53%, rgba(255, 255, 255, 0) 0) 0 0,
-            radial-gradient(circle closest-side, #FFFFFF 50%, rgba(255, 255, 255, 0) 0) 55px 0 rgba(68, 135, 187, 0.9);
-      background-size: 110px 200px;
-      background-repeat: repeat-x;
+	background: linear-gradient(#ffffff 50%, rgba(255, 255, 255, 0) 0) 0 0,
+		radial-gradient(circle closest-side, #FFFFFF 53%, rgba(255, 255, 255, 0) 0) 0 0,
+		radial-gradient(circle closest-side, #FFFFFF 50%, rgba(255, 255, 255, 0) 0) 55px 0 rgba(68, 135, 187, 0.9);
+	background-size: 110px 200px;
+	background-repeat: repeat-x;
 }
 
 .wrap {
-      width: 850px;
-      margin: 40px auto;
+	width: 850px;
+	margin: 40px auto;
 }
 
 .wrap .tb {
-      width: 100%;
-      background-color: #fff;
-      text-align: center;
+	width: 100%;
+	background-color: #fff;
+	text-align: center;
 }
 
 .wrap .tb .tb-hd {
-      height: 100px;
-      line-height: 100px;
-      font-size: 30px;
-      font-weight: bold;
+	height: 100px;
+	line-height: 100px;
+	font-size: 30px;
+	font-weight: bold;
 }
 
 .wrap .tb thead,
 .wrap .tb tbody,
 .wrap .tb tfoot {
-      border: 1px solid #ccc;
-      border-bottom: none;
+	border: 1px solid #ccc;
+	border-bottom: none;
 }
 
-.wrap .tb td{
-      height: 40px;
-      border-bottom: 1px solid #eef;
-      font-size: 16px;
+.wrap .tb td {
+	height: 40px;
+	border-bottom: 1px solid #eef;
+	font-size: 16px;
 }
 
 .wrap .tb input:focus {
-      border-color: rgba(51, 136, 255, 0.5);
-      box-shadow: 0 0 5px rgba(51, 136, 255, 0.3);
+	border-color: rgba(51, 136, 255, 0.5);
+	box-shadow: 0 0 5px rgba(51, 136, 255, 0.3);
 }
 
 .wrap .tb .nav-list {
-      padding-left: 10px;
+	padding-left: 10px;
 }
 
 .wrap .tb .nav-list .nav-item {
-      float: left;
-      height: 30px;
-      margin: 8px 5px;
+	float: left;
+	height: 30px;
+	margin: 8px 5px;
 }
 
 .wrap .tb .nav-list .nav-lk {
-      display: block;
-      height: 30px;
-      padding: 0 12px;
-      line-height: 30px;
-      background-color: #bbb;
-      color: #eee;
-      text-align: center;
-      text-decoration: none;
+	display: block;
+	height: 30px;
+	padding: 0 12px;
+	line-height: 30px;
+	background-color: #bbb;
+	color: #eee;
+	text-align: center;
+	text-decoration: none;
 }
 
 .wrap .tb .nav-list .nav-item.cur .nav-lk {
-      background-color: #333;
-      color: #fff;
+	background-color: #333;
+	color: #fff;
 }
 
 .wrap .tb .search-row {
-      display: none;
+	display: none;
 }
 
 .wrap .tb .search-row.show {
-      display: table-row;
+	display: table-row;
 }
 
 .wrap .tb .search-wrap {
-      position: relative;
-      height: 40px;
-      text-align: left;
+	position: relative;
+	height: 40px;
+	text-align: left;
 }
 
 .wrap .tb .search-wrap .fa {
-      position: absolute;
-      top: 10px;
-      left: 19px;
-      width: 20px;
-      height: 20px;
-      text-align: center;
-      line-height: 20px;
-      color: #555;
+	position: absolute;
+	top: 10px;
+	left: 19px;
+	width: 20px;
+	height: 20px;
+	text-align: center;
+	line-height: 20px;
+	color: #555;
 }
 
 .wrap .tb .search-wrap .search-input {
-      width: 200px;
-      height: 25px;
-      margin: 7px 15px;
-      border-style: inset;
-      text-indent: 25px;
+	width: 200px;
+	height: 25px;
+	margin: 7px 15px;
+	border-style: inset;
+	text-indent: 25px;
 }
 
 .wrap .tb .course-tt {
-      font-weight: bold;
+	font-weight: bold;
 }
 
 .wrap .tb .no-data-row {
-      display: none;
+	display: none;
 }
 
 .wrap .tb .no-data-row.show {
-      display: table-row;
+	display: table-row;
 }
 
 .wrap .tb .no-data-tip {
-      height: 40px;
-      text-align: center;
-      line-height: 40px;
-      color: #666;
+	height: 40px;
+	text-align: center;
+	line-height: 40px;
+	color: #666;
 }
 
 .wrap .tb .course-name-wrap {
-      position: relative;
+	position: relative;
 }
 
 .wrap .tb .course-name.hide {
-      display: none;
+	display: none;
 }
 
 .wrap .tb .course-name-wrap .course-name-input {
-      display: none;
-      position: absolute;
-      width: 100%;
-      height: 23px;
-      top: 50%;
-      left: 50%;
-      font-size: 16px;
-      transform: translate(-50%, -50%);
-      text-indent: 10px;
+	display: none;
+	position: absolute;
+	width: 100%;
+	height: 23px;
+	top: 50%;
+	left: 50%;
+	font-size: 16px;
+	transform: translate(-50%, -50%);
+	text-indent: 10px;
 }
 
 .wrap .tb .course-name-wrap .course-name-input.show {
-      display: inline-block;
+	display: inline-block;
 }
 
 .wrap .tb .btn {
-      padding: 3px 15px;
-      border: none;
-      cursor: pointer;
-      color: #eee;
+	padding: 3px 15px;
+	border: none;
+	cursor: pointer;
+	color: #eee;
 }
 
 .wrap .tb .btn:hover {
-      color: #fff;
+	color: #fff;
 }
 
 .wrap .tb .btn.remove {
-      background-color: #d9534f;
-      border-color: #d43f3a;
+	background-color: #d9534f;
+	border-color: #d43f3a;
 }
 
 .wrap .tb .btn.regain {
-      background-color: #f0ad4e;
-      border-color: #eea236;
+	background-color: #f0ad4e;
+	border-color: #eea236;
 }
 
 .wrap .tb .page-row {
-      display: none;
+	display: none;
 }
 
 .wrap .tb .page-row.show {
-      display: table-row;
+	display: table-row;
 }
 
 .wrap .tb .page-list {
-      height: 40px;
-      padding-left: 10px;
+	height: 40px;
+	padding-left: 10px;
 }
 
 .wrap .tb .page-list .page-item {
-      float: left;
-      width: 25px;
-      height: 25px;
-      margin: 7px 10px;
+	float: left;
+	width: 25px;
+	height: 25px;
+	margin: 7px 10px;
 }
 
 .wrap .tb .page-list .page-lk {
-      display: block;
-      height: 100%;
-      text-align: center;
-      text-decoration: none;
-      line-height: 25px;
-      background-color: #ccc;
-      color: #999;
+	display: block;
+	height: 100%;
+	text-align: center;
+	text-decoration: none;
+	line-height: 25px;
+	background-color: #ccc;
+	color: #999;
 }
 
 .wrap .tb .page-list .page-item.cur .page-lk {
-      background-color: #444;
-      color: #fff;
+	background-color: #444;
+	color: #fff;
 }

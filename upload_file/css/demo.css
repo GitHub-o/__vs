@@ -1,220 +1,220 @@
 body {
-      background: linear-gradient(#ffffff 50%, rgba(255, 255, 255, 0) 0) 0 0,
-                        radial-gradient(circle closest-side, #FFFFFF 53%, rgba(255, 255, 255, 0) 0) 0 0,
-                        radial-gradient(circle closest-side, #FFFFFF 50%, rgba(255, 255, 255, 0) 0) 55px 0 #48B;
-      background-size: 110px 200px;
-      background-repeat: repeat-x;
+	background: linear-gradient(#ffffff 50%, rgba(255, 255, 255, 0) 0) 0 0,
+		radial-gradient(circle closest-side, #FFFFFF 53%, rgba(255, 255, 255, 0) 0) 0 0,
+		radial-gradient(circle closest-side, #FFFFFF 50%, rgba(255, 255, 255, 0) 0) 55px 0 #48B;
+	background-size: 110px 200px;
+	background-repeat: repeat-x;
 }
 
 .wrap {
-      text-align: center;
+	text-align: center;
 }
 
 .open-mod-btn {
-      height: 35px;
-      margin-top: 150px;
-      padding: 3px 13px;
-      font-size: 16px;
-      cursor: pointer;
+	height: 35px;
+	margin-top: 150px;
+	padding: 3px 13px;
+	font-size: 16px;
+	cursor: pointer;
 }
 
 .upload-mask {
-      display: none;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, .4);
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, .4);
 }
 
 .upload-mask.show {
-      display: block;
+	display: block;
 }
 
 .upload-mask .upload-mod {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 490px;
-      background-color: #fff;
-      border-radius: 5px;
-      transform: translate(-50%, -50%);
-      overflow: hidden;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 490px;
+	background-color: #fff;
+	border-radius: 5px;
+	transform: translate(-50%, -50%);
+	overflow: hidden;
 }
 
 .upload-mask .upload-mod .upload-hd {
-      position: relative;
-      height: 30px;
-      background-color: #38f;
+	position: relative;
+	height: 30px;
+	background-color: #38f;
 }
 
 .upload-mask .upload-mod .upload-hd .fa {
-      position: absolute;
-      top: 5px;
-      right: 8px;
-      width: 20px;
-      height: 20px;
-      text-align: center;
-      line-height: 20px;
-      font-size: 20px;
-      color: #eee;
-      cursor: pointer;
-      transition: transform .5s;
+	position: absolute;
+	top: 5px;
+	right: 8px;
+	width: 20px;
+	height: 20px;
+	text-align: center;
+	line-height: 20px;
+	font-size: 20px;
+	color: #eee;
+	cursor: pointer;
+	transition: transform .5s;
 }
 
 .upload-mask .upload-mod .upload-hd .fa:hover {
-      color: #fff;
-      transform: rotate(90deg);
+	color: #fff;
+	transform: rotate(90deg);
 }
 
 .upload-mask .upload-mod .upload-ctn {
-      height: 188px;
-      margin-top: 18px;
+	height: 188px;
+	margin-top: 18px;
 }
 
 .upload-mask .upload-mod .upload-area {
-      position: relative;
-      width: 160px;
-      height: 120px;
-      margin: 0 auto;
-      background-image: url('../img/bg.png');
-      background-size: 480px 260px;
-      background-repeat: no-repeat;
-      overflow: hidden;
+	position: relative;
+	width: 160px;
+	height: 120px;
+	margin: 0 auto;
+	background-image: url('../img/bg.png');
+	background-size: 480px 260px;
+	background-repeat: no-repeat;
+	overflow: hidden;
 }
 
 .upload-mask .upload-mod .upload-area.btn {
-      background-position: 0 0;
+	background-position: 0 0;
 }
 
 .upload-mask .upload-mod .upload-area.uploading {
-      background-position: -160px 0;
+	background-position: -160px 0;
 }
 
 .upload-mask .upload-mod .upload-info {
-      position: relative;
-      z-index: 4;
-      width: 140px;
-      height: 64px;
-      margin: 28px auto;
-      line-height: 64px;
-      font-size: 18px;
+	position: relative;
+	z-index: 4;
+	width: 140px;
+	height: 64px;
+	margin: 28px auto;
+	line-height: 64px;
+	font-size: 18px;
 }
 
 .upload-mask .upload-area .persent {
-      color: #38f;
+	color: #38f;
 }
 
 .upload-mask .upload-area .persent,
 .upload-mask .upload-area .upload-success,
 .upload-mask .upload-area.uploading.finished .persent {
-      display: none;
+	display: none;
 }
 
 .upload-mask .upload-area.btn .upload-input,
 .upload-mask .upload-area.uploading .persent,
 .upload-mask .upload-area.uploading.finished .upload-success {
-      display: block;
+	display: block;
 }
 
 .upload-mask .upload-area .progress-bar {
-      position: absolute;
-      z-index: 3;
-      top: 0;
-      left: 0;
-      width: 0;
-      height: 100%;
-      background-image: url('../img/bg.png');
-      background-repeat: no-repeat;
-      background-position: -320px 0;
-      background-size: 480px 260px;
+	position: absolute;
+	z-index: 3;
+	top: 0;
+	left: 0;
+	width: 0;
+	height: 100%;
+	background-image: url('../img/bg.png');
+	background-repeat: no-repeat;
+	background-position: -320px 0;
+	background-size: 480px 260px;
 }
 
 .upload-mask .upload-area .upload-input {
-      display: none;
-      position: absolute;
-      z-index: 5;
-      top: 50%;
-      left: 50%;
-      width: 100%;
-      height: 100%;
-      transform: translate(-50%, -50%);
+	display: none;
+	position: absolute;
+	z-index: 5;
+	top: 50%;
+	left: 50%;
+	width: 100%;
+	height: 100%;
+	transform: translate(-50%, -50%);
 }
 
 .upload-mask .upload-area .upload-input input {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      visibility: hidden;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	visibility: hidden;
 }
 
 .upload-mask .upload-area .upload-input .label-input {
-      display: block;
-      height: 100%;
-      cursor: pointer;
+	display: block;
+	height: 100%;
+	cursor: pointer;
 }
 
 .upload-mask .upload-mod .upload-info .fa {
-      font-size: 22px;
-      color: rgb(31, 212, 14);
+	font-size: 22px;
+	color: rgb(31, 212, 14);
 }
 
 .upload-mask .upload-mod .upload-file-info {
-      display: none;
-      width: 160px;
-      margin: 15px auto 0;
-      text-align: left;
+	display: none;
+	width: 160px;
+	margin: 15px auto 0;
+	text-align: left;
 }
 
 .upload-mask .upload-mod .upload-file-info.show {
-      display: block;
+	display: block;
 }
 
 .upload-mask .upload-mod .file-name {
-      height: 22px;
-      margin-bottom: 5px;
-      line-height: 22px;
-      text-overflow: ellipsis;
-      font-size: 16px;
-      white-space: nowrap;
-      overflow: hidden;
+	height: 22px;
+	margin-bottom: 5px;
+	line-height: 22px;
+	text-overflow: ellipsis;
+	font-size: 16px;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
 .upload-mask .upload-mod .file-size {
-      font-size: 13px;
+	font-size: 13px;
 }
 
 .upload-mask .upload-mod .file-size {
-      float: left;
-      padding: 0 2px;
-      background-color: #ccc;
+	float: left;
+	padding: 0 2px;
+	background-color: #ccc;
 }
 
 .upload-mask .upload-mod .btn-group {
-      display: none;
-      float: right;
-      margin: 10px 30px 15px 0;
+	display: none;
+	float: right;
+	margin: 10px 30px 15px 0;
 }
 
 .upload-mask .upload-mod .btn-group.show {
-      display: block;
+	display: block;
 }
 
 .upload-mask .upload-mod .btn-group button {
-      padding: 6px 20px;
-      margin-left: 15px;
-      cursor: pointer;
+	padding: 6px 20px;
+	margin-left: 15px;
+	cursor: pointer;
 }
 
 .upload-mask .upload-mod .btn-group button:first-child {
-      padding: 7px 20px;
-      background-color: #38f;
-      border: none;
-      color: #eee;
+	padding: 7px 20px;
+	background-color: #38f;
+	border: none;
+	color: #eee;
 }
 
 .upload-mask .upload-mod .btn-group button:first-child:hover {
-      color: #fff;
+	color: #fff;
 }
