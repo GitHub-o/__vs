@@ -16,7 +16,7 @@
       this._initDropdown(this.data, 'province');
       this.bindEvent();
     },
-    
+
     bindEvent: function() {
       addEvent(this.oSelectWrap, 'click', this.selectClick.bind(this));
       addEvent(doc, 'click', this.hideDropdown.bind(this), true);
@@ -77,8 +77,8 @@
 
     selectClick: function(e) {
       var e = e || window.event,
-            tar = e.target || e.srcElement,
-            className = tar.className;
+          tar = e.target || e.srcElement,
+          className = tar.className;
 
       if (className === 'lk') {
         var field = tar.getAttribute('data-field');
@@ -168,10 +168,10 @@
 
     _initDropdown: function(data, field) {
       var wrap,
-            tpl,
-            city,
-            area
-            _self = this;
+          tpl,
+          city,
+          area
+          _self = this;
       switch (field) {
         case 'province':
           wrap = this.oDdProvince;
