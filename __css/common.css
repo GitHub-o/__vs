@@ -1,3 +1,11 @@
+html {
+	overflow-y: scroll;
+	--input-checked-border-color: #50c0f8;
+	--font-size: 14px;
+	--color: #424242;
+	--border-color: #ccc;
+}
+
 body,
 div,
 dl,
@@ -30,8 +38,8 @@ td {
 
 body {
 	background: #fff;
-	color: #424242;
-	font-size: 14px;
+	color: var(--color);
+	font-size: var(--font-size);
 	font-family: '微软雅黑', Verdana, Arial, Helvetica, sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -40,7 +48,7 @@ body {
 td,
 th,
 caption {
-	font-size: 14px;
+	font-size: var(--font-size);
 }
 
 h1,
@@ -67,7 +75,7 @@ var {
 }
 
 a {
-	color: #424242;
+	color: var(--color);
 	text-decoration: none;
 	cursor: pointer;
 }
@@ -88,18 +96,176 @@ input,
 textarea,
 select,
 button {
-	border: 1px solid #ccc;
-	font: 14px '微软雅黑', Verdana, Helvetica, Arial, sans-serif;
-	color: #424242;
+	border: 1px solid var(--border-color);
+	font: var(--font-size) '微软雅黑', Verdana, Helvetica, Arial, sans-serif;
+	color: var(--color);
 	outline: none;
+}
+
+input[type="range"] {
+	appearance: none;
+	-ms-appearance: none;
+	-webkit-appearance: none;
+	height: 4px;
+	border: none;
+	background-color: #eee;
+}
+
+input[type='range']::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	border: 3px solid var(--input-checked-border-color);
+	height: 15px;
+	width: 15px;
+	border-radius: 50%;
+	background: #fff;
+	box-shadow: 0 0 2px;
+	-webkit-box-shadow: 0 0 2px;
+	cursor: pointer;
+}
+
+input[type='range']::-moz-range-thumb {
+	border: 3px solid var(--input-checked-border-color);
+	height: 15px;
+	width: 15px;
+	border-radius: 50%;
+	background: #fff;
+	box-shadow: 0 0 2px;
+	-moz-box-shadow: 0 0 2px;
+	cursor: pointer;
+}
+
+input[type='range']::-ms-thumb {
+	border: 3px solid var(--input-checked-border-color);
+	height: 15px;
+	width: 15px;
+	border-radius: 50%;
+	background: #fff;
+	box-shadow: 0 0 2px;
+	-ms-box-shadow: 0 0 2px;
+	cursor: pointer;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+	display: none;
+}
+
+input[type="radio"]+label,
+input[type="checkbox"]+label {
+	position: relative;
+	display: inline-block;
+	cursor: pointer;
+	width: 15px;
+	height: 15px;
+	border: 1px solid #aaa;
+	box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	transition: border .3s, box-shadow .3s;
+	-o-transition: border .3s, box-shadow .3s;
+	-ms-transition: border .3s, box-shadow .3s;
+	-moz-transition: border .3s, box-shadow .3s;
+	-webkit-transition: border .3s, box-shadow .3s;
+}
+
+input[type="radio"]+label {
+	border-radius: 50%;
+}
+
+input[type="radio"]:checked+label {
+	border: 4px solid var(--input-checked-border-color);
+	box-shadow: 0 0 2px;
+}
+
+input[type="checkbox"]+label::before,
+input[type="checkbox"]+label::after {
+	content: '';
+	position: absolute;
+	bottom: 1.5px;
+	transition: background-color .3s;
+	-ms-transition: background-color .3s;
+	-moz-transition: background-color .3s;
+	-webkit-transition: background-color .3s;
+	-o-transition: background-color .3s;
+}
+
+input[type="checkbox"]+label::before {
+	left: 3.5px;
+	width: 2px;
+	height: 5px;
+	transform: rotate(-55deg);
+	-o-transform: rotate(-55deg);
+	-ms-transform: rotate(-55deg);
+	-moz-transform: rotate(-55deg);
+	-webkit-transform: rotate(-55deg);
+}
+
+input[type="checkbox"]+label:after {
+	right: 3.5px;
+	width: 2px;
+	height: 10px;
+	transform: rotate(20deg);
+	-o-transform: rotate(20deg);
+	-ms-transform: rotate(20deg);
+	-moz-transform: rotate(20deg);
+	-webkit-transform: rotate(20deg);
+}
+
+input[type="checkbox"]:checked+label {
+	box-shadow: 0 0 2px var(--input-checked-border-color);
+	border-color: var(--input-checked-border-color);
+}
+
+input[type="checkbox"]:checked+label::before,
+input[type="checkbox"]:checked+label::after {
+	background-color: var(--input-checked-border-color);
+}
+
+.my-select {
+	position: relative;
+	display: inline-block;
+	width: 80px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.my-select:hover {
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+.my-select:before {
+	content: "";
+	position: absolute;
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 12px 7px 0 7px;
+	border-color: #777 transparent transparent transparent;
+	top: 50%;
+	right: 10px;
+	transform: translateY(-50%);
+	cursor: pointer;
+	z-index: -2;
+}
+
+.my-select select {
+	cursor: pointer;
+	padding: 10px;
+	width: 100%;
+	height: 100%;
+	border: none;
+	background: transparent;
+	background-image: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	-ms-appearance: none;
+	font-size: 16px;
 }
 
 table {
 	border-collapse: collapse;
-}
-
-html {
-	overflow-y: scroll;
 }
 
 div {

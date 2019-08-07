@@ -1,22 +1,22 @@
 ; (function () {
 	var oNavList = $get('.J_nav-list')[0],
-		oNavItems = $get('.nav-item', oNavList),
-		oSearchRow = $get('.J_search-row')[0],
-		oSearchInput = $get('#J_search-input'),
-		oNoDataRow = $get('.J_no-data-row')[0],
-		oCourseList = $get('.J_course-list')[0],
-		oPageRow = $get('.J_page-row')[0],
-		oPageList = $get('.J_page-list')[0],
-		oAllCourseInputs = $get('.J_course-name-input'),
-		oAllCourseSpans = $get('.J_course-name'),
+			oNavItems = $get('.nav-item', oNavList),
+			oSearchRow = $get('.J_search-row')[0],
+			oSearchInput = $get('#J_search-input'),
+			oNoDataRow = $get('.J_no-data-row')[0],
+			oCourseList = $get('.J_course-list')[0],
+			oPageRow = $get('.J_page-row')[0],
+			oPageList = $get('.J_page-list')[0],
+			oAllCourseInputs = $get('.J_course-name-input'),
+			oAllCourseSpans = $get('.J_course-name'),
 
-		courseListTpl = $get('#J_course-list-tpl').innerHTML,
-		pageListTpl = $get('#J_page-list-tpl').innerHTML,
+			courseListTpl = $get('#J_course-list-tpl').innerHTML,
+			pageListTpl = $get('#J_page-list-tpl').innerHTML,
 
-		field = 'manage',
-		pageNum = 0,
-		id = 0,
-		idx = -1;
+			field = 'manage',
+			pageNum = 0,
+			id = 0,
+			idx = -1;
 
 	var API = {
 		getCourseList: 'http://localhost/api_for_study/List/getCourseListForManage',
@@ -39,7 +39,7 @@
 
 	function searchCourse () {
 		var kw = trimSpace(this.value),
-			kwLen = kw.length;
+				kwLen = kw.length;
 
 		if (kwLen > 0) {
 			getSearchCourse(kw);
@@ -50,8 +50,8 @@
 
 	function courseListClick (e) {
 		var e = e || window.event,
-			tar = e.target || e.srcElement,
-			type = tar.getAttribute('data-type');
+				tar = e.target || e.srcElement,
+				type = tar.getAttribute('data-type');
 
 		if (type) {
 			var itemId = tar.getAttribute('data-id');
@@ -94,10 +94,10 @@
 
 	function updateCourse (e) {
 		var e = e || window.event,
-			type = e.type,
-			newVal = oAllCourseInputs[idx].value,
-			text = oAllCourseSpans[idx].innerText,
-			c;
+				type = e.type,
+				newVal = oAllCourseInputs[idx].value,
+				text = oAllCourseSpans[idx].innerText,
+				c;
 
 		if (newVal !== text) {
 			if (type === 'keyup') {
@@ -176,9 +176,9 @@
 
 	function navListClick (e) {
 		var e = e || window.event,
-			tar = e.target || e.srcElement,
-			parent = tar.parentNode,
-			className = parent.className;
+				tar = e.target || e.srcElement,
+				parent = tar.parentNode,
+				className = parent.className;
 
 		stopBubble(e);
 		if (className === 'nav-item') {
@@ -223,9 +223,9 @@
 
 	function pageListClick (e) {
 		var e = e || window.event,
-			tar = e.target || e.srcElement,
-			parent = tar.parentNode,
-			className = parent.className;
+				tar = e.target || e.srcElement,
+				parent = tar.parentNode,
+				className = parent.className;
 
 		stopBubble(e);
 		if (className === 'page-item') {

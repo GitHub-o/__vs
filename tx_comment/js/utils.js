@@ -1,122 +1,122 @@
 HTMLCollection.prototype.jForEach = function (fn) {
-    var arr = this,
-          len = arr.length,
-          arg2 = arguments[1] || window;
+	var arr = this,
+			len = arr.length,
+			arg2 = arguments[1] || window;
 
-    for (var i = 0; i < len; i++) {
-          fn.apply(arg2, [arr[i], i, arr]);
-    }
+	for (var i = 0; i < len; i++) {
+		fn.apply(arg2, [arr[i], i, arr]);
+	}
 }
 
 Array.prototype.jForEach = function (fn) {
-    var arr = this,
-          len = arr.length,
-          arg2 = arguments[1] || window;
+	var arr = this,
+			len = arr.length,
+			arg2 = arguments[1] || window;
 
-    for (var i = 0; i < len; i++) {
-          fn.apply(arg2, [arr[i], i, arr]);
-    }
+	for (var i = 0; i < len; i++) {
+		fn.apply(arg2, [arr[i], i, arr]);
+	}
 }
 
-function debounce(fn, time, triggleNow) {
-    var t = null,
-          res;
+function debounce (fn, time, triggleNow) {
+	var t = null,
+			res;
 
-    function debounced() {
-          var _self = this,
-                args = arguments;
+	function debounced () {
+		var _self = this,
+				args = arguments;
 
-          if (t) {
-                clearTimeout(t);
-          }
-          if (triggleNow) {
-                var exec = !t;
+		if (t) {
+			clearTimeout(t);
+		}
+		if (triggleNow) {
+			var exec = !t;
 
-                t = setTimeout(function () {
-                      t = null;
-                }, time);
+			t = setTimeout(function () {
+				t = null;
+			}, time);
 
-                if (exec) {
-                      res = fn.apply(_self, args);
-                }
-          } else {
-                t = setTimeout(function () {
-                      res = fn.apply(_self, args);
-                }, time);
-          }
-          return res;
-    }
-    debounced.remove = function () {
-          clearTimeout(t);
-          t = null;
-    }
-    return debounced;
+			if (exec) {
+				res = fn.apply(_self, args);
+			}
+		} else {
+			t = setTimeout(function () {
+				res = fn.apply(_self, args);
+			}, time);
+		}
+		return res;
+	}
+	debounced.remove = function () {
+		clearTimeout(t);
+		t = null;
+	}
+	return debounced;
 }
 
-function $get(target, parent) {
-    var _f = target.charAt(0),
-          rTarget = target.replace(_f, ''),
-          args2 = parent || document;
+function $get (target, parent) {
+	var _f = target.charAt(0),
+			rTarget = target.replace(_f, ''),
+			args2 = parent || document;
 
-    switch (_f) {
-          case '.':
-                return args2.getElementsByClassName(rTarget);
-                break;
-          case '#':
-                return args2.getElementById(rTarget);
-                break;
-          default:
-                return args2.getElementsByTagName(target);
-                break;
-    }
+	switch (_f) {
+		case '.':
+			return args2.getElementsByClassName(rTarget);
+			break;
+		case '#':
+			return args2.getElementById(rTarget);
+			break;
+		default:
+			return args2.getElementsByTagName(target);
+			break;
+	}
 }
 
-function addEvent(elem, type, fn, capture) {
-    if (elem.addEventListener) {
-          addEvent = function (elem, type, fn, capture) {
-                var capture = capture || false;
-                elem.addEventListener(type, fn, capture);
-          }
-    } else if (elem.attachEvent) {
-          addEvent = function (elem, type, fn) {
-                elem.attachEvent('on' + type, function () {
-                      fn.call(elem);
-                });
-          }
-    } else {
-          addEvent = function (elem, type, fn) {
-                elem['on' + type] = fn;
-          }
-    }
+function addEvent (elem, type, fn, capture) {
+	if (elem.addEventListener) {
+		addEvent = function (elem, type, fn, capture) {
+			var capture = capture || false;
+			elem.addEventListener(type, fn, capture);
+		}
+	} else if (elem.attachEvent) {
+		addEvent = function (elem, type, fn) {
+			elem.attachEvent('on' + type, function () {
+				fn.call(elem);
+			});
+		}
+	} else {
+		addEvent = function (elem, type, fn) {
+			elem['on' + type] = fn;
+		}
+	}
 
-    addEvent(elem, type, fn, capture);
+	addEvent(elem, type, fn, capture);
 }
 
-function removeEvent(elem, type, fn, capture) {
-    if (elem.addEventListener) {
-          removeEvent = function (elem, type, fn, capture) {
-                var capture = capture || false;
-                elem.removeEventListener(type, fn, capture);
-          }
-    } else if (elem.attachEvent) {
-          removeEvent = function (elem, type, fn) {
-                elem.detachEvent('on' + type, function () {
-                      fn.call(elem);
-                })
-          }
-    } else {
-          removeEvent = function (elem, type, fn) {
-                elem['on' + type] = null;
-          }
-    }
+function removeEvent (elem, type, fn, capture) {
+	if (elem.addEventListener) {
+		removeEvent = function (elem, type, fn, capture) {
+			var capture = capture || false;
+			elem.removeEventListener(type, fn, capture);
+		}
+	} else if (elem.attachEvent) {
+		removeEvent = function (elem, type, fn) {
+			elem.detachEvent('on' + type, function () {
+				fn.call(elem);
+			})
+		}
+	} else {
+		removeEvent = function (elem, type, fn) {
+			elem['on' + type] = null;
+		}
+	}
 
-    removeEvent(elem, type, fn, capture);
+	removeEvent(elem, type, fn, capture);
 }
 
 var renderPageList = (function () {
 	var list = '';
 
-	function pageBtnTpl(type, num, cur, pages) {
+	function pageBtnTpl (type, num, cur, pages) {
 		switch (type) {
 			case 'btn':
 				return num === cur ?
@@ -139,7 +139,7 @@ var renderPageList = (function () {
 		}
 	}
 
-	function renderPageList(curPage, pages) {
+	function renderPageList (curPage, pages) {
 		if (pages <= 1) {
 			return '';
 		}
@@ -186,7 +186,7 @@ var renderPageList = (function () {
 		return btnGroup += pageBtnTpl('forward', '', curPage, pages);
 	}
 
-	function makeBtns(start, end, curPage) {
+	function makeBtns (start, end, curPage) {
 		list = '';
 		for (var i = start; i <= end; i++) {
 			list += pageBtnTpl('btn', i, curPage);
@@ -198,7 +198,7 @@ var renderPageList = (function () {
 }())
 
 var xhr = (function (doc) {
-	function _doAjax(opt) {
+	function _doAjax (opt) {
 		var o = window.XMLHttpRequest ?
 			new XMLHttpRequest() :
 			new ActiveXObject('Microsoft.XMLHTTP');
@@ -216,9 +216,9 @@ var xhr = (function (doc) {
 			jsonpCallback = opt.jsonpCallback || 'jQuery' + randomNum(),
 			data = opt.data || null,
 			timeout = opt.timeout || 30000,
-			error = opt.error || function () {},
-			success = opt.success || function () {},
-			complete = opt.compelet || function () {},
+			error = opt.error || function () { },
+			success = opt.success || function () { },
+			complete = opt.compelet || function () { },
 
 			t = null;
 
@@ -226,18 +226,18 @@ var xhr = (function (doc) {
 			throw (new Error('您没有填写URL'));
 		}
 
-		if(dataType === 'JSONP' && type !== 'GET') {
+		if (dataType === 'JSONP' && type !== 'GET') {
 			throw new Error('数据类型为"JSONP"的话，请求方式必须为"GET"或者不设置');
 		}
 
-		if(dataType === 'JSONP') {
+		if (dataType === 'JSONP') {
 			var oScript = doc.createElement('script');
 			oScript.src = url.indexOf('?') === -1
-					    ? url + '?' + jsonp + '=' + jsonpCallback
-					    : url + '&' + jsonp + '=' + jsonpCallback;
+				? url + '?' + jsonp + '=' + jsonpCallback
+				: url + '&' + jsonp + '=' + jsonpCallback;
 			doc.body.appendChild(oScript);
 			doc.body.removeChild(oScript);
-			window[jsonpCallback] = function(data) {
+			window[jsonpCallback] = function (data) {
 				success(data);
 			}
 			return;
@@ -283,7 +283,7 @@ var xhr = (function (doc) {
 		}, timeout);
 	}
 
-	function formatDatas(obj) {
+	function formatDatas (obj) {
 		var str = '';
 		for (key in obj) {
 			str += key + '=' + obj[key] + '&';
@@ -291,10 +291,10 @@ var xhr = (function (doc) {
 		return str.replace(/&$/, '');
 	}
 
-	function randomNum() {
+	function randomNum () {
 		var res = '';
-		for(var i = 0; i < 20; i++) {
-			res += Math.floor((Math.random() * 10)); 
+		for (var i = 0; i < 20; i++) {
+			res += Math.floor((Math.random() * 10));
 		}
 		return res + '_' + new Date().getTime();
 	}
@@ -323,14 +323,14 @@ var xhr = (function (doc) {
 	}
 }(document))
 
-function trimSpace(str) {
+function trimSpace (str) {
 	return str.replace(/\s+/g, '');
 
 }
 
-function throttle(fn, delay) {
+function throttle (fn, delay) {
 	var t = null,
-		firstTime = new Date().getTime();
+			firstTime = new Date().getTime();
 
 	return function () {
 		var _self = this,
@@ -350,7 +350,7 @@ function throttle(fn, delay) {
 	}
 }
 
-function stopBubble(e) {
+function stopBubble (e) {
 	if (e.stopPropagation) {
 		e.stopPropagation();
 	} else {
@@ -358,9 +358,9 @@ function stopBubble(e) {
 	}
 }
 
-function imgLazyLoad(images) {
+function imgLazyLoad (images) {
 	var imageItem,
-		n;
+			n;
 
 	return function () {
 		var cHeight = document.documentElement.clientHeight,
@@ -385,10 +385,10 @@ function imgLazyLoad(images) {
 	}
 }
 
-function elemPos(elem) {
+function elemPos (elem) {
 	var elemParent = elem.offsetParent,
-		elemLeft = elem.offsetLeft,
-		elemTop = elem.offsetTop;
+			elemLeft = elem.offsetLeft,
+			elemTop = elem.offsetTop;
 
 	while (elemParent) {
 		elemLeft += elemParent.offsetLeft;
@@ -402,7 +402,7 @@ function elemPos(elem) {
 	}
 }
 
-function getScrollOffset() {
+function getScrollOffset () {
 	if (window.pageXOffset) {
 		return {
 			x: window.pageXOffset,
@@ -416,7 +416,7 @@ function getScrollOffset() {
 	}
 }
 
-function getViewPort() {
+function getViewPort () {
 	if (window.innerWidth) {
 		return {
 			w: window.innerWidth,
@@ -437,7 +437,7 @@ function getViewPort() {
 	}
 }
 
-function getScrollSize() {
+function getScrollSize () {
 	if (document.body.scrollHeight) {
 		return {
 			w: document.body.scrollWidth,
@@ -490,14 +490,14 @@ var mCookie = (function () {
 }());
 
 
-function phoneNumberCheck(str){
+function phoneNumberCheck (str) {
 	return (/^(\(\+86\))?(13[0-9]|14[57]|15[012356789]|17[03678]|18[0-9])\d{8}$/).test(str);
 }
-    
-function digitCheck(str) {
+
+function digitCheck (str) {
 	return (/\d{6}/).test(str);
 }
 
-function alphabetCheck(num) {
+function alphabetCheck (num) {
 	return (/[A-z]{4}/).test(num);
 }

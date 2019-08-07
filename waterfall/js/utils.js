@@ -1,7 +1,7 @@
 HTMLCollection.prototype.jForEach = function (fn) {
 	var arr = this,
-		len = arr.length,
-		arg2 = arguments[1] || window;
+			len = arr.length,
+			arg2 = arguments[1] || window;
 
 	for (var i = 0; i < len; i++) {
 		fn.apply(arg2, [arr[i], i, arr]);
@@ -10,9 +10,9 @@ HTMLCollection.prototype.jForEach = function (fn) {
 
 Array.prototype.jForEach = function (fn) {
 	var arr = this,
-		len = arr.length,
-		arg = arguments[1] || window,
-		item;
+			len = arr.length,
+			arg = arguments[1] || window,
+			item;
 
 	for (var i = 0; i < len; i++) {
 		item = arr[i];
@@ -57,7 +57,7 @@ function debounce(fn, wait = 800, immediate = false) {
 
 function throttle(fn, delay) {
 	var t = null,
-		firstTime = new Date().getTime();
+			firstTime = new Date().getTime();
 
 	return function () {
 		var _self = this,
@@ -79,8 +79,8 @@ function throttle(fn, delay) {
 
 function $get(target, parent) {
 	var _f = target.charAt(0),
-		rTarget = target.replace(_f, ''),
-		args2 = parent || document;
+			rTarget = target.replace(_f, ''),
+			args2 = parent || document;
 
 	switch (_f) {
 		case '.':

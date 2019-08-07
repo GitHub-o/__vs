@@ -1,7 +1,7 @@
 HTMLCollection.prototype.jForEach = function (fn) {
 	var arr = this,
-		len = arr.length,
-		arg2 = arguments[1] || window;
+			len = arr.length,
+			arg2 = arguments[1] || window;
 
 	for (var i = 0; i < len; i++) {
 		fn.apply(arg2, [arr[i], i, arr]);
@@ -10,10 +10,10 @@ HTMLCollection.prototype.jForEach = function (fn) {
 
 HTMLCollection.prototype.jFilter = function (fn) {
 	var arr = this,
-		len = this.length,
-		arg2 = arguments[1] || window,
-		newArr = [],
-		item;
+			len = this.length,
+			arg2 = arguments[1] || window,
+			newArr = [],
+			item;
 
 	for (var i = 0; i < len; i++) {
 		item = deepClone(arr[i], {});
@@ -24,8 +24,8 @@ HTMLCollection.prototype.jFilter = function (fn) {
 
 Array.prototype.jForEach = function (fn) {
 	var arr = this,
-		len = arr.length,
-		arg2 = arguments[1] || window;
+			len = arr.length,
+			arg2 = arguments[1] || window;
 
 	for (var i = 0; i < len; i++) {
 		fn.apply(arg2, [arr[i], i, arr]);
@@ -34,10 +34,10 @@ Array.prototype.jForEach = function (fn) {
 
 Array.prototype.jFilter = function (fn) {
 	var arr = this,
-		len = this.length,
-		arg = arguments[1] || window,
-		newArr = [],
-		item;
+			len = this.length,
+			arg = arguments[1] || window,
+			newArr = [],
+			item;
 
 	for (var i = 0; i < len; i++) {
 		item = deepClone(arr[i], {});
@@ -48,7 +48,7 @@ Array.prototype.jFilter = function (fn) {
 
 function debounce (fn, time, triggleNow) {
 	var t = null,
-		res;
+			res;
 
 	function debounced () {
 		var _self = this,
@@ -84,8 +84,8 @@ function debounce (fn, time, triggleNow) {
 
 function $get (target, parent) {
 	var _f = target.charAt(0),
-		rTarget = target.replace(_f, ''),
-		args2 = parent || document;
+			rTarget = target.replace(_f, ''),
+			args2 = parent || document;
 
 	switch (_f) {
 		case '.':
@@ -162,49 +162,6 @@ function regTpl () {
 
 function trimIllegal (reg) {
 	this.value = this.value.replace(reg, '');
-}
-
-
-function deepClone (origin, target) {
-	var target = target || {},
-		toStr = Object.prototype.toString,
-		arrStr = '[object Array]';
-
-	for (var prop in origin) {
-		if (origin.hasOwnProperty(prop)) {
-			if ((origin[prop]) !== null && typeof (origin[prop]) == 'object') {
-				target[prop] = toStr.call(origin[prop]) === arrStr ? [] : {};
-				deepClone(origin[prop], target[prop]);
-			} else {
-				target[prop] = origin[prop];
-			}
-		}
-	}
-	return target;
-}
-
-
-function showStatusAnimation (status, wrap, showAnimation, time) {
-	var [t, t1, t2] = [null, null, null];
-	time = time || '1s';
-	wrap.style.animation = showAnimation + ' ' + time;
-	time = parseInt(time) * 1000;
-
-	t = setTimeout(function () {
-		if (status == 'none') {
-			t2 = setTimeout(function () {
-				wrap.style.display = status;
-				clearTimeout(t2);
-			}, .7 * time);
-		} else {
-			wrap.style.display = status;
-		}
-		t1 = setTimeout(function () {
-			wrap.style.animation = '';
-			clearTimeout(t1);
-		}, .8 * time);
-		clearTimeout(t);
-	}, .1 * time);
 }
 
 var xhr = (function (doc) {
@@ -341,7 +298,7 @@ function trimSpace (str) {
 
 function throttle (fn, delay) {
 	var t = null,
-		firstTime = new Date().getTime();
+			firstTime = new Date().getTime();
 
 	return function () {
 		var _self = this,

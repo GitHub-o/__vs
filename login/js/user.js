@@ -36,13 +36,13 @@ var initHeader = (function () {
 
 var initLogin = (function () {
 	var oErrorTip = $get('.J_error-tip')[0],
-		loginUrl = $get('#J_login-form').action,
-		oAdmin = $get('#J_admin'),
-		oPwd = $get('#J_password'),
-		oPersisted = $get('.J_persisted')[0],
+			loginUrl = $get('#J_login-form').action,
+			oAdmin = $get('#J_admin'),
+			oPwd = $get('#J_password'),
+			oPersisted = $get('.J_persisted')[0],
 
-		t = null,
-		t1 = null;
+			t = null,
+			t1 = null;
 
 
 	function restoreLoginModStatus () {
@@ -121,25 +121,25 @@ var initLogin = (function () {
 
 var initRegister = (function (Login) {
 	var oErrorTip = $get('.J_error-tip')[0],
-		registerUrl = $get('#J_register-form').action,
-		oHandphone = $get('#J_handphone'),
-		oSPwd = $get('#J_spassword'),
-		oHpcode = $get('#J_hdcode'),
-		oImgcode = $get('#J_imgcode'),
-		oHpcodeBtn = $get('.J_hdcode-btn')[0],
-		oImgcodeBtn = $get('.J_imgcode-btn')[0],
-		sendHpcodeUrl = oHpcodeBtn.value,
+			registerUrl = $get('#J_register-form').action,
+			oHandphone = $get('#J_handphone'),
+			oSPwd = $get('#J_spassword'),
+			oHpcode = $get('#J_hdcode'),
+			oImgcode = $get('#J_imgcode'),
+			oHpcodeBtn = $get('.J_hdcode-btn')[0],
+			oImgcodeBtn = $get('.J_imgcode-btn')[0],
+			sendHpcodeUrl = oHpcodeBtn.value,
 
-		isSend = true,
-		s = 60,
-		os = 60,
-		t = null,
-		timer = null;
+			isSend = true,
+			s = 60,
+			os = 60,
+			t = null,
+			timer = null;
 
 	function regBdClick (e) {
 		var e = e || window.event,
-			tar = e.target || e.srcElement,
-			type = tar.getAttribute('data-type');
+				tar = e.target || e.srcElement,
+				type = tar.getAttribute('data-type');
 
 		type && multiOperation(type);
 	}

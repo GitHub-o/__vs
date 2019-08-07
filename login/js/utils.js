@@ -1,7 +1,7 @@
 HTMLCollection.prototype.jForEach = function (fn) {
 	var arr = this,
-		len = arr.length,
-		arg2 = arguments[1] || window;
+			len = arr.length,
+			arg2 = arguments[1] || window;
 
 	for (var i = 0; i < len; i++) {
 		fn.apply(arg2, [arr[i], i, arr]);
@@ -10,9 +10,9 @@ HTMLCollection.prototype.jForEach = function (fn) {
 
 Array.prototype.jForEach = function (fn) {
 	var arr = this,
-		len = arr.length,
-		arg = arguments[1] || window,
-		item;
+			len = arr.length,
+			arg = arguments[1] || window,
+			item;
 
 	for (var i = 0; i < len; i++) {
 		item = arr[i];
@@ -22,12 +22,12 @@ Array.prototype.jForEach = function (fn) {
 
 function throttle(fn, delay) {
 	var t = null,
-		firstTime = new Date().getTime();
+			firstTime = new Date().getTime();
 
 	return function () {
 		var _self = this,
-			args = arguments,
-			curTime = new Date().getTime();
+				args = arguments,
+				curTime = new Date().getTime();
 
 		clearTimeout(t);
 
@@ -44,8 +44,8 @@ function throttle(fn, delay) {
 
 function $get(target, parent) {
 	var _f = target.charAt(0),
-		rTarget = target.replace(_f, ''),
-		args2 = parent || document;
+			rTarget = target.replace(_f, ''),
+			args2 = parent || document;
 
 	switch (_f) {
 		case '.':
@@ -64,8 +64,8 @@ function $get(target, parent) {
 var xhr = (function (doc) {
 	function _doAjax(opt) {
 		var o = window.XMLHttpRequest ?
-			new XMLHttpRequest() :
-			new ActiveXObject('Microsoft.XMLHTTP');
+				new XMLHttpRequest() :
+				new ActiveXObject('Microsoft.XMLHTTP');
 
 		if (!o) {
 			throw (new Error('您的浏览器不支持异步发起HTTP请求'));

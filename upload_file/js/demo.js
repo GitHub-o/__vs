@@ -57,9 +57,9 @@
 
 	function uploadBtnClick (e) {
 		var e = e || window.event,
-			tar = e.target || e.srcElement,
-			type = tar.getAttribute('data-type'),
-			file = oFile.files[0];
+				tar = e.target || e.srcElement,
+				type = tar.getAttribute('data-type'),
+				file = oFile.files[0];
 
 		if (type) {
 			switch (type) {
@@ -81,9 +81,9 @@
 
 	function uploadFile (file, tar) {
 		var fd = new FormData(),
-			o = window.XMLHttpRequest
-				? new window.XMLHttpRequest
-				: new ActiveXObject('Microsoft.XMLHTTP');
+				o = window.XMLHttpRequest
+					? new window.XMLHttpRequest
+					: new ActiveXObject('Microsoft.XMLHTTP');
 
 		isUploadFile = false;
 		fd.append('file', file);

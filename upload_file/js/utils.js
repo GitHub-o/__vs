@@ -1,7 +1,7 @@
 HTMLCollection.prototype.jForEach = function (fn) {
 	var arr = this,
-		len = arr.length,
-		arg2 = arguments[1] || window;
+			len = arr.length,
+			arg2 = arguments[1] || window;
 
 	for (var i = 0; i < len; i++) {
 		fn.apply(arg2, [arr[i], i, arr]);
@@ -10,9 +10,9 @@ HTMLCollection.prototype.jForEach = function (fn) {
 
 Array.prototype.jForEach = function (fn) {
 	var arr = this,
-		len = arr.length,
-		arg = arguments[1] || window,
-		item;
+			len = arr.length,
+			arg = arguments[1] || window,
+			item;
 
 	for (var i = 0; i < len; i++) {
 		item = arr[i];
@@ -22,7 +22,7 @@ Array.prototype.jForEach = function (fn) {
 
 function throttle(fn, delay) {
 	var t = null,
-		firstTime = new Date().getTime();
+			firstTime = new Date().getTime();
 
 	return function () {
 		var _self = this,
@@ -44,8 +44,8 @@ function throttle(fn, delay) {
 
 function $get(target, parent) {
 	var _f = target.charAt(0),
-		rTarget = target.replace(_f, ''),
-		args2 = parent || document;
+			rTarget = target.replace(_f, ''),
+			args2 = parent || document;
 
 	switch (_f) {
 		case '.':
@@ -64,8 +64,8 @@ function $get(target, parent) {
 var xhr = (function (doc) {
 	function _doAjax(opt) {
 		var o = window.XMLHttpRequest ?
-			new XMLHttpRequest() :
-			new ActiveXObject('Microsoft.XMLHTTP');
+				new XMLHttpRequest() :
+				new ActiveXObject('Microsoft.XMLHTTP');
 
 		if (!o) {
 			throw (new Error('您的浏览器不支持异步发起HTTP请求'));
@@ -229,58 +229,6 @@ function removeEvent(elem, type, fn, capture) {
 	removeEvent(elem, type, fn, capture);
 }
 
-function getScrollOffset() {
-	if (window.pageXOffset) {
-		return {
-			x: window.pageXOffset,
-			y: window.pageYOffset
-		}
-	} else {
-		return {
-			x: document.body.scrollLeft + document.documentElement.scrollLeft,
-			y: document.body.scrollTop + document.documentElement.scrollTop
-		}
-	}
-}
-
-
-// 封装可视区窗口大小
-function getViewPort() {
-	if (window.innerWidth) {
-		return {
-			w: window.innerWidth,
-			h: window.innerHeight
-		}
-	} else {
-		if (document.compatMode == "BackCompat") {
-			return {
-				w: document.body.clientWidth,
-				h: document.body.clientHeight
-			}
-		} else {
-			return {
-				w: document.documentElement.clientWidth,
-				h: document.documentElement.clientHeight
-			}
-		}
-	}
-}
-
-
-// 获取文档的总大小
-function getScrollSize() {
-	if (document.body.scrollHeight) {
-		return {
-			w: document.body.scrollWidth,
-			h: document.body.scrollHeight
-		}
-	} else {
-		return {
-			w: document.documentElement.scrollWidth,
-			h: document.documentElement.scrollHeight
-		}
-	}
-}
 
 function getStyle(elem, prop) {
 	if (window.getComputedStyle) {
@@ -324,53 +272,3 @@ function stopHandler(e) {
 function trimSpace(str) {
 	return str.replace(/\s+/g, '');
 }
-
-function phoneNumberCheck(str){
-	return (/^(\(\+86\))?(13[0-9]|14[57]|15[012356789]|17[03678]|18[0-9])\d{8}$/).test(str);
-}
-    
-function digitCheck(str) {
-	return (/\d{6}/).test(str);
-}
-
-function alphabetCheck(num) {
-	return (/[A-z]{4}/).test(num);
-}
-
-var mCookie = (function () {
-	return {
-		set: function (key, value, time) {
-			var args;
-			args = arguments[3] ? 'max-age' :
-				'expires';
-			document.cookie = key + '=' + value + '; ' + args + '=' + time;
-			return this;
-		},
-
-		delete: function (key) {
-			this.set(key, '', -1);
-		},
-
-		get: function (key, cb) {
-			var cookieStr = document.cookie;
-
-			if (cookieStr) {
-				var cookieArr = cookieStr.split('; '),
-					item,
-					tempArr;
-				for (var prop in cookieArr) {
-					item = cookieArr[prop];
-					if (typeof (item) === 'string') {
-						tempArr = item.split('=');
-						if (tempArr[0] == key) {
-							cb(tempArr[1]);
-							return this;
-						}
-					}
-				}
-			}
-			cb(undefined);
-			return this;
-		}
-	}
-}());

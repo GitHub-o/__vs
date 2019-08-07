@@ -4,10 +4,14 @@ var Waterfall = (function(doc, win) {
     this.oWrap = doc.querySelector(wrap);
     this.column = opt.column || 6;
     this.gap = opt.gap || 10;
+    this.API = opt.url;
+    this.infinity = opt.infinity || false;
+
     this.pages = 0;
     this.curPage = 0;
+    this.cache = [];
+    this.idx = 0;
     this.heightArr = [];
-    this.API = opt.url;
     this.oWrap.style.position = 'relative';
     if (!this.API) {
       throw new Error('url未填写');
@@ -36,8 +40,14 @@ var Waterfall = (function(doc, win) {
     moreImgDatas: function() {
       if (getViewPort().h + getScrollOffset().y >= getScrollSize().h) {
         this.curPage++;
+        
         if (this.curPage <= this.pages - 1) {
           this.getImgDatas(this.curPage);
+        } else if (this.infinity){
+          this.renderImgs(this.cache[this.idx]);
+          this.idx = this.idx === this.pages - 1
+                   ? 0
+                   : this.idx + 1;
         }
       }
     },
@@ -51,9 +61,10 @@ var Waterfall = (function(doc, win) {
           pageNum: curPage
         },
         success: function(data) {
-          _self.res = JSON.parse(data.pageData);
+          var res = JSON.parse(data.pageData);
           _self.pages = data.pageSize;
-					_self.renderImgs(_self.res, curPage);
+          _self.renderImgs(res, curPage);
+          _self.infinity && _self.cache.push(res);
         }
       });
     },
@@ -105,8 +116,9 @@ var Waterfall = (function(doc, win) {
 		resetWaterfall: function() {
 			this.oWrap.innerHTML = '';
 			this.heightArr = [];
-			this.res = [];
-			this.curPage = 0;
+      this.curPage = 0;
+      this.cache = [];
+      this.idx = 0;
 			this.getImgDatas(this.curPage);
 		}
   };

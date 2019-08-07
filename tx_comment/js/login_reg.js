@@ -36,10 +36,10 @@ var initHeader = (function () {
 
 var initLogin = (function () {
 	var oErrorTip = $get('.J_error-tip')[0],
-		loginUrl = $get('#J_login-form').action,
-		oAdmin = $get('#J_admin'),
-		oPwd = $get('#J_password'),
-		oPersisted = $get('.J_persisted')[0],
+			loginUrl = $get('#J_login-form').action,
+			oAdmin = $get('#J_admin'),
+			oPwd = $get('#J_password'),
+			oPersisted = $get('.J_persisted')[0],
 
 		t = null,
 		t1 = null;
@@ -51,7 +51,7 @@ var initLogin = (function () {
 
 	function submitBtnClick () {
 		var adminVal = trimSpace(oAdmin.value),
-			pwdVal = trimSpace(oPwd.value);
+				pwdVal = trimSpace(oPwd.value);
 
 		if (adminVal.length < 6 || adminVal.length > 20) {
 			oErrorTip.innerText = '用户名长度为 6-20 位';

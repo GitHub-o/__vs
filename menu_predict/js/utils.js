@@ -1,7 +1,7 @@
 HTMLCollection.prototype.jForEach = function (fn) {
 	var arr = this,
-		len = arr.length,
-		arg2 = arguments[1] || window;
+			len = arr.length,
+			arg2 = arguments[1] || window;
 
 	for (var i = 0; i < len; i++) {
 		fn.apply(arg2, [arr[i], i, arr]);
@@ -10,8 +10,8 @@ HTMLCollection.prototype.jForEach = function (fn) {
 
 Array.prototype.jForEach = function (fn) {
 	var arr = this,
-		len = arr.length,
-		arg2 = arguments[1] || window;
+			len = arr.length,
+			arg2 = arguments[1] || window;
 
 	for (var i = 0; i < len; i++) {
 		fn.apply(arg2, [arr[i], i, arr]);
@@ -21,8 +21,8 @@ Array.prototype.jForEach = function (fn) {
 
 function $get(target, parent) {
 	var _f = target.charAt(0),
-		rTarget = target.replace(_f, ''),
-		args2 = parent || document;
+			rTarget = target.replace(_f, ''),
+			args2 = parent || document;
 
 	switch (_f) {
 		case '.':
@@ -82,10 +82,10 @@ function removeEvent(elem, type, fn, capture) {
 
 function pagePos(e) {
 	var e = e || window.event,
-		cleft = getScrollOffset().x,
-		ctop = getScrollOffset().y,
-		cx = document.documentElement.clientLeft || 0,
-		cy = document.documentElement.clientTop || 0;
+			cleft = getScrollOffset().x,
+			ctop = getScrollOffset().y,
+			cx = document.documentElement.clientLeft || 0,
+			cy = document.documentElement.clientTop || 0;
 
 	return {
 		x: e.clientX + cleft - cx,
@@ -109,8 +109,8 @@ function getScrollOffset() {
 
 function elemPos(elem) {
 	var elemParent = elem.offsetParent,
-		elemLeft = elem.offsetLeft,
-		elemTop = elem.offsetTop;
+			elemLeft = elem.offsetLeft,
+			elemTop = elem.offsetTop;
 
 	while (elemParent) {
 		elemLeft += elemParent.offsetLeft;

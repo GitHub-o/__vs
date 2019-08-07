@@ -1,8 +1,8 @@
 ;
 (function () {
 	var listTpl = $get('#J_list-tpl').innerHTML,
-		oSearchInputs = $get('input'),
-		oSearchLists = $get('.search-list');
+			oSearchInputs = $get('input'),
+			oSearchLists = $get('.search-list');
 
 	function init () {
 		bindEvent();
@@ -16,9 +16,9 @@
 
 	function searchKwChange () {
 		var kw = trimSpace(this.value),
-			kwLen = kw.length,
-			oParent = this.parentNode.parentNode,
-			thisList = $get('.search-list', oParent)[0];
+				kwLen = kw.length,
+				oParent = this.parentNode.parentNode,
+				thisList = $get('.search-list', oParent)[0];
 
 		if (kwLen > 0) {
 			thisList.className = 'search-list show';
@@ -31,12 +31,12 @@
 
 	function getSearchList (keyword, tar) {
 		var idx = [].indexOf.call(oSearchInputs, tar),
-			url = tar.getAttribute('data-url'),
-			jsonp = tar.getAttribute('data-jsonp') || 'callback',
-			lk = tar.getAttribute('data-lk'),
-			id = tar.id,
-			res,
-			list = '';
+				url = tar.getAttribute('data-url'),
+				jsonp = tar.getAttribute('data-jsonp') || 'callback',
+				lk = tar.getAttribute('data-lk'),
+				id = tar.id,
+				res,
+				list = '';
 
 		xhr.ajax({
 			url: url + keyword,

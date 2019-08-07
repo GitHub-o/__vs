@@ -36,10 +36,10 @@ var initComment = (function (doc) {
 
 	function comModStatus (status) {
 		if (status) {
-			// if (!userId) {
-			// 	alert('登录后才可以评论😘');
-			// 	return;
-			// }
+			if (!userId) {
+				alert('登录后才可以评论😘');
+				return;
+			}
 			oCommentMod.className += ' show';
 		} else {
 			oCommentMod.className = 'J_comment-mod comment-mod';
@@ -66,8 +66,8 @@ var initComment = (function (doc) {
 
 	function mainNavListClick (e) {
 		var e = e || window.event,
-			tar = e.target || e.srcElement,
-			className = tar.className;
+				tar = e.target || e.srcElement,
+				className = tar.className;
 
 		if (className === 'main-nav-item') {
 			var idx = [].indexOf.call(oMainNavItems, tar);
@@ -123,8 +123,8 @@ var initComment = (function (doc) {
 
 	function pageBtnClick (e) {
 		var e = e || window.event,
-			tar = e.target || e.srcElement,
-			className = tar.className;
+				tar = e.target || e.srcElement,
+				className = tar.className;
 
 		switch (className) {
 			case 'page-btn':
@@ -172,8 +172,8 @@ var initComment = (function (doc) {
 	function renderCommentList (data, page) {
 		t = setTimeout(function () {
 			var res = data.res,
-				commentNum = data.num,
-				pages = data.pages;
+					commentNum = data.num,
+					pages = data.pages;
 
 			oLoading.className = 'J_loading-wrap loading-wrap';
 			if (res && res.length > 0) {
@@ -191,8 +191,8 @@ var initComment = (function (doc) {
 
 	function renderListTpl (res) {
 		var list = '',
-			num,
-			count;
+				num,
+				count;
 		res.jForEach(function (val) {
 			count = 0;
 			num = val.star_num;
@@ -209,11 +209,11 @@ var initComment = (function (doc) {
 			time += '000';
 		}
 		var d = new Date(parseInt(time)),
-			year = d.getFullYear(),
-			month = d.getMonth() + 1,
-			date = d.getDate(),
-			hours = d.getHours(),
-			minutes = d.getMinutes();
+				year = d.getFullYear(),
+				month = d.getMonth() + 1,
+				date = d.getDate(),
+				hours = d.getHours(),
+				minutes = d.getMinutes();
 		return year + '-' + month + '-' + date + '  ' + hours + ':' + minutes;
 	}
 
@@ -226,14 +226,13 @@ var initComment = (function (doc) {
 	}
 
 	function replaceCommentListValue (value, count, total_num) {
-		var add_comment = value.add_comment,
-			uptime = value.uptime;
+		var add_comment = value.add_comment;
 
 		return {
 			avatar: value.avatar ? 'img/' + value.avatar : 'img/pure.jpg',
-			nickname: value.nickname ? value.nickname : '*__',
+			nickname: value.nickname ? value.nickname : val.uptime,
 			comment: value.comment,
-			when: (uptime.slice(-1) + uptime.slice(-2, -1)).replace(/^0/g, ''),
+			when: val.uptime,
 			uptime: transferTime(value.uptime),
 			active: count <= total_num ? 'active' : '',
 			show: add_comment ? (add_comment.is_add_comment == 1 ? 'show' : '') : '',

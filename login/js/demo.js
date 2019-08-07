@@ -29,8 +29,8 @@
 
 	function ttLkClick (e) {
 		var e = e || window.event,
-			tar = e.target || e.srcElement,
-			className = tar.className;
+				tar = e.target || e.srcElement,
+				className = tar.className;
 
 		if (className === 'tt-lk') {
 			var type = tar.getAttribute('data-type');

@@ -18,8 +18,8 @@
 
 HTMLCollection.prototype.jForEach = function (fn) {
 	var arr = this,
-		len = arr.length,
-		arg2 = arguments[1] || window;
+			len = arr.length,
+			arg2 = arguments[1] || window;
 
 	for (var i = 0; i < len; i++) {
 		fn.apply(arg2, [arr[i], i, arr]);
@@ -29,10 +29,10 @@ HTMLCollection.prototype.jForEach = function (fn) {
 
 HTMLCollection.prototype.jFilter = function (fn) {
 	var arr = this,
-		len = this.length,
-		arg2 = arguments[1] || window,
-		newArr = [],
-		item;
+			len = this.length,
+			arg2 = arguments[1] || window,
+			newArr = [],
+			item;
 
 	for (var i = 0; i < len; i++) {
 		item = {}.toString.call(item) === '[object Object]' ?
@@ -46,10 +46,10 @@ HTMLCollection.prototype.jFilter = function (fn) {
 
 HTMLCollection.prototype.jMap = function (fn) {
 	var arr = this,
-		len = arr.length,
-		arg2 = arguments[1] || window,
-		newArr = [],
-		item;
+			len = arr.length,
+			arg2 = arguments[1] || window,
+			newArr = [],
+			item;
 
 	for (var i = 0; i < len; i++) {
 		item = {}.toString.call(item) === '[object Object]' ?
@@ -63,10 +63,10 @@ HTMLCollection.prototype.jMap = function (fn) {
 
 HTMLCollection.prototype.jEvery = function (fn) {
 	var arr = this,
-		len = arr.length,
-		arg2 = arguments[1] || window,
-		res = true,
-		item;
+			len = arr.length,
+			arg2 = arguments[1] || window,
+			res = true,
+			item;
 	for (var i = 0; i < len; i++) {
 		item = {}.toString.call(item) === '[object Object]' ?
 			deepClone(arr[i]) :
@@ -81,10 +81,10 @@ HTMLCollection.prototype.jEvery = function (fn) {
 
 HTMLCollection.prototype.jSome = function (fn) {
 	var arr = this,
-		len = arr.length,
-		arg2 = arguments[1] || window,
-		res = false,
-		item;
+			len = arr.length,
+			arg2 = arguments[1] || window,
+			res = false,
+			item;
 	for (var i = 0; i < len; i++) {
 		item = {}.toString.call(item) === '[object Object]' ?
 			deepClone(arr[i]) :
@@ -99,9 +99,9 @@ HTMLCollection.prototype.jSome = function (fn) {
 
 HTMLCollection.prototype.jReduce = function (fn, initialValue) {
 	var arr = this,
-		len = arr.length,
-		arg3 = arguments[2] || window,
-		item;
+			len = arr.length,
+			arg3 = arguments[2] || window,
+			item;
 	for (var i = 0; i < len; i++) {
 		item = {}.toString.call(item) === '[object Object]' ?
 			deepClone(arr[i]) :
@@ -114,9 +114,9 @@ HTMLCollection.prototype.jReduce = function (fn, initialValue) {
 
 HTMLCollection.prototype.jReduceRight = function (fn, initialValue) {
 	var arr = this,
-		len = arr.length,
-		arg3 = arguments[2] || window,
-		item;
+			len = arr.length,
+			arg3 = arguments[2] || window,
+			item;
 	for (var i = len - 1; i >= 0; i--) {
 		item = {}.toString.call(item) === '[object Object]' ?
 			deepClone(arr[i]) :
@@ -141,8 +141,8 @@ HTMLCollection.prototype.jReduceRight = function (fn, initialValue) {
 // 封装 数组去重
 Array.prototype.unique = function () {
 	var arr = [],
-		temp = {},
-		len = this.length;
+			temp = {},
+			len = this.length;
 
 	for (var i = 0; i < len; i++) {
 		if (!temp.hasOwnProperty(this[i])) {
@@ -156,7 +156,7 @@ Array.prototype.unique = function () {
 // 查询出现的次数
 Array.prototype.jq = function () {
 	var len = this.length,
-		temp = {};
+			temp = {};
 	for (var i = 0; i < len; i++) {
 		if (!temp.hasOwnProperty(this[i])) {
 			temp[this[i]] = 1;
@@ -171,9 +171,9 @@ Array.prototype.jq = function () {
 // 封装 forEach
 Array.prototype.jForEach = function (fn) {
 	var arr = this,
-		len = arr.length,
-		arg = arguments[1] || window,
-		item;
+			len = arr.length,
+			arg = arguments[1] || window,
+			item;
 
 	for (var i = 0; i < len; i++) {
 		item = arr[i];
@@ -185,10 +185,10 @@ Array.prototype.jForEach = function (fn) {
 // 封装 filter (筛选/过滤函数)
 Array.prototype.jFilter = function (fn) {
 	var arr = this,
-		len = this.length,
-		arg = arguments[1] || window,
-		newArr = [],
-		item;
+			len = this.length,
+			arg = arguments[1] || window,
+			newArr = [],
+			item;
 
 	for (var i = 0; i < len; i++) {
 		item = {}.toString.call(item) === '[object Object]' ?
@@ -203,10 +203,10 @@ Array.prototype.jFilter = function (fn) {
 // 封装 map
 Array.prototype.jMap = function (fn) {
 	var arr = this,
-		len = arr.length,
-		arg = arguments[1] || window,
-		newArr = [],
-		item;
+			len = arr.length,
+			arg = arguments[1] || window,
+			newArr = [],
+			item;
 
 	for (var i = 0; i < len; i++) {
 		item = {}.toString.call(item) === '[object Object]' ?
@@ -221,10 +221,10 @@ Array.prototype.jMap = function (fn) {
 // 封装 every
 Array.prototype.jEvery = function (fn) {
 	var arr = this,
-		len = arr.length,
-		arg2 = arguments[1] || window,
-		res = true,
-		item;
+			len = arr.length,
+			arg2 = arguments[1] || window,
+			res = true,
+			item;
 	for (var i = 0; i < len; i++) {
 		item = {}.toString.call(item) === '[object Object]' ?
 			deepClone(arr[i]) :
@@ -240,10 +240,10 @@ Array.prototype.jEvery = function (fn) {
 // 封装 some
 Array.prototype.jSome = function (fn) {
 	var arr = this,
-		len = arr.length,
-		arg2 = arguments[1] || window,
-		res = false,
-		item;
+			len = arr.length,
+			arg2 = arguments[1] || window,
+			res = false,
+			item;
 	for (var i = 0; i < len; i++) {
 		item = {}.toString.call(item) === '[object Object]' ?
 			deepClone(arr[i]) :
@@ -259,9 +259,9 @@ Array.prototype.jSome = function (fn) {
 // 封装 reduce (归纳函数)
 Array.prototype.jReduce = function (fn, initialValue) {
 	var arr = this,
-		len = arr.length,
-		arg3 = arguments[2] || window,
-		item;
+			len = arr.length,
+			arg3 = arguments[2] || window,
+			item;
 	for (var i = 0; i < len; i++) {
 		item = {}.toString.call(item) === '[object Object]' ?
 			deepClone(arr[i]) :
@@ -275,9 +275,9 @@ Array.prototype.jReduce = function (fn, initialValue) {
 // 封装 reduceRight (归纳函数)
 Array.prototype.jReduceRight = function (fn, initialValue) {
 	var arr = this,
-		len = arr.length,
-		arg3 = arguments[2] || window,
-		item;
+			len = arr.length,
+			arg3 = arguments[2] || window,
+			item;
 	for (var i = len - 1; i >= 0; i--) {
 		item = arr[i];
 		if ({}.toString.call(item) === '[object Object]') {
@@ -292,7 +292,7 @@ Array.prototype.jReduceRight = function (fn, initialValue) {
 // 扁平化数组
 Array.prototype.flatten = function () {
 	var _self = this,
-		toStr = {}.toString;
+			toStr = {}.toString;
 
 	return _self.reduce(function (prev, cur) {
 		return prev.concat(
@@ -306,7 +306,7 @@ Array.prototype.flatten = function () {
 
 Array.prototype.bubbleSort1 = function () {
 	var len = this.length,
-		temp;
+			temp;
 
 	for (var i = 0; i < len - 1; i++) {
 		for (var j = 0; j < len - i - 1; j++) {
@@ -340,8 +340,8 @@ Array.prototype.bubbleSort2 = function () {
 
 Array.prototype.selectionSort = function () {
 	var len = this.length,
-		temp,
-		minIdx;
+			temp,
+			minIdx;
 	for (var i = 0; i < len - 1; i++) {
 		minIdx = i;
 		for (var j = i + 1; j < len; j++) {
@@ -364,8 +364,8 @@ Array.prototype.selectionSort = function () {
 // 字符串去重
 String.prototype.unique = function () {
 	var str = '',
-		temp = {},
-		len = this.length;
+			temp = {},
+			len = this.length;
 
 	for (var i = 0; i < len; i++) {
 		if (!temp.hasOwnProperty(this[i])) {
@@ -379,8 +379,8 @@ String.prototype.unique = function () {
 //查询出现字符 
 String.prototype.jq = function () {
 	var temp = {},
-		str = this,
-		len = str.length;
+			str = this,
+			len = str.length;
 
 	for (var i = 0; i < len; i++) {
 		if (!temp.hasOwnProperty(str[i])) {
@@ -398,8 +398,8 @@ String.prototype.jq = function () {
 // 封装 hasChildren
 Element.prototype.hasChildren = function () {
 	var child = this.childNodes,
-		len = child.length,
-		childItem;
+			len = child.length,
+			childItem;
 
 	for (var i = 0; i < len; i++) {
 		childItem = child[i];
@@ -414,10 +414,10 @@ Element.prototype.hasChildren = function () {
 // 封装 该节点下的元素节点Children
 Element.prototype.jChildren = function (idx) {
 	var child = this.childNodes,
-		len = child.length,
-		nodeLen = 0,
-		childItem,
-		temp = [];
+			len = child.length,
+			nodeLen = 0,
+			childItem,
+			temp = [];
 
 	for (var i = 0; i < len; i++) {
 		childItem = child[i];
@@ -451,7 +451,7 @@ Element.prototype.insertAfter = function (node, beforeNode) {
 // 逆序元素节点
 Element.prototype.reverseChildren = function () {
 	var child = this.childNodes,
-		len = child.length;
+			len = child.length;
 
 	while (len--) {
 		this.appendChild(child[len]);
@@ -462,8 +462,8 @@ Element.prototype.reverseChildren = function () {
 // 返回该元素下的所有元素节点
 Element.prototype.allChildren = function (childrenArr = []) {
 	var child = this.childNodes,
-		len = child.length,
-		item;
+			len = child.length,
+			item;
 
 	for (var i = 0; i < len; i++) {
 		item = child[i];
@@ -523,14 +523,17 @@ Element.prototype.sibling = function (n) {
  */
 Element.prototype.drag = function (opt = {}) {
 	var dragWrap = opt.dragWrap || this,
-		elem = this,
-		dblWrap = opt.dblWrap,
-		menuWrap = opt.menuWrap,
-		wWidth = getClientPort().w,
-		wHeight = getClientPort().h,
-		disX,
-		disY,
-		[callbackTime, ceTime, counter, t] = [null, null, 0, null];
+			elem = this,
+			dblWrap = opt.dblWrap,
+			menuWrap = opt.menuWrap,
+			wWidth = getClientPort().w,
+			wHeight = getClientPort().h,
+			callbackTime = null,
+			ceTime = null,
+			t = null,
+			counter = 0;
+			disX,
+			disY;
 
 	if (menuWrap) {
 		var mWidth = getStyle(menuWrap, 'width'),
@@ -648,11 +651,13 @@ Element.prototype.drag = function (opt = {}) {
  * @param {动画时间 - ms} opt.duration 
  */
 Element.prototype.showStatusAnimation = function (opt = {}) {
-	var [t, t1, t2] = [null, null, null],
-		status = opt.status,
-		duration = opt.duration || 1000,
-		elem = this,
-		animation = opt.animation;
+	var t = null,
+			t1 = null,
+			t2 = null,
+			status = opt.status,
+			duration = opt.duration || 1000,
+			elem = this,
+			animation = opt.animation;
 
 	elem.style.animation = animation + ' ' + duration / 1000 + 's';
 
@@ -686,13 +691,13 @@ Element.prototype.showStatusAnimation = function (opt = {}) {
  */
 Element.prototype.getDirection = function (e) {
 	var e = e || window.event,
-		elem = this,
-		elemWidth = getStyle(elem, 'width'),
-		elemHeight = getStyle(elem, 'height'),
-		x = (pagePos(e).x - elemPos(elem).left - elemWidth / 2) * (elemWidth > elemHeight ? elemHeight / elemWidth : 1),
-		y = (pagePos(e).y - elemPos(elem).top - elemHeight / 2) * (elemHeight > elemWidth ? elemWidth / elemHeight : 1),
-		angle = (Math.atan2(y, x) * 180 / Math.PI) + 180,
-		num = (Math.round(angle / 90) + 3) % 4;
+			elem = this,
+			elemWidth = getStyle(elem, 'width'),
+			elemHeight = getStyle(elem, 'height'),
+			x = (pagePos(e).x - elemPos(elem).left - elemWidth / 2) * (elemWidth > elemHeight ? elemHeight / elemWidth : 1),
+			y = (pagePos(e).y - elemPos(elem).top - elemHeight / 2) * (elemHeight > elemWidth ? elemWidth / elemHeight : 1),
+			angle = (Math.atan2(y, x) * 180 / Math.PI) + 180,
+			num = (Math.round(angle / 90) + 3) % 4;
 
 	function _getDir (type, callback) {
 		var dir;
@@ -751,13 +756,13 @@ Element.prototype.getDirection = function (e) {
  */
 Element.prototype.elasticMove = function (opt = {}, callback) {
 	var elem = this,
-		attr = opt.attr || 'left',
-		target = opt.target === 0 ? 0 : opt.target || 250,
-		k = opt.k || .7,
-		z = opt.z || .7,
-		flexLen = target,
-		step = 0,
-		cur;
+			attr = opt.attr || 'left',
+			target = opt.target === 0 ? 0 : opt.target || 250,
+			k = opt.k || .7,
+			z = opt.z || .7,
+			flexLen = target,
+			step = 0,
+			cur;
 
 	if (!elem.timer) {
 		elem.timer = {};
@@ -793,17 +798,17 @@ Element.prototype.elasticMove = function (opt = {}, callback) {
  */
 Element.prototype.gravityMove = function (opt = {}, callback) {
 	var elem = this,
-		activeHeight = (opt.activeHeight === 0 ? 0 : getClientPort().h) - getStyle(elem, 'height'),
-		activeWidth = (opt.activeWidth === 0 ? 0 : getClientPort().w) - getStyle(elem, 'width'),
-		z = opt.z || .7,
-		stepX = opt.stepX || 0,
-		stepY = opt.stepY || 2,
-		maxCount = opt.maxCount || 10,
-		x = 0,
-		y = 0,
-		curTop,
-		curLeft,
-		count = 0;
+			activeHeight = (opt.activeHeight === 0 ? 0 : getClientPort().h) - getStyle(elem, 'height'),
+			activeWidth = (opt.activeWidth === 0 ? 0 : getClientPort().w) - getStyle(elem, 'width'),
+			z = opt.z || .7,
+			stepX = opt.stepX || 0,
+			stepY = opt.stepY || 2,
+			maxCount = opt.maxCount || 10,
+			x = 0,
+			y = 0,
+			curTop,
+			curLeft,
+			count = 0;
 
 	if (elem.timer) {
 		clearInterval(elem.timer);
@@ -850,8 +855,8 @@ Element.prototype.gravityMove = function (opt = {}, callback) {
  */
 Element.prototype.startMove = function (opt = {}, duration = 1000, callback) {
 	var elem = this,
-		speed = 100,
-		step;
+			speed = 100,
+			step;
 
 	if (elem.timer) {
 		clearInterval(elem.timer);
@@ -893,10 +898,10 @@ Element.prototype.startMove = function (opt = {}, duration = 1000, callback) {
  * @param {右滑} slideright 
  * @param {上滑} slideup 
  * @param {下滑} slidedown 
+ * @param {触发的最小值} activeRange
  */
-Element.prototype.touch = function () {
-	var elem = this,
-		activeHeight = getStyle(elem, 'height') / 3;
+Element.prototype.touch = function (activeRange = 100) {
+	var elem = this;
 
 	function tap (callback) {
 		elem.addEventListener('touchstart', fn, false);
@@ -983,22 +988,22 @@ Element.prototype.touch = function () {
 		function _slideDir (e, x, y) {
 			switch (type) {
 				case 'left':
-					if (x > activeHeight && Math.abs(y) < 30) {
+					if (x > activeRange && Math.abs(y) < 30) {
 						callback.call(elem, e);
 					}
 					break;
 				case 'up':
-					if (Math.abs(x) < 30 && -y > activeHeight) {
+					if (Math.abs(x) < 30 && -y > activeRange) {
 						callback.call(elem, e);
 					}
 					break;
 				case 'right':
-					if (-x > activeHeight && Math.abs(y) < 30) {
+					if (-x > activeRange && Math.abs(y) < 30) {
 						callback.call(elem, e);
 					}
 					break;
 				case 'down':
-					if (Math.abs(x) < 30 && y > activeHeight) {
+					if (Math.abs(x) < 30 && y > activeRange) {
 						callback.call(elem, e);
 					}
 					break;
@@ -1084,32 +1089,49 @@ function compose () {
 
 
 /**
- * 柯里化函数  --> 将一个多参数函数转成多个单参数的函数（单个多元函数 --> 多个单元函数）
+ * 柯里化函数  --> 将一个多参数函数转成多个单参数的函数（一个n元函数 --> n个一元函数）
  * @param {分步所执行的函数} fn 
- * @param {函数的形参个数} len 
  */
-function curry (fn, len) {
-	var len = len || fn.length;
+// function curry (fn, len) {
+// 	var len = len || fn.length;
 
-	var func = function (fn) {
-		var args = [].slice.call(arguments, 1);
+// 	var func = function (fn) {
+// 		var args = [].slice.call(arguments, 1);
 
-		return function () {
-			var newArgs = args.concat([].slice.call(arguments));
-			return fn.apply(this, newArgs);
-		}
-	}
+// 		return function () {
+// 			var newArgs = args.concat([].slice.call(arguments));
+// 			return fn.apply(this, newArgs);
+// 		}
+// 	}
 
-	return function () {
-		var arrLen = arguments.length;
+// 	return function () {
+// 		var arrLen = arguments.length;
 
-		if (arrLen < len) {
-			var formatedArr = [fn].concat([].slice.call(arguments));
-			return curry(func.apply(this, formatedArr), len - arrLen);
-		} else {
-			return fn.apply(this, arguments);
-		}
-	}
+// 		if (arrLen < len) {
+// 			var formatedArr = [fn].concat([].slice.call(arguments));
+// 			return curry(func.apply(this, formatedArr), len - arrLen);
+// 		} else {
+// 			return fn.apply(this, arguments);
+// 		}
+// 	}
+// }
+function curry (fn) {
+  var totalLen = fn.length,
+      args = [].slice.call(arguments, 1);
+
+    var func = function () {
+      var len = arguments.length;
+
+    if (len < totalLen) {
+      return function () {
+        args = args.concat([].slice.call(arguments));
+        return func.apply(this, args);
+      }
+    } else {
+      return fn.apply(this, args);
+    }
+  }
+  return func();
 }
 
 
@@ -1145,7 +1167,7 @@ function memorize (fn) {
  */
 function debounce (fn, wait = 800, immediate = false) {
 	var timeout,
-		res;
+			res;
 
 	function later (args) {
 		return setTimeout(function () {
@@ -1188,8 +1210,8 @@ function debounce (fn, wait = 800, immediate = false) {
  */
 function throttle (fn, delay = 1000) {
 	var t = null,
-		firstTime = new Date().getTime(),
-		res;
+			firstTime = new Date().getTime(),
+			res;
 
 	return function () {
 		var _self = this,
@@ -1222,7 +1244,7 @@ function throttle (fn, delay = 1000) {
  */
 Function.prototype.partial = function () {
 	var args = [].slice.call(arguments, 1),
-		_self = this;
+			_self = this;
 
 	return function () {
 		var newArgs = args.concat([].slice.call(arguments));
@@ -1240,10 +1262,10 @@ Function.prototype.partial = function () {
 
 /**
  * 数据分类函数
- * @param {以何分类} fields 
- * @param {要分类数据 - array} datas 
+ * @param {分类字段} fields 
+ * @param {数据 - array} datas 
  * @param {映射的字段 - string} mapping_field
- * @param {以seperator为分隔符的复合分类 - string} seperator
+ * @param {分隔符 - string} seperator
  */
 function sortDatas (fields, datas) {
 	var cache = {};
@@ -1382,8 +1404,8 @@ function preventDefault (e) {
 // 获取元素相对于文档的位置
 function elemPos (elem) {
 	var elemParent = elem.offsetParent,
-		elemLeft = elem.offsetLeft,
-		elemTop = elem.offsetTop;
+			elemLeft = elem.offsetLeft,
+			elemTop = elem.offsetTop;
 
 	while (elemParent) {
 		elemLeft += elemParent.offsetLeft;
@@ -1401,10 +1423,10 @@ function elemPos (elem) {
 // 获取鼠标位置
 function pagePos (e) {
 	var e = e || window.event,
-		sTop = window.pageYOffset || document.body.scrollTop + document.documentElement.scrollTop,
-		sLeft = window.pageXOffset || document.body.scrollLeft + document.documentElement.scrollLeft,
-		cTop = document.documentElement.clientTop || 0,
-		cLeft = document.documentElement.clientLeft || 0;
+			sTop = window.pageYOffset || document.body.scrollTop + document.documentElement.scrollTop,
+			sLeft = window.pageXOffset || document.body.scrollLeft + document.documentElement.scrollLeft,
+			cTop = document.documentElement.clientTop || 0,
+			cLeft = document.documentElement.clientLeft || 0;
 
 	return {
 		x: e.clientX + sLeft - cLeft,
@@ -1523,10 +1545,10 @@ function getStyle (elem, prop) {
  */
 function fadeIn (opt = {}) {
 	var o,
-		timer,
-		elemStyle = opt.elem.style,
-		duration = opt.duration || 500,
-		opacity = opt.opacity || 1;
+			timer,
+			elemStyle = opt.elem.style,
+			duration = opt.duration || 500,
+			opacity = opt.opacity || 1;
 
 	clearInterval(timer);
 	o = elemStyle.opacity = getStyle(opt.elem, 'opacity');
@@ -1551,11 +1573,11 @@ function fadeIn (opt = {}) {
  */
 function fadeOut (opt = {}) {
 	var o,
-		timer,
-		elemStyle = opt.elem.style,
-		duration = opt.duration || 500,
-		opacity = opt.opacity || 0,
-		c;
+			timer,
+			elemStyle = opt.elem.style,
+			duration = opt.duration || 500,
+			opacity = opt.opacity || 0,
+			c;
 
 	clearInterval(timer);
 	c = o = elemStyle.opacity = getStyle(opt.elem, 'opacity');
@@ -1574,9 +1596,8 @@ function fadeOut (opt = {}) {
 
 // 封装求取字符串长度
 function retByteslen (target) {
-	var count,
-		len,
-		count = len = target.length;
+	var count = target.length,
+			len = count;
 	for (var i = 0; i < len; i++) {
 		if (target.charCodeAt(i) > 255) {
 			count++;
@@ -1627,8 +1648,8 @@ function trimSpace (str) {
  */
 function deepClone (origin, target) {
 	var target = target || {},
-		toStr = Object.prototype.toString,
-		arrStr = '[object Array]';
+			toStr = Object.prototype.toString,
+			arrStr = '[object Array]';
 
 	for (var prop in origin) {
 		if (origin.hasOwnProperty(prop)) {
@@ -1671,14 +1692,14 @@ function type (target) {
  */
 function checkBrowser () {
 	var nVer = navigator.appVersion,
-		nAgt = navigator.userAgent,
-		browser = navigator.appName,
-		version = '' + parseFloat(navigator.appVersion),
-		majorVersion,
-		nameOffset,
-		verOffset,
-		ix,
-		network = 'unknown';
+			nAgt = navigator.userAgent,
+			browser = navigator.appName,
+			version = '' + parseFloat(navigator.appVersion),
+			majorVersion,
+			nameOffset,
+			verOffset,
+			ix,
+			network = 'unknown';
 
 	// Opera浏览器（老版本）
 	if ((verOffset = nAgt.indexOf('Opera')) != -1) {
@@ -2002,7 +2023,7 @@ function async_load (url) {
 /**
  * 放大镜
  * @param {元素} el
- * @param {模式} mode
+ * @param {模式} opt.mode
  * @param {图片地址 -string} opt.imgUrl
  * @param {放大镜宽度 - number} opt.magWidth
  * @param {放大镜高度 - number} opt.magHeight
@@ -2182,122 +2203,136 @@ var Magnifier = (function (doc) {
  * @param {地址} opt.url
  * @param {列数} opt.column
  * @param {图片间隙} opt.gap
+ * @param {瀑布流无限} opt.infinity
  */
-var Waterfall = (function (doc, win) {
-	var t = null;
-	var Waterfall = function (wrap, opt) {
-		this.oWrap = doc.querySelector(wrap);
-		this.column = opt.column || 6;
-		this.gap = opt.gap || 10;
-		this.pages = 0;
-		this.curPage = 0;
-		this.heightArr = [];
-		this.API = opt.url;
-		this.oWrap.style.position = 'relative';
-		if (!this.API) {
-			throw new Error('url未填写');
-		}
-	};
+var Waterfall = (function(doc, win) {
+  var t = null;
+  var Waterfall = function(wrap, opt) {
+    this.oWrap = doc.querySelector(wrap);
+    this.column = opt.column || 6;
+    this.gap = opt.gap || 10;
+    this.API = opt.url;
+    this.infinity = opt.infinity || false;
 
-	Waterfall.prototype = {
-		init: function () {
-			this.bindEvent();
-			this.getImgDatas(this.curPage);
-			t = setTimeout(function () {
-				win.scroll(0, 0);
-				clearTimeout(t);
-				t = null;
-			}, 400);
-		},
+    this.pages = 0;
+    this.curPage = 0;
+    this.cache = [];
+    this.idx = 0;
+    this.heightArr = [];
+    this.oWrap.style.position = 'relative';
+    if (!this.API) {
+      throw new Error('url未填写');
+    }
+  };
 
-		bindEvent: function () {
+  Waterfall.prototype = {
+    init: function() {
+      this.bindEvent();
+      this.getImgDatas(this.curPage);
+      t = setTimeout(function() {
+        win.scroll(0, 0);
+        clearTimeout(t);
+        t = null;
+      }, 400);
+    },
+
+    bindEvent: function() {
 			var _moreImagDatas = throttle(this.moreImgDatas, 500).bind(this),
-				_resetWaterfall = debounce(this.resetWaterfall.bind(this), 500);
+					_resetWaterfall = debounce(this.resetWaterfall.bind(this), 500);
 
 			addEvent(win, 'scroll', _moreImagDatas);
 			addEvent(win, 'resize', _resetWaterfall);
-		},
+    },
 
-		moreImgDatas: function () {
-			if (getViewPort().h + getScrollOffset().y >= getScrollSize().h) {
-				this.curPage++;
-				if (this.curPage <= this.pages - 1) {
-					this.getImgDatas(this.curPage);
-				}
-			}
-		},
+    moreImgDatas: function() {
+      if (getViewPort().h + getScrollOffset().y >= getScrollSize().h) {
+        this.curPage++;
+        
+        if (this.curPage <= this.pages - 1) {
+          this.getImgDatas(this.curPage);
+        } else if (this.infinity){
+          this.renderImgs(this.cache[this.idx]);
+          this.idx = this.idx === this.pages - 1
+                   ? 0
+                   : this.idx + 1;
+        }
+      }
+    },
 
-		getImgDatas: function (curPage) {
-			var _self = this;
-			xhr.ajax({
-				url: this.API,
-				type: 'POST',
-				data: {
-					pageNum: curPage
-				},
-				success: function (data) {
-					_self.res = JSON.parse(data.pageData);
-					_self.pages = data.pageSize;
-					_self.renderImgs(_self.res, curPage);
-				}
-			});
-		},
+    getImgDatas: function(curPage) {
+      var _self = this;
+      xhr.ajax({
+        url: this.API,
+        type: 'POST',
+        data: {
+          pageNum: curPage
+        },
+        success: function(data) {
+          var res = JSON.parse(data.pageData);
+          _self.pages = data.pageSize;
+          _self.renderImgs(res, curPage);
+          _self.infinity && _self.cache.push(res);
+        }
+      });
+    },
 
-		renderImgs: function (data, curPage) {
-			var _self = this,
-				wrapWidth = getStyle(this.oWrap, 'width'),
-				liWidth = Math.round(
-					(wrapWidth - this.gap * (this.column - 1)) / this.column
-				),
-				liHeight,
-				oLi,
-				oImg,
-				minIdx;
+    renderImgs: function(data, curPage) {
+      var _self = this,
+        wrapWidth = getStyle(this.oWrap, 'width'),
+        liWidth = Math.round(
+          (wrapWidth - this.gap * (this.column - 1)) / this.column
+        ),
+        liHeight,
+        oLi,
+        oImg,
+        minIdx;
 
-			data.jForEach(function (val, idx) {
+      data.jForEach(function(val, idx) {
 				liHeight = Math.round((liWidth * val.height) / val.width);
 				oLi = doc.createElement('li');
 				liStyle = oLi.style;
-				liStyle.position = 'absolute';
-				liStyle.width = liWidth + 'px';
-				liStyle.height = liHeight + 'px';
-				oImg = new Image();
-				oImg.src = val.img;
-				oImg.style.opacity = 0;
-				oImg.style.transition = 'opacity 1s';
-				oLi.appendChild(oImg);
-				_self.oWrap.appendChild(oLi);
+        liStyle.position = 'absolute';
+        liStyle.width = liWidth + 'px';
+        liStyle.height = liHeight + 'px';
+        oImg = new Image();
+        oImg.src = val.img;
+        oImg.style.opacity = 0;
+        oImg.style.transition = 'opacity 1s';
+        oLi.appendChild(oImg);
+        _self.oWrap.appendChild(oLi);
 
-				if (_self.column > idx && curPage === 0) {
-					liStyle.top = 0;
+        if (_self.column > idx && curPage === 0) {
+          liStyle.top = 0;
 					liStyle.left = (liWidth + _self.gap) * idx + 'px';
-					_self.heightArr.push(liHeight + _self.gap);
-				} else {
-					minIdx = _self.getArrIdx(_self.heightArr);
-					liStyle.left = (liWidth + _self.gap) * minIdx + 'px';
-					liStyle.top = _self.heightArr[minIdx] + 'px';
-					_self.heightArr[minIdx] += oLi.offsetHeight + _self.gap;
-				}
-				oImg.style.opacity = 1;
-			});
-			_self.oWrap.style.height = Math.max.apply(null, _self.heightArr) + 'px';
-		},
+          _self.heightArr.push(liHeight + _self.gap);
+        } else {
+          minIdx = _self.getArrIdx(_self.heightArr);
+          liStyle.left = (liWidth + _self.gap) * minIdx + 'px';
+          liStyle.top = _self.heightArr[minIdx] + 'px';
+          _self.heightArr[minIdx] += oLi.offsetHeight + _self.gap;
+        }
+        oImg.style.opacity = 1;
+      });
+      _self.oWrap.style.height = Math.max.apply(null, _self.heightArr) + 'px';
+    },
 
-		getArrIdx: function (arr) {
-			return [].indexOf.call(arr, Math.min.apply(null, arr));
+    getArrIdx: function(arr) {
+      return [].indexOf.call(arr, Math.min.apply(null, arr));
 		},
-
-		resetWaterfall: function () {
+		
+		resetWaterfall: function() {
 			this.oWrap.innerHTML = '';
 			this.heightArr = [];
-			this.res = [];
-			this.curPage = 0;
+      this.curPage = 0;
+      this.cache = [];
+      this.idx = 0;
 			this.getImgDatas(this.curPage);
 		}
-	};
+  };
 
-	return Waterfall;
+  return Waterfall;
 })(document, window);
+
 
 
 /**
