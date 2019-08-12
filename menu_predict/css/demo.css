@@ -23,7 +23,7 @@ body {
 	padding-left: 12px;
 }
 
-.wrap .main-menu-list .menu-item.active {
+.wrap .main-menu-list .menu-item.cur {
 	background-color: #d9d9d9;
 }
 

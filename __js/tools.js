@@ -1544,8 +1544,8 @@ function getStyle (elem, prop) {
  * @param {透明度（0~1）} opt.opacity 
  */
 function fadeIn (opt = {}) {
-	var o,
-			timer,
+	var o = null,
+			timer = null,
 			elemStyle = opt.elem.style,
 			duration = opt.duration || 500,
 			opacity = opt.opacity || 1;
@@ -1572,12 +1572,12 @@ function fadeIn (opt = {}) {
  * @param {透明度（0~1）} opt.opacity 
  */
 function fadeOut (opt = {}) {
-	var o,
-			timer,
+	var o = null,
+			timer = null,
 			elemStyle = opt.elem.style,
 			duration = opt.duration || 500,
 			opacity = opt.opacity || 0,
-			c;
+			c = null;
 
 	clearInterval(timer);
 	c = o = elemStyle.opacity = getStyle(opt.elem, 'opacity');
@@ -2015,6 +2015,18 @@ function async_load (url) {
 	document.head.appendChild(oS);
 }
 
+/**
+ * 获取URL参数的值
+ * @param {} value
+ */
+function getUrlParam(value) {
+  var reg = new RegExp("(^|&)" + value + "=([^&]*)(&|$)", "i")
+      r = window.location.search.substr(1).match(reg);
+	if(r != null) {
+		return(r[2]);
+	}
+}
+
 
 
 
@@ -2022,27 +2034,33 @@ function async_load (url) {
 
 /**
  * 放大镜
- * @param {元素} el
- * @param {模式} opt.mode
+ * @param {元素} elem
+ * @param {放大模式 - 'inner/outer'} opt.mode
  * @param {图片地址 -string} opt.imgUrl
- * @param {放大镜宽度 - number} opt.magWidth
- * @param {放大镜高度 - number} opt.magHeight
+ * @param {放大图片地址 -string} opt.magnifierImgUrl
  * @param {放大因数 - number} opt.scale
+ * @param {放大镜宽度 - number} opt.magnifierWidth
+ * @param {放大镜高度 - number} opt.magnifierHeight
+ * @param {外部图片宽度} opt.outerWidth
+ * @param {外部图片高度} opt.outerHeight
+ * @param {以图片右上方为原点，外部图片left -number} opt.outerTop
+ * @param {以图片右上方为原点，外部图片top -number} opt.outerLeft
  */
-var Magnifier = (function (doc) {
-	var Magnifier = function (el, opt = {}) {
+var Magnifier = (function (doc, win) {
+	var Magnifier = function (elem, opt = {}) {
 		if (!opt.imgUrl) {
 			throw new Error('图片地址未填写！')
 		}
-		this.oWrap = doc.querySelector(el);
-		this.wrapWidth = getStyle(this.oWrap, 'width');
-		this.wrapHeight = getStyle(this.oWrap, 'height');
-		this.wrapLeft = elemPos(this.oWrap).left;
-		this.wrapTop = elemPos(this.oWrap).top;
-		this.mode = opt.mode || 'outer';
+		this.elem = doc.querySelector(elem);
+		this.elemWidth = getStyle(this.elem, 'width');
+		this.elemHeight = getStyle(this.elem, 'height');
+		this.mode = opt.mode || 'inner';
 		this.scale = opt.scale || 1.5;
 		this.imgUrl = opt.imgUrl;
+		this.magnifierImgUrl = opt.magnifierImgUrl || opt.imgUrl;
 		this.opt = opt;
+    this._moveWrap = this.moveWrap.bind(this);
+    this._leaveWrap = this.leaveWrap.bind(this);
 	}
 
 	Magnifier.prototype = {
@@ -2054,115 +2072,100 @@ var Magnifier = (function (doc) {
 
 		initMode: function () {
 			if (this.mode === 'inner') {
-				this.magWidth = this.opt.magWidth ? this.opt.magWidth / this.scale : 100;
-				this.magHeight = this.opt.magHeight ? this.opt.magHeight / this.scale : 100;
+				this.magnifierWidth = (this.opt.magnifierWidth || 200) / this.scale;
+				this.magnifierHeight = (this.opt.magnifierHeight || 200) / this.scale;
 			} else {
-				this.magWidth = this.opt.magWidth || 150;
-				this.magHeight = this.opt.magHeight || 150;
-				this.top = this.opt.top || 0;
-				this.left = (this.opt.left || 20) + this.wrapWidth;
-				this.width = this.opt.width || 256;
-				this.height = this.opt.height || 300;
+				this.magnifierWidth = this.opt.magnifierWidth || 180;
+				this.magnifierHeight = this.opt.magnifierHeight || 180;
+				this.outerTop = this.opt.outerTop || 0;
+				this.outerLeft = (this.opt.outerLeft || 20) + this.elemWidth;
+				this.outerWidth = this.opt.outerWidth || 300;
+				this.outerHeight = this.opt.outerHeight || 300;
 			}
-			this.maxX = this.wrapWidth - this.magWidth;
-			this.maxY = this.wrapHeight - this.magHeight;
-			this.createElement(this.mode);
+			this.maxX = this.elemWidth - this.magnifierWidth;
+      this.maxY = this.elemHeight - this.magnifierHeight;
+      this.hMagW = this.magnifierWidth / 2,
+      this.hMagH = this.magnifierHeight / 2,
+			this.createElement();
 		},
 
-		bindEvent: function () {
-			addEvent(this.oWrap, 'mouseenter', this.enterWrap.bind(this));
-			addEvent(this.oWrap, 'mouseleave', this.leaveWrap.bind(this));
-		},
-
-		createElement: function (mode) {
-			let html;
-			if (mode === 'inner') {
-				html = '<div class="J_magnifierWrap" \
-				style="position: relative;\
-				width: ' + this.wrapWidth + 'px; \
-				height: ' + this.wrapHeight + 'px; ">\
-				<img style="display:block; height: 100%" \
-				src="' + this.imgUrl + '" />\
-				<span class="J_magnifier" \
-				style="display: none; position: absolute; top: 0; left: 0; box-shadow: 0 0 8px 3px #ddd; overflow: hidden; \
-				width: ' + this.magWidth + 'px; \
-				height: ' + this.magHeight + 'px; ">\
-				<img class="J_absImg" \
-				style="position: absolute; top: 0; left: 0; cursor: pointer; \
-				width: ' + this.wrapWidth + 'px; \
-				height: ' + this.wrapHeight + 'px"\
-				src="'+ this.imgUrl + '" />\
-				</span>\
-				</div>';
-			} else {
-				html = '<div class="J_magnifierWrap" \
-				style="position: relative;\
-				width: ' + this.wrapWidth + 'px; \
-				height: ' + this.wrapHeight + 'px; ">\
-				<img style="display:block; height: 100%" \
-				src="' + this.imgUrl + '" />\
-				<span class="J_magnifier" \
-				style="display: none; position: absolute; top: 0; left: 0; background-color: rgba(0, 0, 0, .4); overflow: hidden; cursor: move; \
-				width: ' + this.magWidth + 'px; \
-				height: ' + this.magHeight + 'px; ">\
-				</span>\
-				<div class="J_absWrap"\
-				style="display: none;position: absolute; border: 1px solid #ccc; overflow: hidden; \
-				top:' + this.top + 'px;\
-				left:' + this.left + 'px;\
-				width:' + this.width + 'px;\
-				height:' + this.height + 'px; ">\
-				<img class="J_absImg" \
-				style="position: absolute; top: 0; left: 0; cursor: pointer; \
-				width: ' + this.wrapWidth * this.scale + 'px; \
-				height: ' + this.wrapHeight * this.scale + 'px;" \
-				src="'+ this.imgUrl + '" />\
-				</div>\
-				</div>';
-			}
-
-			this.oWrap.innerHTML = html;
+		createElement: function () {
+			let html = '<div class="J_myMagnifierWrap" \
+                  style="position: relative;\
+                  width: ' + this.elemWidth + 'px; \
+                  height: ' + this.elemHeight + 'px; ">\
+                  <img style="display:block; height: 100%" \
+                  src="' + this.imgUrl + '" />\
+                  <span class="J_myMagnifier" \
+                  style="display: none; position: absolute; top: 0; left: 0; box-shadow: 0 0 8px 1px #ccc; cursor: move; overflow: hidden; \
+                  width: ' + this.magnifierWidth + 'px; \
+                  height: ' + this.magnifierHeight + 'px; ">\
+                  <img class="J_myAbsImg" \
+                  style="position: absolute; top: 0; left: 0; \
+                  width: ' + this.elemWidth + 'px; \
+                  height: ' + this.elemHeight + 'px"\
+                  src="'+ this.imgUrl + '" />\
+                  </span>\
+                  </div>';
+      this.elem.innerHTML = html;
 		},
 
 		getElement: function () {
-			this.oMagnifier = this.oWrap.querySelector('.J_magnifier');
-			this.oAbsImg = this.oWrap.querySelector('.J_absImg');
+      this.oMagnifierWrap = this.elem.querySelector('.J_myMagnifierWrap');
+			this.oMagnifier = this.elem.querySelector('.J_myMagnifier');
+			this.oAbsImg = this.elem.querySelector('.J_myAbsImg');
 			if (this.mode === 'outer') {
-				this.oAbsWrap = this.oWrap.querySelector('.J_absWrap');
+        var oDiv = doc.createElement('div');
+
+        oDiv.className = 'J_myOuterWrap';
+        oDiv.style.cssText = 'display: none;position: absolute; border: 1px solid #ccc; overflow: hidden;\
+          top:' + this.outerTop + 'px; \
+          left:' + this.outerLeft + 'px; \
+          width: ' + this.outerWidth + 'px; \
+          height: ' + this.outerHeight + 'px; \
+          '
+        this.oMagnifier.style.backgroundColor = 'rgba(0, 0, 0, .4)';
+        this.oMagnifier.style.boxShadow = 'none';
+        this.oAbsImg.style.width = this.elemWidth * this.scale + 'px';
+        this.oAbsImg.style.height = this.elemHeight * this.scale + 'px';
+        this.width = this.elemWidth * this.scale - this.outerWidth;
+        this.height = this.elemHeight * this.scale - this.outerHeight;
+        oDiv.appendChild(this.oAbsImg);
+        this.oMagnifierWrap.appendChild(oDiv);
+        this.oOuterWrap = this.elem.querySelector('.J_myOuterWrap');
 			}
+		},
+
+		bindEvent: function () {
+			addEvent(this.elem, 'mouseenter', this.enterWrap.bind(this));
 		},
 
 		magnifierStatus: function (status) {
 			if (this.mode === 'inner') {
-				if (status) {
-					this.oMagnifier.style.display = 'block';
-					this.oMagnifier.style.transform = 'scale(' + this.scale + ', ' + this.scale + ')';
-				} else {
-					this.oMagnifier.style.display = 'none';
-				}
+        this.oMagnifier.style.display = status ? 'block' : 'none';
 			} else {
 				if (status) {
 					this.oMagnifier.style.display = 'block';
-					this.oAbsWrap.style.display = 'block';
+					this.oOuterWrap.style.display = 'block';
 				} else {
 					this.oMagnifier.style.display = 'none';
-					this.oAbsWrap.style.display = 'none';
+					this.oOuterWrap.style.display = 'none';
 				}
 			}
-		},
-
+    },
+    
 		enterWrap: function () {
-			this.magnifierStatus(true);
-			addEvent(this.oWrap, 'mousemove', this.moveWrap.bind(this));
+      addEvent(this.elem, 'mousemove', this._moveWrap);
+			addEvent(this.elem, 'mouseleave', this._leaveWrap);
+      this.magnifierStatus(true);
 		},
 
 		moveWrap: function (e) {
-			var e = e || window.event,
-				magW = this.magWidth / 2,
-				magH = this.magHeight / 2,
-				x = pagePos(e).x - this.wrapLeft - magW,
-				y = pagePos(e).y - this.wrapTop - magH;
-
+			var e = e || win.event,
+          x = pagePos(e).x - elemPos(this.elem).left - this.hMagW,
+          y = pagePos(e).y - elemPos(this.elem).top - this.hMagH;
+          // x = e.offsetX - this.hMagW,
+          // y = e.offsetY - this.hMagH;
 
 			if (x <= 0) {
 				x = 0;
@@ -2176,25 +2179,189 @@ var Magnifier = (function (doc) {
 				y = this.maxY;
 			}
 
-			this.oMagnifier.style.left = x + 'px';
-			this.oMagnifier.style.top = y + 'px';
 			if (this.mode === 'inner') {
-				this.oAbsImg.style.left = -x + 'px';
-				this.oAbsImg.style.top = -y + 'px';
+        this.oMagnifier.style.transform = 'translate(' + x + 'px, ' + y + 'px) scale(' + this.scale + ')';
+        this.oAbsImg.style.transform = 'translate(-' + x + 'px, -' + y + 'px)';
 			} else {
-				this.oAbsImg.style.left = -x / this.maxX * this.width * this.scale + 'px';
-				this.oAbsImg.style.top = -y / this.maxY * this.height * this.scale + 'px';
-			}
+        this.oMagnifier.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
+        this.oAbsImg.style.transform = '\
+          translate(\
+            -' + (x / this.maxX * this.width) + 'px, \
+            -' + (y / this.maxY * this.height) + 'px\
+          )';
+      }
 		},
 
 		leaveWrap: function () {
-			removeEvent(this.oWrap, 'mousemove', this.moveWrap);
-			this.magnifierStatus(false);
+			removeEvent(this.elem, 'mousemove', this._moveWrap);
+			removeEvent(this.elem, 'mouseleave', this._leaveWrap);
+      this.magnifierStatus(false);
 		}
 	}
 
 	return Magnifier;
-})(document);
+})(document, window);
+
+
+/**
+ * @param {元素} wrap
+ * @param {主菜单的类名} mianMenu
+ * @param {主菜单子项的类名} mainItem
+ * @param {子菜单的类名} subMenu
+ * @param {子菜单子项的类名} subItem
+ * @param {移入主菜单子项新增的类名} mainItemShow
+ * @param {移入主菜单，子菜单新增的类名} subMenuShow
+ * @param {移入主菜单子项，子菜单子项新增的类名} subItemShow
+ */
+var PredictedMenu = (function (win, doc) {
+	var PredictedMenu = function (wrap, opt) {
+		this.oWrap = doc.querySelector(wrap);
+		this.oMainMenu = this.oWrap.getElementsByClassName(opt.mainMenu)[0];
+		this.oMainItems = this.oWrap.getElementsByClassName(opt.mainItem);
+		this.oSubMenu = this.oWrap.getElementsByClassName(opt.subMenu)[0];
+		this.oSubItems = this.oWrap.getElementsByClassName(opt.subItem);
+		this.mainItem = opt.mainItem;
+		this.subItem = opt.subItem;
+		this.subMenu = opt.subMenu;
+		this.mainItemShow = opt.mainItemShow || 'cur';
+		this.subItemShow = opt.subItemShow || 'active';
+		this.subMenuShow = opt.subMenuShow || 'show';
+
+		this.mousePos = [];
+		this.isInSub = false;
+		this.isFirstEnter = true;
+		this.isLeave = false;
+		this.t = null;
+		this.t1 = null;
+		this.toDelay = false;
+
+		this._mouseMove = this.mouseMove.bind(this);
+		this._leaveMenu = this.leaveMenu.bind(this);
+		this._leaveSubmenu = this.leaveSubmenu.bind(this);
+	}
+
+	PredictedMenu.prototype = {
+		init: function () {
+			this.bindEvent();
+		},
+
+		bindEvent: function () {
+			var _self = this;
+
+			addEvent(this.oWrap, 'mouseenter', this.enterMenu.bind(this));
+			addEvent(this.oSubMenu, 'mouseenter', this.enterSubmenu.bind(this));
+			this.oMainItems.jForEach(function (val) {
+				addEvent(val, 'mouseenter', _self.enterMianMenu.bind(_self));
+			});
+		},
+
+		enterMenu: function () {
+			this.oSubMenu.className += ' ' + this.subMenuShow;
+			addEvent(doc, 'mousemove', this._mouseMove);
+			addEvent(this.oWrap, 'mouseleave', this._leaveMenu);
+		},
+
+		enterSubmenu: function () {
+			this.isInSub = true;
+			addEvent(this.oSubMenu, 'mouseleave', this._leaveSubmenu);
+		},
+
+		mouseMove: function (e) {
+			if (!this.isInSub) {
+				var e = e || win.event;
+				this.mousePos.push({
+					x: pagePos(e).x,
+					y: pagePos(e).y
+				});
+				this.mousePos.length > 2 && this.mousePos.shift();
+			}
+		},
+
+		enterMianMenu: function (e) {
+			var e = e || win.event,
+					tar = e.target || e.srcElement,
+					idx = [].indexOf.call(this.oMainItems, tar),
+					mousePosLen = this.mousePos.length,
+					last = this.mousePos[mousePosLen - 2] || { x: 0, y: 0 },
+					cur = this.mousePos[mousePosLen - 1] || { x: 0, y: 0 },
+					_self = this;
+
+			this.isLeave = false;
+			this.toDelay = this.doTimeout(cur, last);
+			this.t && clearTimeout(this.t);
+			if (this.isFirstEnter) {
+				_self.showMenuItem(idx);
+				this.isFirstEnter = false;
+				return;
+			}
+			if (this.toDelay) {
+				this.t = setTimeout(function () {
+					if (!_self.isInSub) {
+						_self.t1 = setTimeout(function () {
+							_self.showMenuItem(idx);
+							clearTimeout(_self.t1);
+							_self.t1 = null;
+						}, 80);
+						_self.t = null;
+					}
+				}, 500);
+				return;
+			}
+			this.t1 = setTimeout(function () {
+				_self.showMenuItem(idx);
+				clearTimeout(this.t1);
+				this.t1 = null;
+			}, 80);
+		},
+
+		doTimeout: function (cur, last) {
+			var menuTop = elemPos(this.oWrap).top,
+					menuLeft = elemPos(this.oWrap).left,
+					menuW = getStyle(this.oWrap, 'width'),
+					menuH = getStyle(this.oWrap, 'height');
+
+			return pointInTriangle({
+				topRightPoint: { x: menuLeft + menuW, y: menuTop },
+				bottomRightPoint: { x: menuLeft + menuW, y: menuTop + menuH },
+				lastPoint: last,
+				curPoint: cur
+			})
+		},
+
+		leaveMenu: function () {
+			this.oSubMenu.className = this.subMenu;
+			this.restoreMenuItems();
+			removeEvent(doc, 'mousemove', this._mouseMove);
+			removeEvent(this.oWrap, 'mouseleave', this._leaveMenu);
+			this.isLeave = true;
+		},
+
+		leaveSubmenu: function () {
+			this.isInSub = false;
+			removeEvent(this.oSubMenu, 'mouseleave', this._leaveSubmenu);
+		},
+
+		showMenuItem: function (idx) {
+			this.restoreMenuItems();
+			if (!this.isLeave) {
+				this.oMainItems[idx].className += ' ' + this.mainItemShow;
+				this.oSubItems[idx].className += ' ' + this.subItemShow;
+			}
+		},
+
+		restoreMenuItems: function () {
+			var _self = this;
+			this.oMainItems.jForEach(function (val) {
+				val.className = _self.mainItem;
+			});
+			this.oSubItems.jForEach(function (val) {
+				val.className = _self.subItem;
+			});
+		}
+	}
+
+	return PredictedMenu;
+}(window, document))
 
 
 /**
@@ -2203,7 +2370,7 @@ var Magnifier = (function (doc) {
  * @param {地址} opt.url
  * @param {列数} opt.column
  * @param {图片间隙} opt.gap
- * @param {瀑布流无限} opt.infinity
+ * @param {无限瀑布流} opt.infinity
  */
 var Waterfall = (function(doc, win) {
   var t = null;
@@ -2278,14 +2445,14 @@ var Waterfall = (function(doc, win) {
 
     renderImgs: function(data, curPage) {
       var _self = this,
-        wrapWidth = getStyle(this.oWrap, 'width'),
-        liWidth = Math.round(
-          (wrapWidth - this.gap * (this.column - 1)) / this.column
-        ),
-        liHeight,
-        oLi,
-        oImg,
-        minIdx;
+					wrapWidth = getStyle(this.oWrap, 'width'),
+					liWidth = Math.round(
+						(wrapWidth - this.gap * (this.column - 1)) / this.column
+					),
+					liHeight = 0,
+					oLi = null,
+					oImg = null,
+					minIdx = 0;
 
       data.jForEach(function(val, idx) {
 				liHeight = Math.round((liWidth * val.height) / val.width);
@@ -2346,7 +2513,7 @@ var PageList = (function (doc) {
 	var PageList = function (wrap, opt) {
 		this.wrap = doc.querySelector(wrap);
 		this.curPage = opt.curPage || 1;
-		this.pages = opt.pages;
+		this.pages = opt.pages || 0;
 		this.callback = opt.callback || function () { };
 	}
 
@@ -2433,9 +2600,14 @@ var PageList = (function (doc) {
 		},
 
 		renderPageList: function (curPage, pages) {
-			if (pages <= 1) {
+			if (pages <= 0) {
 				return '';
 			}
+
+			if (pages == 1) {
+				return this.pageBtnTpl('btn', 1, 1, 1);
+			}
+
 			var btnGroup = this.pageBtnTpl('backward', '', curPage);
 			if (pages > 8) {
 				if (curPage < 3) {
@@ -2506,13 +2678,13 @@ var inherit = (function () {
  * @param {图片元素集合} images
  */
 var imgLazyLoad = (function (win, doc) {
-	var imageItem,
-		imagesLen,
-		cHeight,
-		sTop,
-		imageTop,
-		src,
-		n = 0;
+	var imageItem = null,
+			imagesLen = 0,
+			cHeight = 0,
+			sTop = 0,
+			imageTop = 0,
+			src = null,
+			n = 0;
 
 	return function (images) {
 		imagesLen = images.length,

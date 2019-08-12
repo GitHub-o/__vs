@@ -1,0 +1,30 @@
+$list = 'webkit' 'ms' 'o' 'moz' 'default'
+
+vendor(prop, value)
+  for k in $list
+    if k == 'default'
+      {prop} value
+    else
+      -{k}-{prop} value
+
+
+border-radius()
+  vendor('border-radius', arguments)
+
+box-shadow()
+  vendor('box-shadow', arguments)
+
+transform()
+  vendor('transform', arguments)
+
+ellipsis(num = 1) 
+  if num == 1
+    white-space nowrap
+    overflow hidden
+    text-overflow ellipsis
+  else 
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: num;
+    -webkit-box-orient: vertical;

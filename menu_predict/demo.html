@@ -14,10 +14,10 @@
 
 	<div class="J_wrap wrap">
 		<div class="main-menu">
-			<ul class="J_main-menu-list main-menu-list"></ul>
+			<ul class="main-menu-list"></ul>
 		</div>
 		<div class="submenu">
-			<ul class="J_submenu-list submenu-list">
+			<ul class="submenu-list">
 				<li class="submenu-item">1abc</li>
 				<li class="submenu-item">2abc</li>
 				<li class="submenu-item">3abc</li>
@@ -76,12 +76,11 @@
 	<script src="js/utils.js"></script>
 	<script src="js/demo.js"></script>
 	<script>
-		var predictedMenu = new PredictedMenu({
-			wrap: '.J_wrap',
-			mainMenu: '.J_main-menu-list',
-			mainItem: '.menu-item',
-			subMenu: '.J_submenu-list',
-			subItem: '.submenu-item'
+		var predictedMenu = new PredictedMenu('.wrap', {
+			mainMenu: 'main-menu-list',
+			mainItem: 'menu-item',
+			subMenu: 'submenu-list',
+			subItem: 'submenu-item'
 		}).init();
 	</script>
 </body>

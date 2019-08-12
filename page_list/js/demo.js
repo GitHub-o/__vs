@@ -2,7 +2,7 @@ var PageList = (function (doc) {
 	var PageList = function (wrap, opt) {
 		this.wrap = doc.querySelector(wrap);
 		this.curPage = opt.curPage || 1;
-		this.pages = opt.pages;
+		this.pages = opt.pages || 0;
 		this.callback = opt.callback || function () { };
 	}
 
@@ -89,9 +89,14 @@ var PageList = (function (doc) {
 		},
 
 		renderPageList: function (curPage, pages) {
-			if (pages <= 1) {
+			if (pages <= 0) {
 				return '';
 			}
+	
+			if (pages == 1) {
+				return this.pageBtnTpl ('btn', 1, 1, 1);
+			}
+
 			var btnGroup = this.pageBtnTpl('backward', '', curPage);
 			if (pages > 8) {
 				if (curPage < 3) {
