@@ -1,4 +1,4 @@
-; (function () {
+; (function (doc, win) {
 	var oNavList = $get('.J_nav-list')[0],
 			oNavItems = $get('.nav-item', oNavList),
 			oSearchRow = $get('.J_search-row')[0],
@@ -49,7 +49,7 @@
 	}
 
 	function courseListClick (e) {
-		var e = e || window.event,
+		var e = e || win.event,
 				tar = e.target || e.srcElement,
 				type = tar.getAttribute('data-type');
 
@@ -83,8 +83,8 @@
 					oCourseInput.focus();
 					oCourseInput.value = text;
 					oCourseInput.setSelectionRange(0, textLen);
-					addEvent(document, 'click', updateCourse);
-					addEvent(document, 'keyup', updateCourse);
+					addEvent(doc, 'click', updateCourse);
+					addEvent(doc, 'keyup', updateCourse);
 					break;
 				default:
 					break;
@@ -93,7 +93,7 @@
 	}
 
 	function updateCourse (e) {
-		var e = e || window.event,
+		var e = e || win.event,
 				type = e.type,
 				newVal = oAllCourseInputs[idx].value,
 				text = oAllCourseSpans[idx].innerText,
@@ -156,8 +156,8 @@
 			val.className = 'J_course-name course-name';
 		});
 		if (!arguments[0]) {
-			removeEvent(document, 'click', updateCourse);
-			removeEvent(document, 'keyup', updateCourse);
+			removeEvent(doc, 'click', updateCourse);
+			removeEvent(doc, 'keyup', updateCourse);
 		}
 	}
 
@@ -175,7 +175,7 @@
 	}
 
 	function navListClick (e) {
-		var e = e || window.event,
+		var e = e || win.event,
 				tar = e.target || e.srcElement,
 				parent = tar.parentNode,
 				className = parent.className;
@@ -222,7 +222,7 @@
 	}
 
 	function pageListClick (e) {
-		var e = e || window.event,
+		var e = e || win.event,
 				tar = e.target || e.srcElement,
 				parent = tar.parentNode,
 				className = parent.className;
@@ -333,4 +333,4 @@
 	}
 
 	init();
-}())
+}(document, window))

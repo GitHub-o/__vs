@@ -1,19 +1,20 @@
-; (function () {
-	var oOpenModBtn = $get('.J_open-mod-btn')[0],
-			oCloseModBtn = $get('.J_close-mod-btn')[0],
-			oUploadModMask = $get('.J_upload-mask')[0],
-			oUploadArea = $get('.J_upload-area')[0],
-			oProgressBar = $get('.J_progress-bar')[0],
-			oPersent = $get('.J_persent')[0],
-			oFile = $get('#J_file'),
-			oFileInfo = $get('.J_upload-file-info')[0],
-			oFileName = $get('.J_file-name')[0],
-			oFileSize = $get('.J_file-size')[0],
-			oBtnGroup = $get('.J_btn-group')[0],
-			oBtns = $get('button', oBtnGroup),
+; (function (doc) {
+	var oOpenModBtn = doc.querySelector('.J_open-mod-btn'),
+			oCloseModBtn = doc.querySelector('.J_close-mod-btn'),
+			oUploadModMask = doc.querySelector('.J_upload-mask'),
+			oUploadArea = doc.querySelector('.J_upload-area'),
+			oProgressBar = doc.querySelector('.J_progress-bar'),
+			oPersent = doc.querySelector('.J_persent'),
+			oFile = doc.querySelector('#J_file'),
+			oFileInfo = doc.querySelector('.J_upload-file-info'),
+			oFileName = doc.querySelector('.J_file-name'),
+			oFileSize = doc.querySelector('.J_file-size'),
+			oBtnGroup = doc.querySelector('.J_btn-group'),
+			oBtns = oBtnGroup.querySelectorAll('btn'),
 
 			maxSize = 3221225472,
-			isUploadFile = true;
+			isUploadFile = true,
+			o = null;
 
 	function init () {
 		bindEvent();
@@ -60,18 +61,24 @@
 				tar = e.target || e.srcElement,
 				type = tar.getAttribute('data-type'),
 				file = oFile.files[0];
+		
+		if (!o) {
+			o = window.XMLHttpRequest
+				? new XMLHttpRequest
+				: new ActiveXObject('Microsoft.XMLHTTP');
+
+			o.onabort = function () {
+				restoreUploadMod();
+			}
+		}
 
 		if (type) {
 			switch (type) {
 				case 'upload':
-					if (isUploadFile) {
-						uploadFile(file, tar);
-					} else {
-						oFile.click();
-						restoreUploadMod();
-					}
+					uploadFile(o, file, tar);
 					break;
 				case 'abort':
+					o.abort();
 					break;
 				default:
 					break;
@@ -79,28 +86,34 @@
 		}
 	}
 
-	function uploadFile (file, tar) {
-		var fd = new FormData(),
-				o = window.XMLHttpRequest
-					? new window.XMLHttpRequest
-					: new ActiveXObject('Microsoft.XMLHTTP');
+	function uploadFile (o, file, tar) {
+		if (isUploadFile) {
+			var fd = new FormData();
 
-		isUploadFile = false;
-		fd.append('file', file);
-		oUploadArea.className = 'J_upload-area upload-area uploading';
-		tar.innerText = '上传中…';
-		o.open('POST', 'server/upload.php');
-		o.upload.onprogress = function (e) {
-			var e = e || window.event,
-				persent = (e.loaded / e.total * 100).toFixed(1) + '%';
-			oProgressBar.style.width = persent;
-			oPersent.innerText = persent;
+			fd.append('file', file);
+			oUploadArea.className = 'J_upload-area upload-area uploading';
+			tar.innerText = '上传中…';
+			tar.className += ' disabled';
+			oBtns[1].className += ' show';
+			o.open('POST', 'server/upload.php');
+			o.upload.onprogress = function (e) {
+				var e = e || window.event,
+						persent = (e.loaded / e.total * 100).toFixed(1) + '%';
+				oProgressBar.style.width = persent;
+				oPersent.innerText = persent;
+			}
+			o.onload = function () {
+				oUploadArea.className = 'J_upload-area upload-area uploading finished';
+				tar.innerText = '继续上传';
+				tar.className = 'btn upload-btn';
+				oBtns[1].className = 'btn abort-btn';
+				isUploadFile = false;
+			}
+			o.send(fd);
+		} else {
+			oFile.click();
+			restoreUploadMod();
 		}
-		o.onload = function () {
-			oUploadArea.className = 'J_upload-area upload-area uploading finished';
-			tar.innerText = '继续上传';
-		}
-		o.send(fd);
 	}
 
 	function uploadModStatus (status) {
@@ -121,8 +134,12 @@
 		oPersent.innerText = '0.0%';
 		oProgressBar.style.width = 0;
 		oBtns[0].innerText = '上传文件';
+		oBtns[0].className = 'btn upload-btn';
+		oBtns[1].className = 'btn abort-btn';
 		isUploadFile = true;
+		o && o.abort();
+		o = null;
 	}
 
 	init();
-}())
+}(document));

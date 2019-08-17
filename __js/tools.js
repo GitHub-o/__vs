@@ -2028,6 +2028,38 @@ function getUrlParam(value) {
 }
 
 
+/**
+ * 字符串一行
+ */
+function oneLine(template, ...expressions) {
+  let str =  template.reduce((prev, cur, idx) => {
+    return prev + expressions[idx - 1] + cur;
+  })
+  return str.replace(/\n\s*/g, ' ').trim();
+}
+
+
+/**
+ * ES6模板语法
+ */
+function template(template, ...expressions) {
+  let result = template.reduce((prev, cur, idx) => {
+    let expression = expressions[idx - 1];
+    if (Array.isArray(expression)) {
+      expression = expression.join('');
+    }
+    return prev + expression + cur;
+  });
+  const match = result.match(/^[^\S\n]*(?=\S)/gm)
+        indent = match && Math.min(...match.map(el => el.length));
+
+  if (indent) {
+      const regexp = new RegExp(`^.{${indent}}`, 'gm');
+      result =  result.replace(regexp, '');
+  }
+
+  return result.trim();
+}
 
 
 //------------------------------------------------------------------------------------------------>>
@@ -2123,7 +2155,7 @@ var Magnifier = (function (doc, win) {
           left:' + this.outerLeft + 'px; \
           width: ' + this.outerWidth + 'px; \
           height: ' + this.outerHeight + 'px; \
-          '
+          ';
         this.oMagnifier.style.backgroundColor = 'rgba(0, 0, 0, .4)';
         this.oMagnifier.style.boxShadow = 'none';
         this.oAbsImg.style.width = this.elemWidth * this.scale + 'px';
@@ -2205,7 +2237,7 @@ var Magnifier = (function (doc, win) {
 
 /**
  * @param {元素} wrap
- * @param {主菜单的类名} mianMenu
+ * @param {主菜单的类名} mainMenu
  * @param {主菜单子项的类名} mainItem
  * @param {子菜单的类名} subMenu
  * @param {子菜单子项的类名} subItem
@@ -2363,6 +2395,336 @@ var PredictedMenu = (function (win, doc) {
 	return PredictedMenu;
 }(window, document))
 
+
+/**
+ * 五子棋
+ * @param {元素} wrap
+ * @param {两条线的间隔 - number} opt.gap
+ * @param {棋子半径 - numebr} opt.radius
+ */
+var Gomoku = (function (doc) {
+  var Gomoku = function (wrap, opt = {}) {
+    this.wrap = doc.querySelector(wrap);
+    this.oCanvas = doc.createElement('canvas');
+    this.gap = opt.gap || 40;
+    this.hGap = this.gap / 2;
+    this.radius = opt.radius || 16;
+    this.column = 15;
+    this.size = this.gap * this.column;
+
+    this.allChesses = [];
+    this.existChesses = [];
+    this.winsCount = 0;
+    this.wins = [];
+    this.myWins = [];
+    this.computerWins = [];
+    this.player = 1;
+
+    this._moveFocus = throttle(this.moveFocus.bind(this), 300);
+    this._leaveCanvas = this.leaveCanvas.bind(this);
+  }
+
+  Gomoku.prototype = {
+    init: function () {
+      this.initChess();
+      this.bindEvent();
+    },
+
+    initChess: function () {
+      this.oCanvas.width = this.size;
+      this.oCanvas.height = this.size;
+      this.oCanvas.style.cssText = 'background-color: #dab488; box-shadow: 0 0 4px 2px #ccc';
+      this.wrap.appendChild(this.oCanvas);
+      this.context = this.oCanvas.getContext('2d');
+      this.makeBoard();
+      this.computedArrs();
+    },
+
+    makeBoard: function () {
+      this.context.clearRect(0, 0, this.size, this.size);
+      this.context.beginPath();
+      this.context.lineWidth = 1;
+      this.context.strokeStyle = '#333';
+      
+      for (var i = 0; i < 15; i++) {
+        this.context.moveTo(this.hGap + i * this.gap, this.hGap);
+        this.context.lineTo(this.hGap + i * this.gap, this.size - this.hGap);
+        this.context.moveTo(this.hGap, this.hGap + i * this.gap);
+        this.context.lineTo(this.size - this.hGap, this.hGap + i * this.gap);
+        this.context.stroke();
+      }
+    },
+
+    computedArrs: function () {
+      for (var i = 0; i < this.column; i++) {
+        this.allChesses[i] = [];
+        this.wins[i] = [];
+        for (var j = 0; j < this.column; j++) {
+          this.allChesses[i][j] = 0;
+          this.wins[i][j] = [];
+        }
+      }
+
+      this.ComputedWins();
+
+      for (var k = 0; k < this.winsCount; k++) {
+        this.myWins[k] = 0;
+        this.computerWins[k] = 0;
+      }
+    },
+
+    ComputedWins: function () {
+      for (var i = 0; i < this.column; i++) {
+        for (var j = 0; j < this.column - 4; j++) {
+          for (var k = 0; k < 5; k++) {
+            this.wins[i][j + k][this.winsCount] = true;
+          }
+          this.winsCount++;
+        }
+      }
+
+      for (i = 0; i < this.column; i++) {
+        for (j = 0; j < this.column - 4; j++) {
+          for (k = 0; k < 5; k++) {
+            this.wins[j + k][i][this.winsCount] = true;
+          }
+          this.winsCount++;
+        }
+      }
+
+      for (i = 0; i < this.column - 4; i++) {
+        for (j = 0; j < this.column - 4; j++) {
+          for (k = 0; k < 5; k++) {
+            this.wins[i + k][j + k][this.winsCount] = true;
+          }
+          this.winsCount++;
+        }
+      }
+
+      for (i = this.column - 1; i >= 4; i--) {
+        for (j = 0; j < this.column - 4; j++) {
+          for (k = 0; k < 5; k++) {
+            this.wins[i - k][j + k][this.winsCount] = true;
+          }
+          this.winsCount++;
+        }
+      }
+    },
+
+    bindEvent: function () {
+      addEvent(this.oCanvas, 'click', this.canvasClick.bind(this));
+      addEvent(this.oCanvas, 'mouseenter', this.enterCanvas.bind(this));
+    },
+
+    canvasClick: function (e) {
+      var e = e || window.event,
+          i = Math.floor(e.offsetX / this.gap),
+          j = Math.floor(e.offsetY / this.gap);
+
+          if (this.allChesses[j][i]) {
+            return;
+          }
+
+          this.player = 1;
+          this.dropChess(i, j);
+          this.player = 2;
+          this.t = setTimeout(function () {
+            this.dropChess();
+            clearTimeout(this.t);
+          }.bind(this), 200);
+    },
+
+    dropChess: function (i, j) {
+      switch (this.player) {
+        case 1:
+          this.makeChess(i * this.gap + this.hGap, j * this.gap + this.hGap, this.player);
+          this.existChesses.push({x: i, y: j, player: this.player});
+          this.allChesses[j][i] = this.player;
+          this.checkWin(i, j, this.myWins);
+          break;
+        case 2:
+          this.computerAI();
+          break;
+        default:
+          break;
+      }
+    },
+
+    computerAI: function (){
+      var myScore = [],
+          computerScore = [],
+          max = 0
+          u = 0,
+          v = 0;
+    
+      for (var i = 0; i < this.column; i++){
+        myScore[i] = [];
+        computerScore[i] = [];
+        for (var j = 0; j < this.column; j++){
+          myScore[i][j] = 0;
+          computerScore[i][j] = 0;
+          if(this.allChesses[j][i] == 0){
+            for (var k = 0; k < this.winsCount; k++){
+              if(this.wins[i][j][k]){
+                switch(this.myWins[k]){
+                  case 1: myScore[i][j] += 200;
+                    break;
+                  case 2: myScore[i][j] += 500;
+                    break;
+                  case 3: myScore[i][j] += 2000;
+                    break;
+                  case 4: myScore[i][j] += 10000;
+                    break;
+                  default:
+                    break;
+                }
+    
+                switch(this.computerWins[k]){
+                  case 1: computerScore[i][j] += 220;
+                    break;
+                  case 2: computerScore[i][j] += 520;
+                    break;
+                  case 3: computerScore[i][j] += 2200;
+                    break;
+                  case 4: computerScore[i][j] += 20000;
+                    break;
+                  default:
+                    break;
+                }
+              }
+            }
+
+            if (myScore[i][j] > max){
+              max = myScore[i][j];
+              u = i;
+              v = j;
+            } else if(myScore[i][j] == max){
+              if (computerScore[i][j] > computerScore[u][v]){
+                u = i;
+                v = j;
+              }
+            }
+
+            //进攻
+    
+            if (computerScore[i][j] > max){
+              max = computerScore[i][j];
+              u = i;
+              v = j;
+            } else if (computerScore[i][j] == max){
+              if (myScore[i][j] > myScore[u][v]){
+                u = i;
+                v = j;
+              }
+            }
+          }
+        }
+      }
+    
+      this.makeChess(u * this.gap + this.hGap, v * this.gap + this.hGap, this.player);
+      this.existChesses.push({x: u, y: v, player: this.player});
+      this.allChesses[v][u] = this.player;
+      this.checkWin(u, v, this.computerWins);
+    },
+
+    makeChess: function (x, y, player) {
+      var grd = this.context.createRadialGradient(x - 3, y, 10, x + 6, y - 4, 0),
+          startColor = '',
+          endColor = '',
+          strokeColor = '';
+
+      if (player == 1) {
+        startColor = '#0a0a0a';
+        endColor = '#636766';
+        strokeColor = '#333';
+      } else if (player == 2) {
+        startColor = '#d1d1d1';
+        endColor = '#f9f9f9';
+        strokeColor = '#ccc';
+      }
+      grd.addColorStop(0, startColor);
+      grd.addColorStop(1, endColor);
+      this.context.fillStyle = grd;
+      this.context.strokeStyle = strokeColor;
+      this.context.beginPath();
+      this.context.arc(x, y, this.radius, 0, Math.PI * 2, false);
+      this.context.fill();
+      this.context.stroke();
+    },
+
+    checkWin: function (u, v, arr) {
+      for(var k = 0;k < this.winsCount;k++){
+        if(this.wins[u][v][k]){
+          arr[k]++;
+          if(arr[k] == 5){
+            alert((this.player === 1 ? '~ You' : '~ Computer') + ' Win!');
+            this.resetChess();
+          }
+        }
+      }
+    },
+
+    resetChess: function () {
+      this.allChesses = [];
+      this.existChesses = [];
+      this.winsCount = 0;
+      this.wins = [];
+      this.myWins = [];
+      this.computerWins = [];
+      this.player = 1;
+
+      this.initBoard();
+      this.computedArrs();
+    },
+
+    enterCanvas: function () {
+      addEvent(this.oCanvas, 'mousemove', this._moveFocus);
+      addEvent(this.oCanvas, 'mouseleave', this._leaveCanvas);
+    },
+
+    moveFocus: function (e) {
+      var e = e || window.event,
+          i = Math.floor(e.offsetX / this.gap),
+          j = Math.floor(e.offsetY / this.gap);
+
+      this.renderChess();
+      if (!this.allChesses[j][i]) {
+        this.context.beginPath();
+        this.context.strokeStyle = '#f00';
+        this.context.lineWidth = 5;
+        this.context.lineCap = 'round';
+        
+        this.context.moveTo(i * this.gap + this.hGap - 12, j * this.gap + this.hGap);
+        this.context.lineTo(i * this.gap + this.hGap + 12, j * this.gap + this.hGap);
+        this.context.moveTo(i * this.gap + this.hGap, j * this.gap + this.hGap - 12);
+        this.context.lineTo(i * this.gap + this.hGap, j * this.gap + this.hGap + 12);
+        this.context.stroke();
+      }
+    },
+
+    renderChess: function () {
+      this.makeBoard();
+      var len = this.existChesses.length,
+          item = null;
+
+      for (var i = 0; i < len; i++) {
+        item = this.existChesses[i];
+        this.makeChess(item.x * this.gap + this.hGap, item.y * this.gap + this.hGap, item.player);
+      }
+    },
+
+    leaveCanvas: function () {
+      removeEvent(this.oCanvas, 'mousemove', this._moveFocus);
+      removeEvent(this.oCanvas, 'mouseleave', this._leaveCanvas);
+      this.t = setTimeout(function () {
+        this.renderChess();
+        clearTimeout(this.t);
+      }.bind(this), 300);
+    }
+  }
+
+  return Gomoku;
+})(document)
 
 /**
  * 图片瀑布流
@@ -2709,136 +3071,151 @@ var imgLazyLoad = (function (win, doc) {
 
 /**
  * 封装AJAX
+ * @param {xhr请求的url} opt.url
+ * @param {xhr请求的方式} opt.type
+ * @param {xhr同/异步} opt.async
+ * @param {xhr返回的数据类型} opt.dataType
+ * @param {xhr请求的数据} opt.data
+ * @param {xhr的成功的回调} opt.success
+ * @param {xhr的失败的回调} opt.error
+ * @param {xhr的完成的回调} opt.complete
  */
 var xhr = (function (doc, win) {
-	function _doAjax (opt) {
-		var o = win.XMLHttpRequest
-					? new XMLHttpRequest() 
-					: new ActiveXObject('Microsoft.XMLHTTP');
+  var doAjax = function (opt) {
+    var o = win.XMLHttpRequest
+          ? new XMLHttpRequest
+          : new ActiveXObject('Microsoft.XMLHTTP');
+    if (!o) {
+      throw new Error('您的浏览器暂不支持发起HTTP请求，请升级！');
+    }
 
-		if (!o) {
-			throw (new Error('您的浏览器不支持异步发起HTTP请求'));
-		}
+    var url = opt.url,
+        type = (opt.type || 'GET').toUpperCase(),
+        dataType = (opt.dataType || 'JSON').toUpperCase(),
+        data = opt.data || null,
+        jsonp = opt.jsonp || 'callback',
+        jsonpCB = opt.jsonpCB || 'jQuery' + random() + '_' + new Date().getTime(),
+        async = opt.async === false ? false : true,
+        success = opt.success || function () {},
+        error = opt.error || function () {},
+        complete = opt.complete || function () {},
+        timeout = opt.timoeut || 30000,
 
-		var opt = opt || {},
-				url = opt.url,
-				type = (opt.type || 'GET').toUpperCase(),
-				dataType = (opt.dataType || 'JSON').toUpperCase(),
-				async = opt.async === false ? false : true,
-				jsonp = opt.jsonp || 'callback',
-				jsonpCB = opt.jsonpCB || 'jQuery' + randomNum() + '_' + new Date().getTime(),
-				data = opt.data || null,
-				timeout = opt.timeout || 30000,
-				error = opt.error || function () { },
-				success = opt.success || function () { },
-				complete = opt.compelet || function () { },
+        timer = null;
 
-				t = null;
+      if (!url) {
+        throw new Error('您没有填写URL！');
+      }
 
-		if (!url) {
-			throw (new Error('您没有填写URL'));
-		}
+      if (dataType === 'JSONP') {
+        if (type !== 'GET') {
+          console.warn('请求方式已修改为 type="GET"');
+          type = 'GET';
+        }
+        var oS = doc.createElement('script');
+        oS.src = url.indexOf('?') === -1
+               ? url + '?' + jsonp + '=' + jsonpCB
+               : url + '&' + jsonp + '=' + jsonpCB;
 
-		if (dataType === 'JSONP' && type !== 'GET') {
-			throw new Error('数据类型为"JSONP"的话，请求方式必须为"GET"或者不设置');
-		}
+        doc.body.appendChild(oS);
+        doc.body.removeChild(oS);
+        win[jsonpCB] = function (data) {
+          success(data);
+        }
+        return;
+      }
 
-		if (dataType === 'JSONP') {
-			var oScript = doc.createElement('script');
-			oScript.src = url.indexOf('?') === -1
-									? url + '?' + jsonp + '=' + jsonpCB
-									: url + '&' + jsonp + '=' + jsonpCB;
-			doc.body.appendChild(oScript);
-			doc.body.removeChild(oScript);
-			win[jsonpCB] = function (data) {
-				success(data);
+      o.onreadystatechange = function () {
+        if (o.readyState === 4) {
+          if ((o.status >= 200 && o.status < 300) || o.status === 304) {
+            switch (dataType) {
+              case 'JSON':
+                success(JSON.parse(o.responseText));
+                break;
+              case 'TEXT':
+                success(o.responseText);
+                break;
+              case 'XML':
+                success(o.responseXML);
+                break;
+              default:
+                success(JSON.parse(o.responseText));
+                break;
+            }
+          } else {
+            error();
+          }
+          complete();
+          clearTimeout(timer);
+          timer = null;
+          o = null;
+        }
 			}
-			return;
-		}
+			
+      o.open(type, url, async);
+      type === 'POST' && o.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      o.send(type === 'POST' ? formatData(data) : null);
 
-		o.onreadystatechange = function () {
-			if (o.readyState === 4) {
-				if ((o.status >= 200 && o.status < 300) || o.status === 304) {
-					switch (dataType) {
-						case 'JSON':
-							success(JSON.parse(o.responseText));
-							break;
-						case 'TEXT':
-							success(o.responseText);
-							break;
-						case 'XML':
-							success(o.responseXML);
-							break;
-						default:
-							success(JSON.parse(o.responseText));
-							break;
-					}
-				} else {
-					error();
-				}
+      timer = setTimeout(function () {
+        o.abort();
+        complete();
+        clearTimeout(timer);
+        timer = null;
+        o = null;
+      }, timeout);
+  }
 
-				complete();
-				clearTimeout(t);
-				t = null;
-				o = null;
-			}
-		}
-		o.open(type, url, async);
-		type === 'POST' && o.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		o.send(type === 'GET' ? null : formatDatas(data));
+  function formatData (data) {
+    var str = '';
+    for (var prop in data) {
+      str += prop + '=' + data[prop] + '&';
+    }
+    return str.replace(/&$/, '');
+  }
 
-		t = setTimeout(function () {
-			o.abort();
-			complete();
-			clearTimeout(t);
-			t = null;
-			o = null;
-		}, timeout);
-	}
+  function random () {
+    var str = '';
+    for (var i = 0; i < 20; i ++) {
+      str += Math.floor(Math.random() * 10);
+    }
+    return str;
+  }
 
-	function formatDatas (obj) {
-		var str = '';
-		for (key in obj) {
-			str += key + '=' + obj[key] + '&';
-		}
-		return str.replace(/&$/, '');
-	}
+  return {
+    ajax: function (opt) {
+      doAjax(opt);
+    },
 
-	function randomNum () {
-		var res = '';
-		for (var i = 0; i < 20; i++) {
-			res += Math.floor((Math.random() * 10));
-		}
-		return res + '_' + new Date().getTime();
-	}
+    post: function (url, data, success) {
+      doAjax({
+        url: url,
+        data: data,
+        success: success
+      })
+    },
 
-	return {
-		ajax: function (opt) {
-			_doAjax(opt);
-		},
-
-		post: function (url, data, successCB) {
-			_doAjax({
-				url: url,
-				type: 'POST',
-				data: data,
-				success: successCB
-			})
-		},
-
-		get: function (url, successCB) {
-			_doAjax({
-				url: url,
-				type: 'GET',
-				success: successCB
-			})
-		}
-	}
-}(document, window));
+    get: function (url, success) {
+      doAjax({
+        url: url,
+        success: success
+      })
+    }
+  }
+})(document, window);
 
 
 /**
- * 跨域domain
+ * 跨域 domain + iframe
+ * @param {基础域名} opt.baseDomain
+ * @param {iframe的id值} opt.frameId
+ * @param {ifrmae的url} opt.frameUrl
+ * @param {xhr请求的url} opt.url
+ * @param {xhr请求的方式} opt.type
+ * @param {xhr同/异步} opt.async
+ * @param {xhr返回的数据类型} opt.dataType
+ * @param {xhr请求的数据} opt.data
+ * @param {成功的回调} opt.success
+ * @param {失败的回调} opt.error
  */
 var ajaxDomain = (function (doc) {
 	function createIframe (frameId, frameUrl) {
@@ -2858,15 +3235,56 @@ var ajaxDomain = (function (doc) {
 			var $$ = doc.getElementById(opt.frameId).contentWindow.xhr;
 			$$.ajax({
 				url: opt.url,
+				async: opt.async,
 				type: opt.type,
 				dataType: opt.dataType,
 				data: opt.data,
 				success: opt.success,
-				error: opt.error
+				error: opt.error,
+				complete: opt.complete
 			})
 		}
 		doc.body.appendChild(frame);
 	}
+})(document);
+
+/**
+ * 跨域 window.name + iframe
+ * @param {iframe的url} opt.iframeUrl
+ * @param {跳转location} opt.location
+ * @param {回调函数} opt.callback
+ */
+var xhrWindowName = (function (doc) {
+  var flag = false,
+      t = null;
+  var getDatas = function (opt) {
+    if (flag) {
+      flag = false;
+      opt.callback(JSON.parse(iframe.contentWindow.name));
+    } else {
+      flag = true;
+      t = setTimeout(function () {
+        iframe.contentWindow.location = opt.location;
+        clearTimeout(t);
+        t = null;
+      }, 500);
+    }
+  }
+
+  return function (opt) {
+    var iframe = doc.createElement('iframe');
+    iframe.src = opt.frameUrl;
+    doc.body.appendChild(iframe);
+    if (iframe.attachEvent) {
+      iframe.attachEvent('onload', function () {
+        getDatas(opt);
+      });
+    } else {
+      iframe.onload = function () {
+        getDatas(opt);
+      };
+    }
+  }
 })(document);
 
 

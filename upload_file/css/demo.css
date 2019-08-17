@@ -1,9 +1,7 @@
 body {
   background: linear-gradient(#ffffff 50%, rgba(255, 255, 255, 0) 0) 0 0,
-    radial-gradient(circle closest-side, #ffffff 53%, rgba(255, 255, 255, 0) 0)
-      0 0,
-    radial-gradient(circle closest-side, #ffffff 50%, rgba(255, 255, 255, 0) 0)
-      55px 0 #48b;
+    radial-gradient(circle closest-side, #ffffff 53%, rgba(255, 255, 255, 0) 0) 0 0,
+    radial-gradient(circle closest-side, #ffffff 50%, rgba(255, 255, 255, 0) 0) 55px 0 #48b;
   background-size: 110px 200px;
   background-repeat: repeat-x;
 }
@@ -204,19 +202,37 @@ body {
   display: block;
 }
 
-.upload-mask .upload-mod .btn-group button {
+.upload-mask .upload-mod .btn-group .btn {
   padding: 6px 20px;
   margin-left: 15px;
+  border-radius: 3px;
+  font-size: 16px;
   cursor: pointer;
 }
 
-.upload-mask .upload-mod .btn-group button:first-child {
-  padding: 7px 20px;
+.upload-mask .upload-mod .btn-group .btn.upload-btn {
   background-color: #38f;
+  border: 1px solid #38f;
   border: none;
   color: #eee;
 }
 
-.upload-mask .upload-mod .btn-group button:first-child:hover {
+.upload-mask .upload-mod .btn-group .btn.upload-btn.disabled {
+  pointer-events: none;
+}
+
+.upload-mask .upload-mod .btn-group .btn.abort-btn {
+  visibility: hidden;
+  background-color: #aaa;
+  opacity: 0;
+  transition: opacity .8s;
+}
+
+.upload-mask .upload-mod .btn-group .btn.abort-btn.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+.upload-mask .upload-mod .btn-group .btn:hover {
   color: #fff;
 }
