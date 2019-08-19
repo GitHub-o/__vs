@@ -1,8 +1,0 @@
-.list {
-  width: 90%;
-  margin: 0 auto;
-}
-
-.list li:hover {
-  box-shadow: 0 0 15px #999;
-}

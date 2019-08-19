@@ -1519,11 +1519,12 @@ function domReady (fn) {
  * 获取元素CSS 样式属性
  * @param {元素} elem 
  * @param {属性} prop 
+ * @param {伪元素 before/after} type
  */
-function getStyle (elem, prop) {
+function getStyle (elem, prop, type = null) {
 	if (window.getComputedStyle) {
 		if (prop) {
-			return parseInt(window.getComputedStyle(elem, null)[prop]);
+			return parseInt(window.getComputedStyle(elem, type)[prop]);
 		} else {
 			return window.getComputedStyle(elem, null);
 		}
@@ -2547,7 +2548,15 @@ var Gomoku = (function (doc) {
           break;
         default:
           break;
-      }
+			}
+			var flag = this.allChesses.jEvery(function (val) {
+				if (val === 0) {
+					return false;
+				}
+			});
+			if (flag) {
+				this.resetAllChess();
+			}
     },
 
     computerAI: function (){
@@ -2653,18 +2662,18 @@ var Gomoku = (function (doc) {
     },
 
     checkWin: function (u, v, arr) {
-      for(var k = 0;k < this.winsCount;k++){
+      for(var k = 0; k < this.winsCount; k++){
         if(this.wins[u][v][k]){
           arr[k]++;
           if(arr[k] == 5){
             alert((this.player === 1 ? '~ You' : '~ Computer') + ' Win!');
-            this.resetChess();
+            this.resetAllChess();
           }
         }
       }
     },
 
-    resetChess: function () {
+    resetAllChess: function () {
       this.allChesses = [];
       this.existChesses = [];
       this.winsCount = 0;
@@ -2725,6 +2734,8 @@ var Gomoku = (function (doc) {
 
   return Gomoku;
 })(document)
+
+
 
 /**
  * 图片瀑布流
@@ -3310,8 +3321,8 @@ var mCookie = (function () {
 
 			if (cookieStr) {
 				var cookieArr = cookieStr.split('; '),
-					item,
-					tempArr;
+						item = null,
+						tempArr = [];
 				for (var prop in cookieArr) {
 					if (cookieArr.hasOwnProperty(prop)) {
 						item = cookieArr[prop];
