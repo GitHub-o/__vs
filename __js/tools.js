@@ -32,7 +32,7 @@ HTMLCollection.prototype.jFilter = function (fn) {
 			len = this.length,
 			arg2 = arguments[1] || window,
 			newArr = [],
-			item;
+			item = null;
 
 	for (var i = 0; i < len; i++) {
 		item = {}.toString.call(item) === '[object Object]' ?
@@ -49,7 +49,7 @@ HTMLCollection.prototype.jMap = function (fn) {
 			len = arr.length,
 			arg2 = arguments[1] || window,
 			newArr = [],
-			item;
+			item = null;
 
 	for (var i = 0; i < len; i++) {
 		item = {}.toString.call(item) === '[object Object]' ?
@@ -66,7 +66,7 @@ HTMLCollection.prototype.jEvery = function (fn) {
 			len = arr.length,
 			arg2 = arguments[1] || window,
 			res = true,
-			item;
+			item = null;
 	for (var i = 0; i < len; i++) {
 		item = {}.toString.call(item) === '[object Object]' ?
 			deepClone(arr[i]) :
@@ -84,7 +84,7 @@ HTMLCollection.prototype.jSome = function (fn) {
 			len = arr.length,
 			arg2 = arguments[1] || window,
 			res = false,
-			item;
+			item = null;
 	for (var i = 0; i < len; i++) {
 		item = {}.toString.call(item) === '[object Object]' ?
 			deepClone(arr[i]) :
@@ -101,7 +101,7 @@ HTMLCollection.prototype.jReduce = function (fn, initialValue) {
 	var arr = this,
 			len = arr.length,
 			arg3 = arguments[2] || window,
-			item;
+			item = null;
 	for (var i = 0; i < len; i++) {
 		item = {}.toString.call(item) === '[object Object]' ?
 			deepClone(arr[i]) :
@@ -116,7 +116,7 @@ HTMLCollection.prototype.jReduceRight = function (fn, initialValue) {
 	var arr = this,
 			len = arr.length,
 			arg3 = arguments[2] || window,
-			item;
+			item = null;
 	for (var i = len - 1; i >= 0; i--) {
 		item = {}.toString.call(item) === '[object Object]' ?
 			deepClone(arr[i]) :
@@ -138,7 +138,7 @@ HTMLCollection.prototype.jReduceRight = function (fn, initialValue) {
 
 
 
-// 封装 数组去重
+// NOTE:封装 数组去重
 Array.prototype.unique = function () {
 	var arr = [],
 			temp = {},
@@ -153,7 +153,7 @@ Array.prototype.unique = function () {
 	return arr;
 }
 
-// 查询出现的次数
+// NOTE:查询出现的次数
 Array.prototype.jq = function () {
 	var len = this.length,
 			temp = {};
@@ -168,12 +168,12 @@ Array.prototype.jq = function () {
 }
 
 
-// 封装 forEach
+// NOTE:封装 forEach
 Array.prototype.jForEach = function (fn) {
 	var arr = this,
 			len = arr.length,
 			arg = arguments[1] || window,
-			item;
+			item = null;
 
 	for (var i = 0; i < len; i++) {
 		item = arr[i];
@@ -182,13 +182,13 @@ Array.prototype.jForEach = function (fn) {
 }
 
 
-// 封装 filter (筛选/过滤函数)
+// NOTE:封装 filter (筛选/过滤函数)
 Array.prototype.jFilter = function (fn) {
 	var arr = this,
 			len = this.length,
 			arg = arguments[1] || window,
 			newArr = [],
-			item;
+			item = null;
 
 	for (var i = 0; i < len; i++) {
 		item = {}.toString.call(item) === '[object Object]' ?
@@ -200,13 +200,13 @@ Array.prototype.jFilter = function (fn) {
 }
 
 
-// 封装 map
+// NOTE:封装 map
 Array.prototype.jMap = function (fn) {
 	var arr = this,
 			len = arr.length,
 			arg = arguments[1] || window,
 			newArr = [],
-			item;
+			item = null;
 
 	for (var i = 0; i < len; i++) {
 		item = {}.toString.call(item) === '[object Object]' ?
@@ -218,13 +218,13 @@ Array.prototype.jMap = function (fn) {
 }
 
 
-// 封装 every
+// NOTE:封装 every
 Array.prototype.jEvery = function (fn) {
 	var arr = this,
 			len = arr.length,
 			arg2 = arguments[1] || window,
 			res = true,
-			item;
+			item = null;
 	for (var i = 0; i < len; i++) {
 		item = {}.toString.call(item) === '[object Object]' ?
 			deepClone(arr[i]) :
@@ -237,13 +237,13 @@ Array.prototype.jEvery = function (fn) {
 }
 
 
-// 封装 some
+// NOTE:封装 some
 Array.prototype.jSome = function (fn) {
 	var arr = this,
 			len = arr.length,
 			arg2 = arguments[1] || window,
 			res = false,
-			item;
+			item = null;
 	for (var i = 0; i < len; i++) {
 		item = {}.toString.call(item) === '[object Object]' ?
 			deepClone(arr[i]) :
@@ -256,12 +256,12 @@ Array.prototype.jSome = function (fn) {
 }
 
 
-// 封装 reduce (归纳函数)
+// NOTE:封装 reduce (归纳函数)
 Array.prototype.jReduce = function (fn, initialValue) {
 	var arr = this,
 			len = arr.length,
 			arg3 = arguments[2] || window,
-			item;
+			item = null;
 	for (var i = 0; i < len; i++) {
 		item = {}.toString.call(item) === '[object Object]' ?
 			deepClone(arr[i]) :
@@ -272,12 +272,12 @@ Array.prototype.jReduce = function (fn, initialValue) {
 }
 
 
-// 封装 reduceRight (归纳函数)
+// NOTE:封装 reduceRight (归纳函数)
 Array.prototype.jReduceRight = function (fn, initialValue) {
 	var arr = this,
 			len = arr.length,
 			arg3 = arguments[2] || window,
-			item;
+			item = null;
 	for (var i = len - 1; i >= 0; i--) {
 		item = arr[i];
 		if ({}.toString.call(item) === '[object Object]') {
@@ -289,7 +289,7 @@ Array.prototype.jReduceRight = function (fn, initialValue) {
 }
 
 
-// 扁平化数组
+// NOTE:扁平化数组
 Array.prototype.flatten = function () {
 	var _self = this,
 			toStr = {}.toString;
@@ -361,7 +361,7 @@ Array.prototype.selectionSort = function () {
 
 
 
-// 字符串去重
+// NOTE:字符串去重
 String.prototype.unique = function () {
 	var str = '',
 			temp = {},
@@ -376,7 +376,7 @@ String.prototype.unique = function () {
 	return str;
 }
 
-//查询出现字符 
+// NOTE:查询出现字符 
 String.prototype.jq = function () {
 	var temp = {},
 			str = this,
@@ -395,11 +395,11 @@ String.prototype.jq = function () {
 //---------------------Element---------------------------------------------------------------------->>
 
 
-// 封装 hasChildren
+// NOTE:封装 hasChildren
 Element.prototype.hasChildren = function () {
 	var child = this.childNodes,
 			len = child.length,
-			childItem;
+			childItem = null;
 
 	for (var i = 0; i < len; i++) {
 		childItem = child[i];
@@ -411,7 +411,7 @@ Element.prototype.hasChildren = function () {
 }
 
 
-// 封装 该节点下的元素节点Children
+// NOTE:封装 该节点下的元素节点Children
 Element.prototype.jChildren = function (idx) {
 	var child = this.childNodes,
 			len = child.length,
@@ -436,19 +436,16 @@ Element.prototype.jChildren = function (idx) {
 }
 
 
-// 封装 insertAfter
-Element.prototype.insertAfter = function (node, beforeNode) {
-	var AfterNode = beforeNode.nextElementSibling;
-
-	if (AfterNode) {
-		this.insertBefore(node, AfterNode);
-	} else {
-		this.appendChild(node);
-	}
+// NOTE:封装 insertAfter
+Element.prototype.insertAfter = function (tar, node) {
+	var afterNode = node.nextElementSibling;
+	afterNode ? this.insertBefore(tar, afterNode)
+						: this.appendChild(tar);
+	return tar;
 }
 
 
-// 逆序元素节点
+// NOTE:逆序元素节点
 Element.prototype.reverseChildren = function () {
 	var child = this.childNodes,
 			len = child.length;
@@ -459,11 +456,11 @@ Element.prototype.reverseChildren = function () {
 }
 
 
-// 返回该元素下的所有元素节点
+// NOTE:返回该元素下的所有元素节点
 Element.prototype.allChildren = function (childrenArr = []) {
 	var child = this.childNodes,
 			len = child.length,
-			item;
+			item = null;
 
 	for (var i = 0; i < len; i++) {
 		item = child[i];
@@ -475,7 +472,7 @@ Element.prototype.allChildren = function (childrenArr = []) {
 	return childrenArr;
 }
 
-// 返回e元素的第n层祖先元素节点  
+// NOTE:返回e元素的第n层祖先元素节点  
 Element.prototype.parent = function (n) {
 	var elem = this;
 	while (elem && n--) {
@@ -484,7 +481,7 @@ Element.prototype.parent = function (n) {
 	return elem;
 }
 
-// 返回元素e的第n个兄弟元素节点, n正 ,返回 nextSibling; n负,返回 previousSibling
+// NOTE:返回元素e的第n个兄弟元素节点, n正 ,返回 nextSibling; n负,返回 previousSibling
 Element.prototype.sibling = function (n) {
 	var elem = this;
 	while (elem && n) {
@@ -516,7 +513,7 @@ Element.prototype.sibling = function (n) {
 }
 
 /**
- * 拖拽函数
+ * NOTE:拖拽函数
  * @param {点击的元素} opt.elem 
  * @param {双击所显示的元素} opt.dblWrap
  * @param {右键所显示的元素} opt.menuWrap
@@ -645,7 +642,7 @@ Element.prototype.drag = function (opt = {}) {
 }
 
 /**
- * 元素显示/隐藏的动画
+ * NOTE:元素显示/隐藏的动画
  * @param {元素显示的状态 - none/block} opt.status 
  * @param {过渡动画} opt.animation 
  * @param {动画时间 - ms} opt.duration 
@@ -682,7 +679,7 @@ Element.prototype.showStatusAnimation = function (opt = {}) {
 }
 
 /**
- * 判断鼠标相对于元素的位置
+ * NOTE:判断鼠标相对于元素的位置
  * @param {事件源} e 
  * @param {左侧} left
  * @param {上部} top
@@ -747,7 +744,7 @@ Element.prototype.getDirection = function (e) {
 
 
 /**
- * 弹性运动
+ * NOTE:弹性运动
  * @param {元素属性} opt.attr
  * @param {元素弹性变换后的位置} opt.target
  * @param {弹性系数} opt.k
@@ -787,7 +784,7 @@ Element.prototype.elasticMove = function (opt = {}, callback) {
 }
 
 /**
- * 重力运动
+ * NOTE:重力运动
  * @param {最大活动高度} opt.activeHeight
  * @param {最大活动宽度} opt.activeWidth
  * @param {垂直方向上的步数} opt.stepY
@@ -849,6 +846,7 @@ Element.prototype.gravityMove = function (opt = {}, callback) {
 
 
 /**
+ * NOTE:匀速运动
  * @param {css属性} opt
  * @param {运动时长} duration
  * @param {运动结束后的回调函数} callback
@@ -891,7 +889,7 @@ Element.prototype.startMove = function (opt = {}, duration = 1000, callback) {
 }
 
 /**
- * 移动端触屏事件的封装
+ * NOTE:移动端触屏事件的封装
  * @param {轻触} tap 
  * @param {长按} longtap 
  * @param {左滑} slideleft 
@@ -1052,7 +1050,7 @@ Element.prototype.touch = function (activeRange = 100) {
 // 			allDomItem = allDoms[i];
 // 			var temp = trimSpace(allDomItem.className).trim().split(' '),
 // 				tempLen = temp.length,
-// 				tempItem;
+// 				tempItem = null;
 
 // 			for (var j = 0; j < tempLen; j++) {
 // 				tempItem = temp[j];
@@ -1069,13 +1067,53 @@ Element.prototype.touch = function (activeRange = 100) {
 // 		}
 // 	}
 
+//-------------------- Date ------------------------------------------------------------>>
+
+
+/**
+ * NOTE: 倒计时
+ * @param {计时器} timer
+ */
+Date.prototype.cutdown = function (timer) {
+	var time = (this.getTime() - new Date().getTime()) / 1000,
+			day = 0,
+			hours = 0,
+			minutes = 0,
+			seconds = 0;
+
+  if (time > 1) {
+    day = Math.floor(time / 60 / 60 / 24),
+		hours = Math.floor(time / 60 / 60 % 24),
+		minutes = Math.floor(time / 60 % 60),
+		seconds = Math.floor(time % 60);
+  } else {
+    clearTimeout(timer);
+    timer = null;
+	}
+	
+	return {
+		day: day,
+		hours: hours,
+		minutes: minutes,
+		seconds: seconds,
+		cutdown: '\
+			' + day + '天 \
+			' + hours + '小时 \
+			' + minutes + '分钟 \
+			' + seconds + ' 秒\
+		'
+	}
+}
+
+
+
 
 
 //--------------------Advanced Function------------------------------------------------------------>>
 
 
 /**
- * 组合函数  --> 组合多个功能函数
+ * NOTE:组合函数  --> 组合多个功能函数
  */
 function compose () {
 	var args = [].slice.call(arguments);
@@ -1089,7 +1127,7 @@ function compose () {
 
 
 /**
- * 柯里化函数  --> 将一个多参数函数转成多个单参数的函数（一个n元函数 --> n个一元函数）
+ * NOTE:柯里化函数  --> 将一个多参数函数转成多个单参数的函数（一个n元函数 --> n个一元函数）
  * @param {分步所执行的函数} fn 
  */
 // function curry (fn, len) {
@@ -1137,13 +1175,13 @@ function curry (fn) {
 
 
 /**
- * 惰性函数  --> 函数内部改写自身
+ * NOTE:惰性函数  --> 函数内部改写自身
  */
 
 
 
 /**
- * 记忆/缓存函数  --> 具有缓存池的函数
+ * NOTE:记忆/缓存函数  --> 具有缓存池的函数
  * 														上次的计算结果缓存起来，当下次调用时，如果遇到相同的参数，就直接返回缓存中的数据。
  * @param {具有记忆的函数} fn 
  */
@@ -1160,34 +1198,34 @@ function memorize (fn) {
 
 
 /**
- * 防抖函数  --> 在事件被触发n秒后再执行回调，如果在这n秒内又被触发，则重新计时。
+ * NOTE:防抖函数  --> 在事件被触发n秒后再执行回调，如果在这n秒内又被触发，则重新计时。
  * @param {具有防抖的函数} fn 
  * @param {time秒内频繁触发不执行 - ms} wait
  * @param {立即执行} immediate 
  */
-function debounce (fn, wait = 800, immediate = false) {
-	var timeout,
-			res;
+function debounce (fn, delay = 1000, immediate = false) {
+	var t = null,
+			res = null;
 
 	function later (args) {
 		return setTimeout(function () {
-			timeout = null;
 			if (!immediate) {
 				res = fn.apply(this, args);
 			}
-		}.bind(this), wait);
+			clearTimeout(t);
+			t = null;
+		}.bind(this), delay);
 	}
 
 	var debounced = function () {
-		if (!timeout) {
-			timeout = later(arguments);
+		if (!t) {
+			t = later(arguments);
 			if (immediate) {
 				res = fn.apply(this, arguments);
 			}
-
 		} else {
-			clearTimeout(timeout);
-			timeout = later(arguments);
+			clearTimeout(t);
+			t = later(arguments);
 		}
 		return res;
 	}
@@ -1203,15 +1241,16 @@ function debounce (fn, wait = 800, immediate = false) {
 
 
 /**
- * 节流函数  --> n秒内，事件被触发只执行一次
+ * NOTE:节流函数  --> n秒内，事件被触发只执行一次
  * 										规定一个单位时间，在这个单位时间内，只能有一次触发事件的回调函数执行，如果在同一个单位时间内某事件被触发多次，只有一次能生效。
  * @param {具有节流的函数} fn 
  * @param {delay秒内触发 - ms} delay 
+ * @param {最后是否触发 - boolean} finalTrigger
  */
-function throttle (fn, delay = 1000) {
-	var t = null,
-			firstTime = new Date().getTime(),
-			res;
+function throttle (fn, delay = 1000, finalTrigger = false) {
+	var firstTime = new Date().getTime(),
+			t = null,
+			res = null;
 
 	return function () {
 		var _self = this,
@@ -1223,7 +1262,7 @@ function throttle (fn, delay = 1000) {
 		if (curTime - firstTime >= delay) {
 			res = fn.apply(_self, args);
 			firstTime = curTime;
-		} else {
+		} else if (finalTrigger) {
 			t = setTimeout(function () {
 				res = fn.apply(_self, args);
 			}, delay);
@@ -1240,7 +1279,7 @@ function throttle (fn, delay = 1000) {
 
 
 /**     
- * 偏函数   --> 固定一个函数的一个或多个参数（n元函数 --> n - x 元函数）
+ * NOTE:偏函数   --> 固定一个函数的一个或多个参数（n元函数 --> n - x 元函数）
  */
 Function.prototype.partial = function () {
 	var args = [].slice.call(arguments, 1),
@@ -1261,7 +1300,7 @@ Function.prototype.partial = function () {
 
 
 /**
- * 数据分类函数
+ * NOTE:数据分类函数
  * @param {分类字段} fields 
  * @param {数据 - array} datas 
  * @param {映射的字段 - string} mapping_field
@@ -1297,7 +1336,7 @@ function sortDatas (fields, datas) {
 
 
 /**
- * 封装事件绑定
+ * NOTE:封装事件绑定
  * @param {元素} elem 
  * @param {事件类型} type 
  * @param {执行函数} fn 
@@ -1336,7 +1375,7 @@ function addEvent (elem, type, fn, capture = false) {
 
 
 /**
- * 封装事件解绑
+ * NOTE:封装事件解绑
  * @param {元素} elem 
  * @param {事件类型} type 
  * @param {执行函数} fn 
@@ -1374,7 +1413,7 @@ function removeEvent (elem, type, fn, capture) {
 }
 
 /**
- * 封装事件冒泡函数：
+ * NOTE:封装事件冒泡函数：
  * IE：cancelBubble
  * Firefox：stopPropagation
  */
@@ -1388,7 +1427,7 @@ function cancelBubble (e) {
 
 
 /**
- * 封装阻止元素的默认行为函数
+ * NOTE:封装阻止元素的默认行为函数
  * IE：returnValue
  * DOM：preventDefault
  */
@@ -1401,7 +1440,7 @@ function preventDefault (e) {
 }
 
 
-// 获取元素相对于文档的位置
+// NOTE:获取元素相对于文档的位置
 function elemPos (elem) {
 	var elemParent = elem.offsetParent,
 			elemLeft = elem.offsetLeft,
@@ -1420,7 +1459,7 @@ function elemPos (elem) {
 }
 
 
-// 获取鼠标位置
+// NOTE:获取鼠标位置
 function pagePos (e) {
 	var e = e || window.event,
 			sTop = window.pageYOffset || document.body.scrollTop + document.documentElement.scrollTop,
@@ -1435,7 +1474,7 @@ function pagePos (e) {
 }
 
 
-// 求取滚动条的纵横距离
+// NOTE:求取滚动条的纵横距离
 function getScrollOffset () {
 	if (window.pageXOffset) {
 		return {
@@ -1451,7 +1490,7 @@ function getScrollOffset () {
 }
 
 
-// 封装可视区窗口大小
+// NOTE:封装可视区窗口大小
 function getClientPort () {
 	if (window.innerWidth) {
 		return {
@@ -1472,7 +1511,7 @@ function getClientPort () {
 }
 
 
-// 获取文档的总大小
+// NOTE:获取文档的总大小
 function getScrollSize () {
 	if (document.body.scrollHeight) {
 		return {
@@ -1488,7 +1527,7 @@ function getScrollSize () {
 }
 
 
-// 封装文档解析完毕函数
+// NOTE:封装文档解析完毕函数
 function domReady (fn) {
 	if (document.addEventListener) {
 		document.addEventListener('DOMContentLoaded', function () {
@@ -1539,7 +1578,7 @@ function getStyle (elem, prop, type = null) {
 
 
 /**
- * 
+ * NOTE:元素淡入
  * @param {元素} opt.elem 
  * @param {渐变时间 ms} opt.duration
  * @param {透明度（0~1）} opt.opacity 
@@ -1567,7 +1606,7 @@ function fadeIn (opt = {}) {
 
 
 /**
- * 
+ * NOTE:元素淡出
  * @param {元素} opt.elem 
  * @param {渐变时间 ms} opt.duration
  * @param {透明度（0~1）} opt.opacity 
@@ -1595,7 +1634,7 @@ function fadeOut (opt = {}) {
 }
 
 
-// 封装求取字符串长度
+// NOTE:封装求取字符串长度
 function retByteslen (target) {
 	var count = target.length,
 			len = count;
@@ -1608,7 +1647,7 @@ function retByteslen (target) {
 }
 
 /**
- * 渲染模板
+ * NOTE:渲染模板
  * @param {元素 - dom} opt.wrap
  * @param {数据 - array} opt.data
  * @param {字符串模板 - string} opt.tpl
@@ -1626,7 +1665,7 @@ function render (opt) {
 }
 
 
-// 替换模板正则
+// NOTE:替换模板正则
 function regTpl () {
 	return new RegExp(/{{(.*?)}}/, 'gim');
 }
@@ -1638,7 +1677,7 @@ function trimSpace (str) {
 
 
 /**
- *  封装克隆对象
+ *  NOTE:封装克隆对象
  *  遍历对象    for (var prop in )
  *  1. 判断是不是原始值 typeof object
  *  2. 判断是数组还是对象 toString instanceof constructor
@@ -1666,7 +1705,7 @@ function deepClone (origin, target) {
 }
 
 
-// 封装 typeof返回类型
+// NOTE:封装 typeof返回类型
 function type (target) {
 	// 1.区分原始值,引用值
 	// 2.区分引用值: 数组, 对象, 包装类
@@ -1689,7 +1728,7 @@ function type (target) {
 }
 
 /**
- * 判断浏览器的类型
+ * NOTE:判断浏览器的类型
  */
 function checkBrowser () {
 	var nVer = navigator.appVersion,
@@ -1932,7 +1971,7 @@ function checkBrowser () {
 }
 
 /**
- * 判断网络状况4G/3G/2G/2G-
+ * NOTE:判断网络状况4G/3G/2G/2G-
  */
 function networkType () {
 	var type = navigator.connection.effectiveType;
@@ -2005,7 +2044,7 @@ function async_load_func (url, callback) {
 
 
 /**
- * 异步加载脚本
+ * NOTE:异步加载脚本
  * @param {地址} url
  */
 function async_load (url) {
@@ -2017,20 +2056,19 @@ function async_load (url) {
 }
 
 /**
- * 获取URL参数的值
+ * NOTE:获取URL参数的值
  * @param {} value
  */
 function getUrlParam(value) {
   var reg = new RegExp("(^|&)" + value + "=([^&]*)(&|$)", "i")
-      r = window.location.search.substr(1).match(reg);
-	if(r != null) {
-		return(r[2]);
-	}
+			res = window.location.search.substr(1).match(reg);
+			
+	return res && res[2] && decodeURIComponent(res[2]);
 }
 
 
 /**
- * 字符串一行
+ * NOTE:字符串一行
  */
 function oneLine(template, ...expressions) {
   let str =  template.reduce((prev, cur, idx) => {
@@ -2041,7 +2079,7 @@ function oneLine(template, ...expressions) {
 
 
 /**
- * ES6模板语法
+ * NOTE:ES6模板语法
  */
 function template(template, ...expressions) {
   let result = template.reduce((prev, cur, idx) => {
@@ -2066,7 +2104,7 @@ function template(template, ...expressions) {
 //------------------------------------------------------------------------------------------------>>
 
 /**
- * 放大镜
+ * NOTE:放大镜
  * @param {元素} elem
  * @param {放大模式 - 'inner/outer'} opt.mode
  * @param {图片地址 -string} opt.imgUrl
@@ -2093,7 +2131,9 @@ var Magnifier = (function (doc, win) {
 		this.magnifierImgUrl = opt.magnifierImgUrl || opt.imgUrl;
 		this.opt = opt;
     this._moveWrap = this.moveWrap.bind(this);
-    this._leaveWrap = this.leaveWrap.bind(this);
+		this._leaveWrap = this.leaveWrap.bind(this);
+		
+		this.init();
 	}
 
 	Magnifier.prototype = {
@@ -2237,6 +2277,7 @@ var Magnifier = (function (doc, win) {
 
 
 /**
+ * NOTE:鼠标行为预测菜单
  * @param {元素} wrap
  * @param {主菜单的类名} mainMenu
  * @param {主菜单子项的类名} mainItem
@@ -2271,6 +2312,7 @@ var PredictedMenu = (function (win, doc) {
 		this._mouseMove = this.mouseMove.bind(this);
 		this._leaveMenu = this.leaveMenu.bind(this);
 		this._leaveSubmenu = this.leaveSubmenu.bind(this);
+		this.init();
 	}
 
 	PredictedMenu.prototype = {
@@ -2394,11 +2436,11 @@ var PredictedMenu = (function (win, doc) {
 	}
 
 	return PredictedMenu;
-}(window, document))
+})(window, document);
 
 
 /**
- * 五子棋
+ * NOTE:五子棋
  * @param {元素} wrap
  * @param {两条线的间隔 - number} opt.gap
  * @param {棋子半径 - numebr} opt.radius
@@ -2422,7 +2464,8 @@ var Gomoku = (function (doc) {
     this.player = 1;
 
     this._moveFocus = throttle(this.moveFocus.bind(this), 300);
-    this._leaveCanvas = this.leaveCanvas.bind(this);
+		this._leaveCanvas = this.leaveCanvas.bind(this);
+		this.init();
   }
 
   Gomoku.prototype = {
@@ -2733,12 +2776,12 @@ var Gomoku = (function (doc) {
   }
 
   return Gomoku;
-})(document)
+})(document);
 
 
 
 /**
- * 图片瀑布流
+ * NOTE:图片瀑布流
  * @param {元素} wrap
  * @param {地址} opt.url
  * @param {列数} opt.column
@@ -2762,7 +2805,9 @@ var Waterfall = (function(doc, win) {
     this.oWrap.style.position = 'relative';
     if (!this.API) {
       throw new Error('url未填写');
-    }
+		}
+		
+		this.init();
   };
 
   Waterfall.prototype = {
@@ -2876,7 +2921,7 @@ var Waterfall = (function(doc, win) {
 
 
 /**
- * 渲染页脚
+ * NOTE:渲染页脚
  * @param {dom} wrap
  * @param {当前页} opt.curPage
  * @param {总页数} opt.pages
@@ -3026,11 +3071,11 @@ var PageList = (function (doc) {
 	}
 
 	return PageList;
-}(document));
+})(document);
 
 
 /**
- * 圣杯模式
+ * NOTE:圣杯模式
  * @param {模板} Origin 
  * @param {对象} Target 
  */
@@ -3043,11 +3088,11 @@ var inherit = (function () {
 		Target.prototype.uber = Origin.prototype;
 		return Target;
 	}
-}());
+})();
 
 
 /**
- * 图片懒加载
+ * NOTE:图片懒加载
  * @param {图片元素集合} images
  */
 var imgLazyLoad = (function (win, doc) {
@@ -3216,7 +3261,7 @@ var xhr = (function (doc, win) {
 
 
 /**
- * 跨域 domain + iframe
+ * NOTE:跨域 domain + iframe
  * @param {基础域名} opt.baseDomain
  * @param {iframe的id值} opt.frameId
  * @param {ifrmae的url} opt.frameUrl
@@ -3260,7 +3305,7 @@ var ajaxDomain = (function (doc) {
 })(document);
 
 /**
- * 跨域 window.name + iframe
+ * NOTE:跨域 window.name + iframe
  * @param {iframe的url} opt.iframeUrl
  * @param {跳转location} opt.location
  * @param {回调函数} opt.callback
@@ -3338,11 +3383,11 @@ var mCookie = (function () {
 			return this;
 		}
 	}
-}());
+})();
 
 
 /**
- * 判断该点是否在△内
+ * NOTE:判断该点是否在△内
  */
 var pointInTriangle = (function () {
 	function vec (a, b) {
@@ -3370,7 +3415,7 @@ var pointInTriangle = (function () {
 
 		return sameSymbols(R1, R2) && sameSymbols(R2, R3);
 	}
-}());
+})();
 
 
 
