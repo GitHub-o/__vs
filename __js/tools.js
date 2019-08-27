@@ -642,34 +642,36 @@ Element.prototype.drag = function (opt = {}) {
 }
 
 /**
- * NOTE:元素显示/隐藏的动画
- * @param {元素显示的状态 - none/block} opt.status 
+ * NOTE:元素过渡动画
+ * @param {元素显示的状态 - boolean} opt.isShow 
  * @param {过渡动画} opt.animation 
  * @param {动画时间 - ms} opt.duration 
  */
-Element.prototype.showStatusAnimation = function (opt = {}) {
-	var t = null,
+Element.prototype.showAnimation = function (opt = {}, callback) {
+	var elem = this,
+			t = null,
 			t1 = null,
 			t2 = null,
-			status = opt.status,
+			isShow = opt.isShow,
 			duration = opt.duration || 1000,
-			elem = this,
 			animation = opt.animation;
 
-	elem.style.animation = animation + ' ' + duration / 1000 + 's';
+	elem.style.animation = animation + ' ' + duration + 'ms';
 
 	t = setTimeout(function () {
-		if (status == 'none') {
+		if (!isShow) {
 			t2 = setTimeout(function () {
-				elem.style.display = status;
+				elem.style.display = 'none';
+				typeof (callback) == 'function' && callback();
 				clearTimeout(t2);
 				t2 = null;
 			}, .7 * duration);
 		} else {
-			elem.style.display = status;
+			elem.style.display = 'block';
 		}
 		t1 = setTimeout(function () {
 			elem.style.animation = '';
+			typeof (callback) == 'function' && callback();
 			clearTimeout(t1);
 			t1 = null;
 		}, .8 * duration);
@@ -715,7 +717,7 @@ Element.prototype.getDirection = function (e) {
 				break;
 		}
 		if (type === dir) {
-			callback.call(elem);
+			typeof (callback) == 'function' && callback.call(elem);
 		}
 	}
 
@@ -759,7 +761,7 @@ Element.prototype.elasticMove = function (opt = {}, callback) {
 			z = opt.z || .7,
 			flexLen = target,
 			step = 0,
-			cur;
+			cur = 0;
 
 	if (!elem.timer) {
 		elem.timer = {};
@@ -854,7 +856,7 @@ Element.prototype.gravityMove = function (opt = {}, callback) {
 Element.prototype.startMove = function (opt = {}, duration = 1000, callback) {
 	var elem = this,
 			speed = 100,
-			step;
+			step = 0;
 
 	if (elem.timer) {
 		clearInterval(elem.timer);
@@ -918,7 +920,7 @@ Element.prototype.touch = function (activeRange = 100) {
 					eTime = new Date().getTime();
 
 					if (eTime - bTime < 500) {
-						callback.call(elem, e);
+						typeof (callback) == 'function' && callback.call(elem, e);
 					}
 					break;
 				default:
@@ -942,7 +944,7 @@ Element.prototype.touch = function (activeRange = 100) {
 			switch (e.type) {
 				case 'touchstart':
 					t = setTimeout(function () {
-						callback.call(elem, e);
+						typeof (callback) == 'function' && callback.call(elem, e);
 						clearTimeout(t);
 						t = null;
 					}, 500);
@@ -987,22 +989,22 @@ Element.prototype.touch = function (activeRange = 100) {
 			switch (type) {
 				case 'left':
 					if (x > activeRange && Math.abs(y) < 30) {
-						callback.call(elem, e);
+						typeof (callback) == 'function' && callback.call(elem, e);
 					}
 					break;
 				case 'up':
 					if (Math.abs(x) < 30 && -y > activeRange) {
-						callback.call(elem, e);
+						typeof (callback) == 'function' && callback.call(elem, e);
 					}
 					break;
 				case 'right':
 					if (-x > activeRange && Math.abs(y) < 30) {
-						callback.call(elem, e);
+						typeof (callback) == 'function' && callback.call(elem, e);
 					}
 					break;
 				case 'down':
 					if (Math.abs(x) < 30 && y > activeRange) {
-						callback.call(elem, e);
+						typeof (callback) == 'function' && callback.call(elem, e);
 					}
 					break;
 			}
@@ -1115,7 +1117,7 @@ Date.prototype.cutdown = function (timer) {
  * NOTE:组合函数  --> 组合多个功能函数
  */
 function compose () {
-	var args = [].slice.call(arguments);
+	var args = [back].slice.call(arguments);
 
 	return function (initialVal) {
 		return args.jReduceRight(function (res, callback) {
@@ -2956,14 +2958,13 @@ var Waterfall = (function(doc, win) {
  * @param {dom} wrap
  * @param {当前页} opt.curPage
  * @param {总页数} opt.pages
- * @param {回调函数} opr.callback
+ * @param {回调函数} opt.callback
  */
 var PageList = (function (doc) {
 	var PageList = function (wrap, opt) {
 		this.wrap = doc.querySelector(wrap);
 		this.curPage = opt.curPage || 1;
 		this.pages = opt.pages || 0;
-		this.callback = opt.callback || function () { };
 	}
 
 	PageList.prototype = {
@@ -2997,17 +2998,17 @@ var PageList = (function (doc) {
 					case 'page-btn':
 						curPage = parseInt(tar.getAttribute('data-page'));
 						this.elem.innerHTML = this.renderPageList(curPage, pages);
-						this.callback && this.callback({curPage, pages});
+						typeof (callback) == 'function' && callback();
 						break;
 					case 'backward-btn':
 						curPage--;
 						this.elem.innerHTML = this.renderPageList(curPage, pages);
-						this.callback && this.callback({curPage, pages});
+						typeof (callback) == 'function' && callback();
 						break;
 					case 'forward-btn':
 						curPage++;
 						this.elem.innerHTML = this.renderPageList(curPage, pages);
-						this.callback && this.callback({curPage, pages});
+						typeof (callback) == 'function' && callback();
 						break;
 					default:
 						break;
@@ -3404,13 +3405,13 @@ var mCookie = (function () {
 						item = cookieArr[prop];
 						tempArr = item.split('=');
 						if (tempArr[0] == key) {
-							callback(tempArr[1]);
+							typeof (callback) == 'function' && callback(tempArr[1]);
 							return this;
 						}
 					}
 				}
 			}
-			callback(undefined);
+			typeof (callback) == 'function' && callback(undefined);
 			return this;
 		}
 	}
