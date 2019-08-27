@@ -1036,36 +1036,35 @@ Element.prototype.touch = function (activeRange = 100) {
 	};
 };
 
-// 封装getElementsByClassName
-// Document.prototype.getElementsByClassName =
-// 	Element.prototype.getElementsByClassName =
-// 	document.getElementsByClassName || 
-// 	function (className) {
-// 		var allDoms = document.getElementsByTagName('*'),
-// 			allDomsLen = allDoms.length,
-// 			allDomItem,
-// 			finalArr = [];
+// NOTE:封装getElementsByClassName
+Document.prototype.getElementsByClassName =
+Element.prototype.getElementsByClassName =
+	document.getElementsByClassName || function (className) {
+		var allDoms = document.getElementsByTagName('*'),
+				allDomsLen = allDoms.length,
+				allDomItem = null,
+				finalArr = [];
 
-// 		for (var i = 0; i < allDomsLen; i++) {
-// 			allDomItem = allDoms[i];
-// 			var temp = trimSpace(allDomItem.className).trim().split(' '),
-// 				tempLen = temp.length,
-// 				tempItem = null;
+		for (var i = 0; i < allDomsLen; i++) {
+			allDomItem = allDoms[i];
+			var temp = trimSpace(allDomItem.className).trim().split(' '),
+					tempLen = temp.length,
+					tempItem = null;
 
-// 			for (var j = 0; j < tempLen; j++) {
-// 				tempItem = temp[j];
-// 				if (tempItem === className) {
-// 					finalArr.push(allDomItem);
-// 					break;
-// 				}
-// 			}
-// 		}
-// 		return finalArr;
+			for (var j = 0; j < tempLen; j++) {
+				tempItem = temp[j];
+				if (tempItem === className) {
+					finalArr.push(allDomItem);
+					break;
+				}
+			}
+		}
+		return finalArr;
 
-// 		function trimSpace (tar) {
-// 			return tar.replace(/\s+/g, ' ');
-// 		}
-// 	}
+		function trimSpace (tar) {
+			return tar.replace(/\s+/g, ' ');
+		}
+	}
 
 //-------------------- Date ------------------------------------------------------------>>
 
@@ -1203,29 +1202,31 @@ function memorize (fn) {
  * @param {time秒内频繁触发不执行 - ms} wait
  * @param {立即执行} immediate 
  */
-function debounce (fn, delay = 1000, immediate = false) {
+function _debounce (fn, delay = 1000, immediate = false) {
 	var t = null,
-			res = null;
+			res = null,
+			_self = null;
 
 	function later (args) {
-		return setTimeout(function () {
+		t = setTimeout(function () {
 			if (!immediate) {
-				res = fn.apply(this, args);
+				res = fn.apply(_self, args);
 			}
 			clearTimeout(t);
 			t = null;
-		}.bind(this), delay);
+		}, delay);
 	}
 
 	var debounced = function () {
+		_self = this;
 		if (!t) {
-			t = later(arguments);
+			later(arguments);
 			if (immediate) {
 				res = fn.apply(this, arguments);
 			}
 		} else {
 			clearTimeout(t);
-			t = later(arguments);
+			later(arguments);
 		}
 		return res;
 	}
@@ -1247,7 +1248,7 @@ function debounce (fn, delay = 1000, immediate = false) {
  * @param {delay秒内触发 - ms} delay 
  * @param {最后是否触发 - boolean} finalTrigger
  */
-function throttle (fn, delay = 1000, finalTrigger = false) {
+function _throttle (fn, delay = 1000, finalTrigger = false) {
 	var firstTime = new Date().getTime(),
 			t = null,
 			res = null;
@@ -1342,17 +1343,6 @@ function sortDatas (fields, datas) {
  * @param {执行函数} fn 
  * @param {是否捕获} capture 
  */
-// function addEvent(elem, type, fn, capture) {
-//     if (elem.addEventListener) {
-//         elem.addEventListener(type, fn, capture);
-//     } else if (elem.attachEvent) {
-//         elem.attachEvent('on' + type, function () {
-//             fn.call(elem);
-//         })
-//     } else {
-//         elem['on' + type] = fn;
-//     }
-// }
 function addEvent (elem, type, fn, capture = false) {
 	if (elem.addEventListener) {
 		addEvent = function (elem, type, fn, capture) {
@@ -1381,17 +1371,6 @@ function addEvent (elem, type, fn, capture = false) {
  * @param {执行函数} fn 
  * @param {是否捕获} capture
  */
-// function removeEvent(elem, type, fn, capture) {
-//     if (elem.addEventListener) {
-//         elem.removeEventListener(type, fn, capture);
-//     } else if (elem.attachEvent) {
-//         elem.detachEvent('on' + type, function() {
-//             fn.call(elem);
-//         });
-//     } else {
-//         elem['on' + type] = null;
-//     }
-// }
 function removeEvent (elem, type, fn, capture) {
 	if (elem.addEventListener) {
 		removeEvent = function (elem, type, fn, capture = false) {
@@ -1665,14 +1644,66 @@ function render (opt) {
 }
 
 
-// NOTE:替换模板正则
+/**
+ * NOTE:替换模板正则
+ */
 function regTpl () {
 	return new RegExp(/{{(.*?)}}/, 'gim');
 }
 
-// 去除空格
+/**
+ * NOTE:去除空格
+ */
 function trimSpace (str) {
 	return str.replace(/\s+/g, '');
+}
+
+
+/**
+ * NOTE: 匹配手机号
+ * @param {*} str 
+ */
+function checkPhoneNumber (str) {
+  var reg = /^(\(\+86\))?1[3-9]\d{9}$/;
+  return reg.test(str);
+}
+
+/**
+ * NOTE: 匹配邮箱
+ * @param {*} str 
+ */
+function checkMail (str) {
+  var reg = /^[A-z0-9_-]+\@[A-z0-9_\-\.]+\.[A-z]{2,4}$/;
+  return reg.test(str);
+}
+
+
+/**
+ * NOTE: 匹配进制颜色
+ * @param {*} str 
+ */
+function checkColor (str) {
+  var reg = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+  return reg.test(str);
+}
+
+/**
+ * NOTE: 匹配日期
+ * @param {*} str 
+ */
+function checkDate (str) {
+  var reg = /^(19|20)\d{2}([./-])(0[1-9]|1[0-2])\2([0-2][1-9]|([1-3]0|31))$/;
+  return reg.test(str);
+}
+
+
+/**
+ * NOTE: 匹配车牌号
+ * @param {*} str 
+ */
+function checkCarCard (str) {
+  var reg = /^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1}$/;
+  return reg.test(str);
 }
 
 
@@ -2060,7 +2091,7 @@ function async_load (url) {
  * @param {} value
  */
 function getUrlParam(value) {
-  var reg = new RegExp("(^|&)" + value + "=([^&]*)(&|$)", "i")
+  var reg = new RegExp("(^|&)" + value + "=([^&]*)(&|$)", "i"),
 			res = window.location.search.substr(1).match(reg);
 			
 	return res && res[2] && decodeURIComponent(res[2]);
