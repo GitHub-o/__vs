@@ -16,7 +16,7 @@
 
 
 
-HTMLCollection.prototype.jForEach = function (fn) {
+HTMLCollection.prototype._forEach = function (fn) {
 	var arr = this,
 			len = arr.length,
 			arg2 = arguments[1] || window;
@@ -27,50 +27,53 @@ HTMLCollection.prototype.jForEach = function (fn) {
 }
 
 
-HTMLCollection.prototype.jFilter = function (fn) {
+HTMLCollection.prototype._filter = function (fn) {
 	var arr = this,
 			len = this.length,
 			arg2 = arguments[1] || window,
 			newArr = [],
-			item = null;
+			item = null,
+			toString = {}.toString;
 
 	for (var i = 0; i < len; i++) {
-		item = {}.toString.call(item) === '[object Object]' ?
-			deepClone(arr[i]) :
-			arr[i];
+		item = toString.call(item) === '[object Object]'
+																? deepClone(arr[i])
+																: arr[i];
 		fn.apply(arg2, [item, i, arr]) && newArr.push(item);
 	}
 	return newArr;
 }
 
 
-HTMLCollection.prototype.jMap = function (fn) {
+HTMLCollection.prototype._map = function (fn) {
 	var arr = this,
 			len = arr.length,
 			arg2 = arguments[1] || window,
 			newArr = [],
-			item = null;
+			item = null,
+			toString = {}.toString;
 
 	for (var i = 0; i < len; i++) {
-		item = {}.toString.call(item) === '[object Object]' ?
-			deepClone(arr[i]) :
-			arr[i];
+		item = toString.call(item) === '[object Object]'
+																? deepClone(arr[i])
+																: arr[i];
 		newArr.push(fn.apply(arg2, [item, i, arr]));
 	}
 	return newArr;
 }
 
 
-HTMLCollection.prototype.jEvery = function (fn) {
+HTMLCollection.prototype._every = function (fn) {
 	var arr = this,
 			len = arr.length,
 			arg2 = arguments[1] || window,
 			res = true,
-			item = null;
+			item = null,
+			toString = {}.toString;
 	for (var i = 0; i < len; i++) {
-		item = {}.toString.call(item) === '[object Object]' ?
-			deepClone(arr[i]) :
-			arr[i];
+		item = toString.call(item) === '[object Object]'
+																? deepClone(arr[i])
+																: arr[i];
 		if (!fn.apply(arg2, [item, i, arr])) {
 			return res = false;
 		};
@@ -79,16 +82,17 @@ HTMLCollection.prototype.jEvery = function (fn) {
 }
 
 
-HTMLCollection.prototype.jSome = function (fn) {
+HTMLCollection.prototype._some = function (fn) {
 	var arr = this,
 			len = arr.length,
 			arg2 = arguments[1] || window,
 			res = false,
-			item = null;
+			item = null,
+			toString = {}.toString;
 	for (var i = 0; i < len; i++) {
-		item = {}.toString.call(item) === '[object Object]' ?
-			deepClone(arr[i]) :
-			arr[i];
+		item = toString.call(item) === '[object Object]'
+																? deepClone(arr[i])
+																: arr[i];
 		if (fn.apply(arg2, [item, i, arr])) {
 			return res = true;
 		}
@@ -97,30 +101,36 @@ HTMLCollection.prototype.jSome = function (fn) {
 }
 
 
-HTMLCollection.prototype.jReduce = function (fn, initialValue) {
+HTMLCollection.prototype._reduce = function (fn, initialValue) {
 	var arr = this,
 			len = arr.length,
 			arg3 = arguments[2] || window,
-			item = null;
+			item = null,
+			toString = {}.toString;
+
+	initialValue = initialValue || arr[0];
 	for (var i = 0; i < len; i++) {
-		item = {}.toString.call(item) === '[object Object]' ?
-			deepClone(arr[i]) :
-			arr[i];
+		item = toString.call(item) === '[object Object]'
+																? deepClone(arr[i])
+																: arr[i];
 		initialValue = fn.apply(arg3, [initialValue, item, i, arr]);
 	}
 	return initialValue;
 }
 
 
-HTMLCollection.prototype.jReduceRight = function (fn, initialValue) {
+HTMLCollection.prototype._reduceRight = function (fn, initialValue) {
 	var arr = this,
 			len = arr.length,
 			arg3 = arguments[2] || window,
-			item = null;
+			item = null,
+			toString = {}.toString;
+
+	initialValue = initialValue || arr[0];
 	for (var i = len - 1; i >= 0; i--) {
-		item = {}.toString.call(item) === '[object Object]' ?
-			deepClone(arr[i]) :
-			arr[i];
+		item = toString.call(item) === '[object Object]'
+																? deepClone(arr[i])
+																: arr[i];
 		initialValue = fn.apply(arg3, [initialValue, item, i, arr]);
 	}
 	return initialValue;
@@ -139,37 +149,39 @@ HTMLCollection.prototype.jReduceRight = function (fn, initialValue) {
 
 
 // NOTE:封装 数组去重
-Array.prototype.unique = function () {
+Array.prototype._unique = function () {
 	var arr = [],
 			temp = {},
-			len = this.length;
+			len = this.length,
+			item = null;
 
 	for (var i = 0; i < len; i++) {
-		if (!temp.hasOwnProperty(this[i])) {
-			temp[this[i]] = this[i];
-			arr.push(this[i]);
+		item = this[i];
+		if (!temp.hasOwnProperty(item)) {
+			temp[item] = item;
+			arr.push(item);
 		}
 	}
 	return arr;
 }
 
 // NOTE:查询出现的次数
-Array.prototype.jq = function () {
+Array.prototype._jq = function () {
 	var len = this.length,
-			temp = {};
+			temp = {},
+			item = null;
 	for (var i = 0; i < len; i++) {
-		if (!temp.hasOwnProperty(this[i])) {
-			temp[this[i]] = 1;
-		} else {
-			temp[this[i]]++;
-		}
+		item = this[i];
+		temp[item] = temp.hasOwnProperty(item)
+							 ? temp[item] + 1
+							 : 1;
 	}
 	return temp;
 }
 
 
 // NOTE:封装 forEach
-Array.prototype.jForEach = function (fn) {
+Array.prototype._forEach = function (fn) {
 	var arr = this,
 			len = arr.length,
 			arg = arguments[1] || window,
@@ -183,35 +195,37 @@ Array.prototype.jForEach = function (fn) {
 
 
 // NOTE:封装 filter (筛选/过滤函数)
-Array.prototype.jFilter = function (fn) {
+Array.prototype._filter = function (fn) {
 	var arr = this,
-			len = this.length,
+			len = arr.length,
 			arg = arguments[1] || window,
 			newArr = [],
-			item = null;
+			item = null,
+			toString = {}.toString;
 
 	for (var i = 0; i < len; i++) {
-		item = {}.toString.call(item) === '[object Object]' ?
-			deepClone(arr[i]) :
-			arr[i];
-		fn.apply(arg, [item, i, arr]) ? newArr.push(item) : '';
+		item = toString.call(item) === '[object Object]'
+																? deepClone(arr[i])
+																: arr[i];
+		fn.apply(arg, [item, i, arr]) && newArr.push(item);
 	}
 	return newArr;
 }
 
 
 // NOTE:封装 map
-Array.prototype.jMap = function (fn) {
+Array.prototype._map = function (fn) {
 	var arr = this,
 			len = arr.length,
 			arg = arguments[1] || window,
 			newArr = [],
-			item = null;
+			item = null,
+			toString = {}.toString;
 
 	for (var i = 0; i < len; i++) {
-		item = {}.toString.call(item) === '[object Object]' ?
-			deepClone(arr[i]) :
-			arr[i];
+		item = toString.call(item) === '[object Object]'
+																? deepClone(arr[i])
+																: arr[i];
 		newArr.push(fn.apply(arg, [item, i, arr]));
 	}
 	return newArr;
@@ -219,16 +233,17 @@ Array.prototype.jMap = function (fn) {
 
 
 // NOTE:封装 every
-Array.prototype.jEvery = function (fn) {
+Array.prototype._every = function (fn) {
 	var arr = this,
 			len = arr.length,
 			arg2 = arguments[1] || window,
 			res = true,
-			item = null;
+			item = null,
+			toString = {}.toString;
 	for (var i = 0; i < len; i++) {
-		item = {}.toString.call(item) === '[object Object]' ?
-			deepClone(arr[i]) :
-			arr[i];
+		item = toString.call(item) === '[object Object]'
+																? deepClone(arr[i])
+																: arr[i];
 		if (!fn.apply(arg2, [item, i, arr])) {
 			return res = false;
 		};
@@ -238,16 +253,17 @@ Array.prototype.jEvery = function (fn) {
 
 
 // NOTE:封装 some
-Array.prototype.jSome = function (fn) {
+Array.prototype._some = function (fn) {
 	var arr = this,
 			len = arr.length,
 			arg2 = arguments[1] || window,
 			res = false,
-			item = null;
+			item = null,
+			toString = {}.toString;
 	for (var i = 0; i < len; i++) {
-		item = {}.toString.call(item) === '[object Object]' ?
-			deepClone(arr[i]) :
-			arr[i];
+		item = toString.call(item) === '[object Object]'
+																? deepClone(arr[i])
+																: arr[i];
 		if (fn.apply(arg2, [item, i, arr])) {
 			return res = true;
 		}
@@ -257,15 +273,18 @@ Array.prototype.jSome = function (fn) {
 
 
 // NOTE:封装 reduce (归纳函数)
-Array.prototype.jReduce = function (fn, initialValue) {
+Array.prototype._reduce = function (fn, initialValue) {
 	var arr = this,
 			len = arr.length,
 			arg3 = arguments[2] || window,
-			item = null;
+			item = null,
+			toString = {}.toString;
+
+	initialValue = initialValue || this[0];
 	for (var i = 0; i < len; i++) {
-		item = {}.toString.call(item) === '[object Object]' ?
-			deepClone(arr[i]) :
-			arr[i];
+		item = toString.call(item) === '[object Object]'
+																? deepClone(arr[i])
+																: arr[i];
 		initialValue = fn.apply(arg3, [initialValue, item, i, arr]);
 	}
 	return initialValue;
@@ -273,88 +292,133 @@ Array.prototype.jReduce = function (fn, initialValue) {
 
 
 // NOTE:封装 reduceRight (归纳函数)
-Array.prototype.jReduceRight = function (fn, initialValue) {
+Array.prototype._reduceRight = function (fn, initialValue) {
 	var arr = this,
 			len = arr.length,
 			arg3 = arguments[2] || window,
-			item = null;
+			item = null,
+			toString = {}.toString;
+
+	initialValue = initialValue || this[0];
 	for (var i = len - 1; i >= 0; i--) {
-		item = arr[i];
-		if ({}.toString.call(item) === '[object Object]') {
-			item = deepClone(arr[i]);
-		}
+		item = toString.call(item) === '[object Object]'
+																? deepClone(arr[i])
+																: arr[i];
 		initialValue = fn.apply(arg3, [initialValue, item, i, arr]);
 	}
 	return initialValue;
 }
 
-
 // NOTE:扁平化数组
-Array.prototype.flatten = function () {
+Array.prototype._flat = function (depth = 1) {
 	var _self = this,
-			toStr = {}.toString;
+			toString = {}.toString;
 
-	return _self.reduce(function (prev, cur) {
-		return prev.concat(
-			toStr.call(cur) === '[object Array]' ?
-				cur.flatten() :
-				cur
-		);
-	}, []);
+	return depth == 0
+								? this
+								: _self.reduce(function (prev, cur) {
+										return prev.concat(
+											toString.call(cur) === '[object Array]'
+																					? cur.jFlatten(depth - 1)
+																					: cur
+										);
+									}, []);
 }
 
+function swap (arr, idxA, idxB) {
+  [arr[idxA], arr[idxB]] = [arr[idxB], arr[idxA]];
+}
 
-Array.prototype.bubbleSort1 = function () {
-	var len = this.length,
-			temp;
+Array.prototype._bubbleSort = function () {
+  var arr = this,
+      start = 0,
+      end = arr.length - 1,
+      startPos = -1,
+      endPos = -1;
 
-	for (var i = 0; i < len - 1; i++) {
-		for (var j = 0; j < len - i - 1; j++) {
-			if (this[j] > this[j + 1]) {
-				temp = this[j + 1];
-				this[j + 1] = this[j];
-				this[j] = temp;
-			}
-		}
-	}
-	return this;
-};
+  while (start < end) {
+    startPos = endPos = 0;
 
-Array.prototype.bubbleSort2 = function () {
-	var j = this.length - 1;
-	while (j > 0) {
-		var pos = 0,
-			temp;
-		for (var i = 0; i < j; i++) {
-			if (this[i] > this[i + 1]) {
-				pos = i;
-				temp = this[i];
-				this[i] = this[i + 1];
-				this[i + 1] = temp;
-			}
-		}
-		j = pos;
-	}
-	return this;
-};
+    for (var i = start; i < end; i++) {
+      if (arr[i] > arr[i + 1]) {
+        endPos = i;
+        swap(arr, i, i + 1);
+      }
+    }
+    end = endPos;
 
-Array.prototype.selectionSort = function () {
-	var len = this.length,
-			temp,
-			minIdx;
-	for (var i = 0; i < len - 1; i++) {
-		minIdx = i;
-		for (var j = i + 1; j < len; j++) {
-			if (this[minIdx] > this[j]) {
-				minIdx = j;
-			}
-		}
-		temp = this[i];
-		this[i] = this[minIdx];
-		this[minIdx] = temp;
-	}
-	return this;
-};
+    for (var j = end; j > start; j--) {
+      if (arr[i - 1] > arr[i]) {
+        startPos = i - 1;
+        swap(arr, i - 1, i);
+      }
+    }
+    start = startPos;
+  }
+
+  return arr;
+}
+
+Array.prototype._quickSort = function () {
+  var arr = this,
+      mid = arr.shift(),
+      left = [],
+      right = [];
+
+  if (arr.length < 2) {
+    return arr;
+  }
+
+  arr.forEach(val => {
+    val < mid
+        ? left.push(val)
+        : right.push(val);
+  })
+
+  return left._quickSort().concat(mid, right._quickSort());
+}
+
+Array.prototype._selectionSort = function () {
+  var arr = this,
+      minIdx = -1,
+      len = arr.length - 1;
+
+  for (var i = 0; i < len; i++) {
+    minIdx = i;
+
+    for (var j = i + 1; j <= len; j++) {
+      if (arr[minIdx] > arr[j]) {
+        minIdx = j;
+      }
+    }
+
+    if (minIdx !== i) {
+      swap(arr, i, minIdx);
+    }
+  }
+
+  return arr;
+}
+
+Array.prototype._insertSort = function () {
+  var arr = this,
+      len = arr.length,
+      temp = null,
+      prevIdx = -1;
+
+  for (var i = 1; i < len; i++) {
+    temp = arr[i];
+    prevIdx = i - 1;
+
+    while (arr[prevIdx] > temp) {
+      arr[prevIdx + 1] = arr[prevIdx];
+      prevIdx--;
+    }
+    arr[prevIdx + 1] = temp;
+  }
+
+  return arr;
+}
 
 //-----------------------String--------------------------------------------------------------------->>
 
@@ -362,32 +426,33 @@ Array.prototype.selectionSort = function () {
 
 
 // NOTE:字符串去重
-String.prototype.unique = function () {
+String.prototype._unique = function () {
 	var str = '',
 			temp = {},
-			len = this.length;
+			len = this.length,
+			item = null;
 
 	for (var i = 0; i < len; i++) {
-		if (!temp.hasOwnProperty(this[i])) {
-			temp[this[i]] = this[i];
-			str += this[i];
+		item = this[i];
+		if (!temp.hasOwnProperty(item)) {
+			temp[item] = item;
+			str += item;
 		}
 	}
 	return str;
 }
 
-// NOTE:查询出现字符 
-String.prototype.jq = function () {
+// NOTE:查询出现字符
+String.prototype._jq = function () {
 	var temp = {},
-			str = this,
-			len = str.length;
+			len = this.length,
+			item = null;
 
 	for (var i = 0; i < len; i++) {
-		if (!temp.hasOwnProperty(str[i])) {
-			temp[str[i]] = 1;
-		} else {
-			temp[str[i]]++;
-		}
+		item = this[i];
+		temp[item] = temp.hasOwnProperty(item)
+							 ? ++temp[item]
+							 : 1;
 	}
 	return temp;
 }
@@ -396,7 +461,7 @@ String.prototype.jq = function () {
 
 
 // NOTE:封装 hasChildren
-Element.prototype.hasChildren = function () {
+Element.prototype._hasChildren = function () {
 	var child = this.childNodes,
 			len = child.length,
 			childItem = null;
@@ -412,32 +477,25 @@ Element.prototype.hasChildren = function () {
 
 
 // NOTE:封装 该节点下的元素节点Children
-Element.prototype.jChildren = function (idx) {
+Element.prototype._children = function (idx) {
 	var child = this.childNodes,
 			len = child.length,
-			nodeLen = 0,
-			childItem,
+			childItem = null,
 			temp = [];
 
 	for (var i = 0; i < len; i++) {
 		childItem = child[i];
 		if (childItem.nodeType == 1) {
-			nodeLen++;
 			temp.push(childItem);
 		}
 	}
 
-	if (Math.abs(idx) > Math.abs(nodeLen)) {
-		return undefined;
-	} else if (idx < 0) {
-		idx += nodeLen;
-	}
 	return idx >= 0 ? temp[idx] : temp;
 }
 
 
 // NOTE:封装 insertAfter
-Element.prototype.insertAfter = function (tar, node) {
+Element.prototype._insertAfter = function (tar, node) {
 	var afterNode = node.nextElementSibling;
 	afterNode ? this.insertBefore(tar, afterNode)
 						: this.appendChild(tar);
@@ -446,7 +504,7 @@ Element.prototype.insertAfter = function (tar, node) {
 
 
 // NOTE:逆序元素节点
-Element.prototype.reverseChildren = function () {
+Element.prototype._reverseChildren = function () {
 	var child = this.childNodes,
 			len = child.length;
 
@@ -457,7 +515,7 @@ Element.prototype.reverseChildren = function () {
 
 
 // NOTE:返回该元素下的所有元素节点
-Element.prototype.allChildren = function (childrenArr = []) {
+Element.prototype._allChildren = function (childrenArr = []) {
 	var child = this.childNodes,
 			len = child.length,
 			item = null;
@@ -465,15 +523,15 @@ Element.prototype.allChildren = function (childrenArr = []) {
 	for (var i = 0; i < len; i++) {
 		item = child[i];
 		if (item.nodeType == 1) {
-			childrenArr && childrenArr.push(item)
+			childrenArr.push(item);
 			item.allChildren(childrenArr);
 		}
 	}
 	return childrenArr;
 }
 
-// NOTE:返回e元素的第n层祖先元素节点  
-Element.prototype.parent = function (n) {
+// NOTE:返回e元素的第n层祖先元素节点
+Element.prototype._parent = function (n) {
 	var elem = this;
 	while (elem && n--) {
 		elem = elem.parentElement;
@@ -482,7 +540,7 @@ Element.prototype.parent = function (n) {
 }
 
 // NOTE:返回元素e的第n个兄弟元素节点, n正 ,返回 nextSibling; n负,返回 previousSibling
-Element.prototype.sibling = function (n) {
+Element.prototype._sibling = function (n) {
 	var elem = this;
 	while (elem && n) {
 		if (n > 0) {
@@ -514,11 +572,11 @@ Element.prototype.sibling = function (n) {
 
 /**
  * NOTE:拖拽函数
- * @param {点击的元素} opt.elem 
+ * @param {点击的元素} opt.elem
  * @param {双击所显示的元素} opt.dblWrap
  * @param {右键所显示的元素} opt.menuWrap
  */
-Element.prototype.drag = function (opt = {}) {
+Element.prototype._drag = function (opt = {}) {
 	var dragWrap = opt.dragWrap || this,
 			elem = this,
 			dblWrap = opt.dblWrap,
@@ -529,14 +587,14 @@ Element.prototype.drag = function (opt = {}) {
 			ceTime = null,
 			t = null,
 			counter = 0;
-			disX,
-			disY;
+			disX = 0,
+			disY = 0;
 
 	if (menuWrap) {
 		var mWidth = getStyle(menuWrap, 'width'),
-			mHeight = getStyle(menuWrap, 'height'),
-			maxW = wWidth - mWidth,
-			maxH = wHeight - mHeight;
+				mHeight = getStyle(menuWrap, 'height'),
+				maxW = wWidth - mWidth,
+				maxH = wHeight - mHeight;
 		addEvent(menuWrap, 'click', stopEvent);
 	}
 	addEvent(elem, 'mousedown', mouseDown);
@@ -545,11 +603,11 @@ Element.prototype.drag = function (opt = {}) {
 
 	function mouseDown (e) {
 		var e = e || window.event,
-			btnCode = e.button,
-			x = pagePos(e).x,
-			y = pagePos(e).y,
-			mLeft,
-			mTop;
+				x = pagePos(e).x,
+				y = pagePos(e).y,
+				mLeft = 0,
+				mTop = 0,
+				btnCode = e.button;
 
 		stopEvent(e);
 
@@ -582,12 +640,13 @@ Element.prototype.drag = function (opt = {}) {
 
 	function mouseMove (e) {
 		var e = e || window.event,
-			x = pagePos(e).x - disX,
-			y = pagePos(e).y - disY,
-			maxX = wWidth - getStyle(dragWrap, 'width') - 1,
-			maxY = wHeight - getStyle(dragWrap, 'height') - 1;
+				x = pagePos(e).x - disX,
+				y = pagePos(e).y - disY,
+				maxX = wWidth - getStyle(dragWrap, 'width') - 1,
+				maxY = wHeight - getStyle(dragWrap, 'height') - 1;
+
 		if (menuWrap) {
-			menuWrap.style.display = 'none'
+			menuWrap.style.display = 'none';
 			removeEvent(document, 'click', hideMenu);
 			removeEvent(menuWrap, 'contextmenu', stopEvent);
 		}
@@ -609,7 +668,7 @@ Element.prototype.drag = function (opt = {}) {
 
 	function mouseUp () {
 		if (dblWrap) {
-			var res;
+			var res = null;
 			counter++;
 			if (counter == 1) {
 				callbackTime = new Date().getTime();
@@ -637,17 +696,17 @@ Element.prototype.drag = function (opt = {}) {
 	}
 
 	function hideMenu () {
-		menuWrap.style.display = 'none'
+		menuWrap.style.display = 'none';
 	}
 }
 
 /**
  * NOTE:元素过渡动画
- * @param {元素显示的状态 - boolean} opt.isShow 
- * @param {过渡动画} opt.animation 
- * @param {动画时间 - ms} opt.duration 
+ * @param {元素显示的状态 - boolean} opt.isShow
+ * @param {过渡动画} opt.animation
+ * @param {动画时间 - ms} opt.duration
  */
-Element.prototype.showAnimation = function (opt = {}, callback) {
+Element.prototype._showAnimation = function (opt = {}, callback) {
 	var elem = this,
 			t = null,
 			t1 = null,
@@ -682,13 +741,13 @@ Element.prototype.showAnimation = function (opt = {}, callback) {
 
 /**
  * NOTE:判断鼠标相对于元素的位置
- * @param {事件源} e 
+ * @param {事件源} e
  * @param {左侧} left
  * @param {上部} top
  * @param {右侧} right
  * @param {底部} bottom
  */
-Element.prototype.getDirection = function (e) {
+Element.prototype._getDirection = function (e) {
 	var e = e || window.event,
 			elem = this,
 			elemWidth = getStyle(elem, 'width'),
@@ -753,7 +812,7 @@ Element.prototype.getDirection = function (e) {
  * @param {摩擦阻力系数} opt.z
  * @param {运动结束后的回调函数} callback
  */
-Element.prototype.elasticMove = function (opt = {}, callback) {
+Element.prototype._elasticMove = function (opt = {}, callback) {
 	var elem = this,
 			attr = opt.attr || 'left',
 			target = opt.target === 0 ? 0 : opt.target || 250,
@@ -795,7 +854,7 @@ Element.prototype.elasticMove = function (opt = {}, callback) {
  * @param {每次碰撞的耗能} opt.z
  * @param {运动结束后的回调函数} callback
  */
-Element.prototype.gravityMove = function (opt = {}, callback) {
+Element.prototype._gravityMove = function (opt = {}, callback) {
 	var elem = this,
 			activeHeight = (opt.activeHeight === 0 ? 0 : getClientPort().h) - getStyle(elem, 'height'),
 			activeWidth = (opt.activeWidth === 0 ? 0 : getClientPort().w) - getStyle(elem, 'width'),
@@ -844,7 +903,7 @@ Element.prototype.gravityMove = function (opt = {}, callback) {
 		elem.style.top = curTop + y + 'px';
 		elem.style.left = curLeft + x + 'px';
 	}, 1000 / 60)
-};
+}
 
 
 /**
@@ -853,7 +912,7 @@ Element.prototype.gravityMove = function (opt = {}, callback) {
  * @param {运动时长} duration
  * @param {运动结束后的回调函数} callback
  */
-Element.prototype.startMove = function (opt = {}, duration = 1000, callback) {
+Element.prototype._startMove = function (opt = {}, duration = 1000, callback) {
 	var elem = this,
 			speed = 100,
 			step = 0;
@@ -892,15 +951,15 @@ Element.prototype.startMove = function (opt = {}, duration = 1000, callback) {
 
 /**
  * NOTE:移动端触屏事件的封装
- * @param {轻触} tap 
- * @param {长按} longtap 
- * @param {左滑} slideleft 
- * @param {右滑} slideright 
- * @param {上滑} slideup 
- * @param {下滑} slidedown 
+ * @param {轻触} tap
+ * @param {长按} longtap
+ * @param {左滑} slideleft
+ * @param {右滑} slideright
+ * @param {上滑} slideup
+ * @param {下滑} slidedown
  * @param {触发的最小值} activeRange
  */
-Element.prototype.touch = function (activeRange = 100) {
+Element.prototype._touch = function (activeRange = 100) {
 	var elem = this;
 
 	function tap (callback) {
@@ -1015,14 +1074,17 @@ Element.prototype.touch = function (activeRange = 100) {
 		_slide('left', callback);
 		return this;
 	}
+
 	function slideright (callback) {
 		_slide('right', callback);
 		return this;
 	}
+
 	function slideup (callback) {
 		_slide('up', callback);
 		return this;
 	}
+
 	function slidedown (callback) {
 		_slide('down', callback);
 		return this;
@@ -1036,7 +1098,7 @@ Element.prototype.touch = function (activeRange = 100) {
 		slideup: slideup,
 		slidedown: slidedown
 	};
-};
+}
 
 // NOTE:封装getElementsByClassName
 Document.prototype.getElementsByClassName =
@@ -1075,14 +1137,14 @@ Element.prototype.getElementsByClassName =
  * NOTE: 倒计时
  * @param {计时器} timer
  */
-Date.prototype.cutdown = function (timer) {
-	var time = (this.getTime() - new Date().getTime()) / 1000,
+Date.prototype._countdown = function (timer) {
+	var time = (this.getTime() - Date.now()) / 1000,
 			day = 0,
 			hours = 0,
 			minutes = 0,
 			seconds = 0;
 
-  if (time > 1) {
+  if (time > 0) {
     day = Math.floor(time / 60 / 60 / 24),
 		hours = Math.floor(time / 60 / 60 % 24),
 		minutes = Math.floor(time / 60 % 60),
@@ -1091,13 +1153,13 @@ Date.prototype.cutdown = function (timer) {
     clearTimeout(timer);
     timer = null;
 	}
-	
+
 	return {
 		day: day,
 		hours: hours,
 		minutes: minutes,
 		seconds: seconds,
-		cutdown: '\
+		countdown: '\
 			' + day + '天 \
 			' + hours + '小时 \
 			' + minutes + '分钟 \
@@ -1120,7 +1182,7 @@ function compose () {
 	var args = [back].slice.call(arguments);
 
 	return function (initialVal) {
-		return args.jReduceRight(function (res, callback) {
+		return args._reduceRight(function (res, callback) {
 			return callback(res);
 		}, initialVal);
 	}
@@ -1129,48 +1191,23 @@ function compose () {
 
 /**
  * NOTE:柯里化函数  --> 将一个多参数函数转成多个单参数的函数（一个n元函数 --> n个一元函数）
- * @param {分步所执行的函数} fn 
+ * @param {分步所执行的函数} fn
  */
-// function curry (fn, len) {
-// 	var len = len || fn.length;
 
-// 	var func = function (fn) {
-// 		var args = [].slice.call(arguments, 1);
-
-// 		return function () {
-// 			var newArgs = args.concat([].slice.call(arguments));
-// 			return fn.apply(this, newArgs);
-// 		}
-// 	}
-
-// 	return function () {
-// 		var arrLen = arguments.length;
-
-// 		if (arrLen < len) {
-// 			var formatedArr = [fn].concat([].slice.call(arguments));
-// 			return curry(func.apply(this, formatedArr), len - arrLen);
-// 		} else {
-// 			return fn.apply(this, arguments);
-// 		}
-// 	}
-// }
 function curry (fn) {
   var totalLen = fn.length,
       args = [].slice.call(arguments, 1);
 
-    var func = function () {
-      var len = arguments.length;
-
-    if (len < totalLen) {
-      return function () {
-        args = args.concat([].slice.call(arguments));
-        return func.apply(this, args);
-      }
-    } else {
-      return fn.apply(this, args);
-    }
-  }
-  return func();
+	var func = function () {
+		if (arguments.length < totalLen) {
+			return function () {
+				args = args.concat([].slice.call(arguments));
+				return func.apply(this, args);
+			}
+		}
+		return fn.apply(this, args);
+	}
+  return func.apply(this, args);
 }
 
 
@@ -1184,7 +1221,7 @@ function curry (fn) {
 /**
  * NOTE:记忆/缓存函数  --> 具有缓存池的函数
  * 														上次的计算结果缓存起来，当下次调用时，如果遇到相同的参数，就直接返回缓存中的数据。
- * @param {具有记忆的函数} fn 
+ * @param {具有记忆的函数} fn
  */
 function memorize (fn) {
 	var cache = {};
@@ -1200,42 +1237,36 @@ function memorize (fn) {
 
 /**
  * NOTE:防抖函数  --> 在事件被触发n秒后再执行回调，如果在这n秒内又被触发，则重新计时。
- * @param {具有防抖的函数} fn 
+ * @param {具有防抖的函数} fn
  * @param {time秒内频繁触发不执行 - ms} wait
- * @param {立即执行} immediate 
+ * @param {立即执行} immediate
  */
 function _debounce (fn, delay = 1000, immediate = false) {
 	var t = null,
-			res = null,
-			_self = null;
+			res = null;
 
 	function later (args) {
 		t = setTimeout(function () {
-			if (!immediate) {
-				res = fn.apply(_self, args);
-			}
+			!immediate && (res = fn.apply(this, args));
 			clearTimeout(t);
 			t = null;
-		}, delay);
+		}.bind(this), delay);
 	}
 
 	var debounced = function () {
-		_self = this;
 		if (!t) {
-			later(arguments);
-			if (immediate) {
-				res = fn.apply(this, arguments);
-			}
+			later.call(this, arguments);
+			immediate && (res = fn.apply(this, arguments));
 		} else {
-			clearTimeout(t);
-			later(arguments);
+			t && clearTimeout(t);
+			later.call(this, arguments);
 		}
 		return res;
 	}
 
 	debounced.remove = function () {
-		clearTimeout(timeout);
-		timeout = null;
+		clearTimeout(t);
+		t = null;
 	}
 
 	return debounced;
@@ -1246,29 +1277,28 @@ function _debounce (fn, delay = 1000, immediate = false) {
 /**
  * NOTE:节流函数  --> n秒内，事件被触发只执行一次
  * 										规定一个单位时间，在这个单位时间内，只能有一次触发事件的回调函数执行，如果在同一个单位时间内某事件被触发多次，只有一次能生效。
- * @param {具有节流的函数} fn 
- * @param {delay秒内触发 - ms} delay 
+ * @param {具有节流的函数} fn
+ * @param {delay秒内触发 - ms} delay
  * @param {最后是否触发 - boolean} finalTrigger
  */
-function _throttle (fn, delay = 1000, finalTrigger = false) {
-	var firstTime = new Date().getTime(),
+function _throttle (fn, delay = 1000, finalTrigger = true) {
+	var firstTime = Date.now(),
 			t = null,
 			res = null;
 
 	return function () {
-		var _self = this,
-			args = arguments,
-			curTime = new Date().getTime();
+		var args = arguments,
+				curTime = Date.now();
 
 		t && clearTimeout(t);
 
 		if (curTime - firstTime >= delay) {
-			res = fn.apply(_self, args);
+			res = fn.apply(this, args);
 			firstTime = curTime;
 		} else if (finalTrigger) {
 			t = setTimeout(function () {
-				res = fn.apply(_self, args);
-			}, delay);
+				res = fn.apply(this, args);
+			}.bind(this), delay);
 		}
 		return res;
 	}
@@ -1281,7 +1311,7 @@ function _throttle (fn, delay = 1000, finalTrigger = false) {
 
 
 
-/**     
+/**
  * NOTE:偏函数   --> 固定一个函数的一个或多个参数（n元函数 --> n - x 元函数）
  */
 Function.prototype.partial = function () {
@@ -1296,7 +1326,44 @@ Function.prototype.partial = function () {
 }
 
 
+Function.prototype._bind = function (...args) {
+  var [context, ...nArgs] = args,
+      _self = this;
 
+  context = context || window;
+
+  var func = function (...args) {
+    context = this instanceof _self ? this : context;
+    context.func = _self;
+    var res = context.func(...nArgs, ...args);
+    delete context.func;
+    return res;
+  }
+  func.prototype = this.prototype;
+  return func;
+}
+
+Function.prototype._call = function (...args) {
+  var [context, ...nArgs] = args,
+      res = null;
+
+  context = context || window;
+  context.func = this;
+  res = context.func(...nArgs);
+  delete context.func;
+  return res;
+}
+
+Function.prototype._apply = function (...args) {
+  var [context, nArgs] = args,
+			res = null;
+
+  context = context || window;
+	context.func = this;
+  res = context.func(...nArgs);
+  delete context.func;
+  return res;
+}
 
 //----------------------Fn-------------------------------------------------------------------------->>
 
@@ -1304,8 +1371,8 @@ Function.prototype.partial = function () {
 
 /**
  * NOTE:数据分类函数
- * @param {分类字段} fields 
- * @param {数据 - array} datas 
+ * @param {分类字段} fields
+ * @param {数据 - array} datas
  * @param {映射的字段 - string} mapping_field
  * @param {分隔符 - string} seperator
  */
@@ -1313,11 +1380,11 @@ function sortDatas (fields, datas) {
 	var cache = {};
 
 	return function (mapping_field, seperator = ',') {
-		fields.jForEach(function (field) {
+		fields._forEach(function (field) {
 			var _key = field.id;
 
 			cache[_key] = [];
-			datas.jForEach(function (elem) {
+			datas._forEach(function (elem) {
 				var mapping_val = elem[mapping_field];
 				if (!seperator) {
 					if (_key == mapping_val) {
@@ -1325,7 +1392,7 @@ function sortDatas (fields, datas) {
 					}
 				} else {
 					var _arr = mapping_val.split(seperator);
-					_arr.jForEach(function (val) {
+					_arr._forEach(function (val) {
 						if (val == _key) {
 							cache[_key].push(elem);
 						}
@@ -1340,10 +1407,10 @@ function sortDatas (fields, datas) {
 
 /**
  * NOTE:封装事件绑定
- * @param {元素} elem 
- * @param {事件类型} type 
- * @param {执行函数} fn 
- * @param {是否捕获} capture 
+ * @param {元素} elem
+ * @param {事件类型} type
+ * @param {执行函数} fn
+ * @param {是否捕获} capture
  */
 function addEvent (elem, type, fn, capture = false) {
 	if (elem.addEventListener) {
@@ -1368,9 +1435,9 @@ function addEvent (elem, type, fn, capture = false) {
 
 /**
  * NOTE:封装事件解绑
- * @param {元素} elem 
- * @param {事件类型} type 
- * @param {执行函数} fn 
+ * @param {元素} elem
+ * @param {事件类型} type
+ * @param {执行函数} fn
  * @param {是否捕获} capture
  */
 function removeEvent (elem, type, fn, capture) {
@@ -1422,21 +1489,19 @@ function preventDefault (e) {
 
 
 // NOTE:获取元素相对于文档的位置
-function elemPos (elem) {
-	var elemParent = elem.offsetParent,
-			elemLeft = elem.offsetLeft,
-			elemTop = elem.offsetTop;
+function elemPos (el) {
+	var pos = {
+    left: 0,
+    top: 0
+  }
 
-	while (elemParent) {
-		elemLeft += elemParent.offsetLeft;
-		elemTop += elemParent.offsetTop;
-		elemParent = elemParent.offsetParent;
+	while (el) {
+		pos.left += el.offsetLeft;
+		pos.top += el.offsetTop;
+		el = el.offsetParent;
 	}
 
-	return {
-		top: elemTop,
-		left: elemLeft
-	}
+	return pos;
 }
 
 
@@ -1537,81 +1602,18 @@ function domReady (fn) {
 
 /**
  * 获取元素CSS 样式属性
- * @param {元素} elem 
- * @param {属性} prop 
+ * @param {元素} elem
+ * @param {属性} prop
  * @param {伪元素 before/after} type
  */
 function getStyle (elem, prop, type = null) {
 	if (window.getComputedStyle) {
-		if (prop) {
-			return parseInt(window.getComputedStyle(elem, type)[prop]);
-		} else {
-			return window.getComputedStyle(elem, null);
-		}
+		return prop ? parseInt(window.getComputedStyle(elem, type)[prop])
+								: window.getComputedStyle(elem, null);
 	} else {
-		if (prop) {
-			return parseInt(elem.currentStyle[prop]);
-		} else {
-			return elem.currentStyle;
-		}
+		return prop ? parseInt(elem.currentStyle[prop])
+								: elem.currentStyle;
 	}
-}
-
-
-/**
- * NOTE:元素淡入
- * @param {元素} opt.elem 
- * @param {渐变时间 ms} opt.duration
- * @param {透明度（0~1）} opt.opacity 
- */
-function fadeIn (opt = {}) {
-	var o = null,
-			timer = null,
-			elemStyle = opt.elem.style,
-			duration = opt.duration || 500,
-			opacity = opt.opacity || 1;
-
-	clearInterval(timer);
-	o = elemStyle.opacity = getStyle(opt.elem, 'opacity');
-
-	timer = setInterval(function () {
-		if (o >= opacity) {
-			elemStyle.opacity = opacity;
-			clearInterval(timer);
-		} else {
-			o += opacity / duration * 30;
-			elemStyle.opacity = o;
-		}
-	}, 30);
-}
-
-
-/**
- * NOTE:元素淡出
- * @param {元素} opt.elem 
- * @param {渐变时间 ms} opt.duration
- * @param {透明度（0~1）} opt.opacity 
- */
-function fadeOut (opt = {}) {
-	var o = null,
-			timer = null,
-			elemStyle = opt.elem.style,
-			duration = opt.duration || 500,
-			opacity = opt.opacity || 0,
-			c = null;
-
-	clearInterval(timer);
-	c = o = elemStyle.opacity = getStyle(opt.elem, 'opacity');
-
-	timer = setInterval(function () {
-		if (o <= opacity) {
-			elemStyle.opacity = opacity;
-			clearInterval(timer);
-		} else {
-			o -= (c - opacity) / duration * 30;
-			elemStyle.opacity = o;
-		}
-	}, 30);
 }
 
 
@@ -1636,7 +1638,7 @@ function retByteslen (target) {
  */
 function render (opt) {
 	var list = '';
-	opt.data.jForEach(function (val, idx, arr) {
+	opt.data._forEach(function (val, idx, arr) {
 		list += this.replace(regTpl(), function (node, key) {
 			return opt.value(val, idx, arr)[key];
 		})
@@ -1653,6 +1655,7 @@ function regTpl () {
 	return new RegExp(/{{(.*?)}}/, 'gim');
 }
 
+
 /**
  * NOTE:去除空格
  */
@@ -1663,7 +1666,7 @@ function trimSpace (str) {
 
 /**
  * NOTE: 匹配手机号
- * @param {*} str 
+ * @param {*} str
  */
 function checkPhoneNumber (str) {
   var reg = /^(\(\+86\))?1[3-9]\d{9}$/;
@@ -1672,17 +1675,17 @@ function checkPhoneNumber (str) {
 
 /**
  * NOTE: 匹配邮箱
- * @param {*} str 
+ * @param {*} str
  */
 function checkMail (str) {
-  var reg = /^[A-z0-9_-]+\@[A-z0-9_\-\.]+\.[A-z]{2,4}$/;
+  var reg = /^[A-z0-9_\-\.]+\@[A-z0-9_\-\.]+\.[A-z0-9]{2,4}$/;
   return reg.test(str);
 }
 
 
 /**
  * NOTE: 匹配进制颜色
- * @param {*} str 
+ * @param {*} str
  */
 function checkColor (str) {
   var reg = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
@@ -1691,7 +1694,7 @@ function checkColor (str) {
 
 /**
  * NOTE: 匹配日期
- * @param {*} str 
+ * @param {*} str
  */
 function checkDate (str) {
   var reg = /^(19|20)\d{2}([./-])(0[1-9]|1[0-2])\2([0-2][1-9]|([1-3]0|31))$/;
@@ -1701,7 +1704,7 @@ function checkDate (str) {
 
 /**
  * NOTE: 匹配车牌号
- * @param {*} str 
+ * @param {*} str
  */
 function checkCarCard (str) {
   var reg = /^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1}$/;
@@ -1716,8 +1719,8 @@ function checkCarCard (str) {
  *  2. 判断是数组还是对象 toString instanceof constructor
  *  3. 建立相应的数组或对象
  *   递归
- * @param {模板} origin 
- * @param {对象} target 
+ * @param {模板} origin
+ * @param {对象} target
  */
 function deepClone (origin, target) {
 	var target = target || {},
@@ -2028,9 +2031,9 @@ function networkType () {
 
 
 /**
- * 
- * @param {对象} obj 
- * @param {参数} params 
+ *
+ * @param {对象} obj
+ * @param {参数} params
  */
 function parse (obj, params) {
 	if (typeof params === 'string') {
@@ -2042,21 +2045,19 @@ function parse (obj, params) {
 			.replace(/\]/g, '.')
 			.replace(/\.$/, '')
 			.split('.');
-	} else if (params.length === 1) {
-		return obj[params];
+
+		return params.reduce((prev, cur) => prev[cur], obj);
 	}
-	obj = obj[params[0]];
-	params.shift();
-	return parse(obj, params);
 }
 
 /**
  * 异步加载并执行回调函数
- * @param {资源} url 
- * @param {回调函数} callback 
+ * @param {资源} url
+ * @param {回调函数} callback
  */
-function async_load_func (url, callback) {
+function asyncLoadFunc (url, callback) {
 	var oS = document.createElement('script');
+
 	oS.type = 'text/javascript';
 	oS.async = true;
 
@@ -2067,7 +2068,7 @@ function async_load_func (url, callback) {
 			}
 		}
 	} else {
-		oS.onload = function () { // safari chrome firefox 
+		oS.onload = function () {
 			return parse(window, callback)();
 		}
 	}
@@ -2075,13 +2076,77 @@ function async_load_func (url, callback) {
 	document.head.appendChild(oS);
 }
 
+function flatObj (opts) {
+  const { data = [], keySeperator = '.', arrSeperator } = opts;
+  const toStr = {}.toString;
+
+  const func = (obj, res = {}, qd = '') => {
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        const value = obj[key];
+        const prop = qd ? qd + keySeperator + key : key;
+
+        if (value === null || typeof value !== 'object') {
+          res[prop] = value;
+          continue;
+        }
+
+        if (toStr.call(value) === '[object Array]') {
+          res[prop] = value.join(arrSeperator);
+          continue;
+        }
+
+        func(value, res, prop);
+      }
+    }
+
+    return res;
+  }
+
+  return data.map(item => func(item));
+}
+
+function transferObj(opts) {
+  const { data = [], keySeperator = '.', arrSeperator } = opts;
+  const unique = `[🐷${ rand() }]`;
+
+  function rand () {
+    return Math.random().toString().replace(/\./g, '');
+  }
+
+  const func = (obj, res = {}) => {
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        const value = obj[key];
+
+        if (!key.includes(keySeperator)) {
+          res[key] = arrSeperator && typeof value === 'string' && value.includes(arrSeperator)
+            ? value.split(arrSeperator)
+            : value;
+          continue;
+        }
+
+        const [prop, str] = key.replace(keySeperator, unique).split(unique);
+        const temp = { [str]: value };
+
+        !res[prop] && (res[prop] = {});
+        func(temp, res[prop]);
+      }
+    }
+
+    return res;
+  }
+
+  return data.map(item => func(item));
+}
 
 /**
  * NOTE:异步加载脚本
  * @param {地址} url
  */
-function async_load (url) {
+function asyncLoad (url) {
 	var oS = document.createElement('script');
+
 	oS.type = 'text/javascript';
 	oS.async = true;
 	oS.src = url;
@@ -2095,8 +2160,30 @@ function async_load (url) {
 function getUrlParam(value) {
   var reg = new RegExp("(^|&)" + value + "=([^&]*)(&|$)", "i"),
 			res = window.location.search.substr(1).match(reg);
-			
+
 	return res && res[2] && decodeURIComponent(res[2]);
+}
+
+
+/**
+ * NOTE:解析URL -> 对象
+ */
+function parseUrlParam(url) {
+	var param = /\?(.+)$/.exec(url)[1],
+			arr = param.split('&'),
+			temp = {},
+			item = null,
+			value = null;
+
+	arr.forEach(val => {
+		item = val.split('=');
+		value = decodeURIComponent(item[1]);
+		value = /\d+$/.test(value) ? parseFloat(value) : value;
+		temp[item[0]] = temp.hasOwnProperty(item[0])
+									? [].concat.call([temp[item[0]]], value)
+									: value;
+	})
+	return temp;
 }
 
 
@@ -2134,6 +2221,28 @@ function template(template, ...expressions) {
 }
 
 
+/**
+ * NOTE: 判断对象是否存在环
+ */
+function cycleDetector(obj) {
+	var ancestor = []; //保存祖先
+	return (function (obj, ancestor) {
+		var arr = [];
+		if ({}.toString.call(obj) !== "[object Object]" || obj === null) {
+			return false;
+		}
+		if (ancestor.indexOf(obj) !== -1) {
+			return true;
+		}
+		ancestor = ancestor.concat(obj); //直接拿到他的直系祖先,并和原祖先合并
+		for (var prop in obj) {
+			arr.push(obj[prop]);
+		}
+		return arr.some(value => arguments.callee(value, ancestor));
+	})(obj, ancestor);
+}
+
+
 //------------------------------------------------------------------------------------------------>>
 
 /**
@@ -2165,7 +2274,7 @@ var Magnifier = (function (doc, win) {
 		this.opt = opt;
     this._moveWrap = this.moveWrap.bind(this);
 		this._leaveWrap = this.leaveWrap.bind(this);
-		
+
 		this.init();
 	}
 
@@ -2259,7 +2368,7 @@ var Magnifier = (function (doc, win) {
 				}
 			}
     },
-    
+
 		enterWrap: function () {
       addEvent(this.elem, 'mousemove', this._moveWrap);
 			addEvent(this.elem, 'mouseleave', this._leaveWrap);
@@ -2312,13 +2421,13 @@ var Magnifier = (function (doc, win) {
 /**
  * NOTE:鼠标行为预测菜单
  * @param {元素} wrap
- * @param {主菜单的类名} mainMenu
+ * @param {主菜单的类名} mianMenu
  * @param {主菜单子项的类名} mainItem
  * @param {子菜单的类名} subMenu
  * @param {子菜单子项的类名} subItem
- * @param {移入主菜单子项新增的类名} mainItemShow
- * @param {移入主菜单，子菜单新增的类名} subMenuShow
- * @param {移入主菜单子项，子菜单子项新增的类名} subItemShow
+ * @param {移入主菜单子项显示的新增类名} mainItemCurrent
+ * @param {移入主菜单，子菜单显示新增类名} subMenuShow
+ * @param {移入主菜单子项，子菜单子项显示新增类名} subItemActive
  */
 var PredictedMenu = (function (win, doc) {
 	var PredictedMenu = function (wrap, opt) {
@@ -2330,8 +2439,8 @@ var PredictedMenu = (function (win, doc) {
 		this.mainItem = opt.mainItem;
 		this.subItem = opt.subItem;
 		this.subMenu = opt.subMenu;
-		this.mainItemShow = opt.mainItemShow || 'cur';
-		this.subItemShow = opt.subItemShow || 'active';
+		this.mainItemCurrent = opt.mainItemCurrent || 'cur';
+		this.subItemActive = opt.subItemActive || 'active';
 		this.subMenuShow = opt.subMenuShow || 'show';
 
 		this.mousePos = [];
@@ -2345,7 +2454,6 @@ var PredictedMenu = (function (win, doc) {
 		this._mouseMove = this.mouseMove.bind(this);
 		this._leaveMenu = this.leaveMenu.bind(this);
 		this._leaveSubmenu = this.leaveSubmenu.bind(this);
-		this.init();
 	}
 
 	PredictedMenu.prototype = {
@@ -2358,13 +2466,13 @@ var PredictedMenu = (function (win, doc) {
 
 			addEvent(this.oWrap, 'mouseenter', this.enterMenu.bind(this));
 			addEvent(this.oSubMenu, 'mouseenter', this.enterSubmenu.bind(this));
-			this.oMainItems.jForEach(function (val) {
+			this.oMainItems._forEach(function (val) {
 				addEvent(val, 'mouseenter', _self.enterMianMenu.bind(_self));
 			});
 		},
 
 		enterMenu: function () {
-			this.oSubMenu.className += ' ' + this.subMenuShow;
+			this.oSubMenu.classList.add(this.subMenuShow);
 			addEvent(doc, 'mousemove', this._mouseMove);
 			addEvent(this.oWrap, 'mouseleave', this._leaveMenu);
 		},
@@ -2437,7 +2545,7 @@ var PredictedMenu = (function (win, doc) {
 		},
 
 		leaveMenu: function () {
-			this.oSubMenu.className = this.subMenu;
+			this.oSubMenu.classList.remove(this.subMenuShow);
 			this.restoreMenuItems();
 			removeEvent(doc, 'mousemove', this._mouseMove);
 			removeEvent(this.oWrap, 'mouseleave', this._leaveMenu);
@@ -2452,24 +2560,24 @@ var PredictedMenu = (function (win, doc) {
 		showMenuItem: function (idx) {
 			this.restoreMenuItems();
 			if (!this.isLeave) {
-				this.oMainItems[idx].className += ' ' + this.mainItemShow;
-				this.oSubItems[idx].className += ' ' + this.subItemShow;
+				this.oMainItems[idx].classList.add(this.mainItemCurrent);
+				this.oSubItems[idx].classList.add(this.subItemActive);
 			}
 		},
 
 		restoreMenuItems: function () {
 			var _self = this;
-			this.oMainItems.jForEach(function (val) {
-				val.className = _self.mainItem;
+			this.oMainItems._forEach(function (val) {
+				val.classList.remove(_self.mainItemCurrent);
 			});
-			this.oSubItems.jForEach(function (val) {
-				val.className = _self.subItem;
+			this.oSubItems._forEach(function (val) {
+				val.classList.remove(_self.subItemActive);
 			});
 		}
 	}
 
 	return PredictedMenu;
-})(window, document);
+}(window, document));
 
 
 /**
@@ -2522,7 +2630,7 @@ var Gomoku = (function (doc) {
       this.context.beginPath();
       this.context.lineWidth = 1;
       this.context.strokeStyle = '#333';
-      
+
       for (var i = 0; i < 15; i++) {
         this.context.moveTo(this.hGap + i * this.gap, this.hGap);
         this.context.lineTo(this.hGap + i * this.gap, this.size - this.hGap);
@@ -2641,7 +2749,7 @@ var Gomoku = (function (doc) {
           max = 0
           u = 0,
           v = 0;
-    
+
       for (var i = 0; i < this.column; i++){
         myScore[i] = [];
         computerScore[i] = [];
@@ -2663,7 +2771,7 @@ var Gomoku = (function (doc) {
                   default:
                     break;
                 }
-    
+
                 switch(this.computerWins[k]){
                   case 1: computerScore[i][j] += 220;
                     break;
@@ -2691,7 +2799,7 @@ var Gomoku = (function (doc) {
             }
 
             //进攻
-    
+
             if (computerScore[i][j] > max){
               max = computerScore[i][j];
               u = i;
@@ -2705,7 +2813,7 @@ var Gomoku = (function (doc) {
           }
         }
       }
-    
+
       this.makeChess(u * this.gap + this.hGap, v * this.gap + this.hGap, this.player);
       this.existChesses.push({x: u, y: v, player: this.player});
       this.allChesses[v][u] = this.player;
@@ -2778,7 +2886,7 @@ var Gomoku = (function (doc) {
         this.context.strokeStyle = '#f00';
         this.context.lineWidth = 5;
         this.context.lineCap = 'round';
-        
+
         this.context.moveTo(i * this.gap + this.hGap - 12, j * this.gap + this.hGap);
         this.context.lineTo(i * this.gap + this.hGap + 12, j * this.gap + this.hGap);
         this.context.moveTo(i * this.gap + this.hGap, j * this.gap + this.hGap - 12);
@@ -2832,14 +2940,13 @@ var Waterfall = (function(doc, win) {
 
     this.pages = 0;
     this.curPage = 0;
-    this.cache = [];
     this.idx = 0;
+    this.cache = [];
     this.heightArr = [];
-    this.oWrap.style.position = 'relative';
     if (!this.API) {
       throw new Error('url未填写');
 		}
-		
+
 		this.init();
   };
 
@@ -2855,17 +2962,17 @@ var Waterfall = (function(doc, win) {
     },
 
     bindEvent: function() {
-			var _moreImagDatas = throttle(this.moreImgDatas, 500).bind(this),
-					_resetWaterfall = debounce(this.resetWaterfall.bind(this), 500);
+			var _moreImagDatas = _throttle(this.moreImgDatas, 500).bind(this),
+					_resetWaterfall = _debounce(this.resetWaterfall, 500).bind(this);
 
 			addEvent(win, 'scroll', _moreImagDatas);
 			addEvent(win, 'resize', _resetWaterfall);
     },
 
     moreImgDatas: function() {
-      if (getViewPort().h + getScrollOffset().y >= getScrollSize().h) {
+      if (getClientPort().h + getScrollOffset().y >= getScrollSize().h) {
         this.curPage++;
-        
+
         if (this.curPage <= this.pages - 1) {
           this.getImgDatas(this.curPage);
         } else if (this.infinity){
@@ -2895,17 +3002,15 @@ var Waterfall = (function(doc, win) {
     },
 
     renderImgs: function(data, curPage) {
-      var _self = this,
+			var oFrag = doc.createDocumentFragment,
 					wrapWidth = getStyle(this.oWrap, 'width'),
-					liWidth = Math.round(
-						(wrapWidth - this.gap * (this.column - 1)) / this.column
-					),
+					liWidth = Math.round((wrapWidth - this.gap * (this.column - 1)) / this.column),
 					liHeight = 0,
 					oLi = null,
 					oImg = null,
 					minIdx = 0;
 
-      data.jForEach(function(val, idx) {
+      data._forEach(function(val, idx) {
 				liHeight = Math.round((liWidth * val.height) / val.width);
 				oLi = doc.createElement('li');
 				liStyle = oLi.style;
@@ -2914,30 +3019,29 @@ var Waterfall = (function(doc, win) {
         liStyle.height = liHeight + 'px';
         oImg = new Image();
         oImg.src = val.img;
-        oImg.style.opacity = 0;
-        oImg.style.transition = 'opacity 1s';
         oLi.appendChild(oImg);
-        _self.oWrap.appendChild(oLi);
+        oFrag.appendChild(oLi);
 
-        if (_self.column > idx && curPage === 0) {
+        if (this.column > idx && curPage === 0) {
           liStyle.top = 0;
-					liStyle.left = (liWidth + _self.gap) * idx + 'px';
-          _self.heightArr.push(liHeight + _self.gap);
+					liStyle.left = (liWidth + this.gap) * idx + 'px';
+          this.heightArr.push(liHeight + this.gap);
         } else {
-          minIdx = _self.getArrIdx(_self.heightArr);
-          liStyle.left = (liWidth + _self.gap) * minIdx + 'px';
-          liStyle.top = _self.heightArr[minIdx] + 'px';
-          _self.heightArr[minIdx] += oLi.offsetHeight + _self.gap;
+          minIdx = this.getArrIdx(this.heightArr);
+          liStyle.left = (liWidth + this.gap) * minIdx + 'px';
+          liStyle.top = this.heightArr[minIdx] + 'px';
+          this.heightArr[minIdx] += liHeight + this.gap;
         }
         oImg.style.opacity = 1;
-      });
-      _self.oWrap.style.height = Math.max.apply(null, _self.heightArr) + 'px';
+      }, this);
+			this.oWrap.style.height = Math.max.apply(null, this.heightArr) + 'px';
+			this.oWrap.appendChild(oFrag);
     },
 
     getArrIdx: function(arr) {
       return [].indexOf.call(arr, Math.min.apply(null, arr));
 		},
-		
+
 		resetWaterfall: function() {
 			this.oWrap.innerHTML = '';
 			this.heightArr = [];
@@ -2984,7 +3088,7 @@ var PageList = (function (doc) {
 		bindEvent: function () {
 			addEvent(this.elem, 'click', this.pageListClick.bind(this));
 		},
-		
+
 
 		pageListClick: function (e) {
 			var e = e || window.event,
@@ -2992,7 +3096,7 @@ var PageList = (function (doc) {
 					className = tar.className,
 					curPage = this.curPage,
 					pages = this.pages;
-	
+
 			if (className) {
 				switch (className) {
 					case 'page-btn':
@@ -3108,8 +3212,8 @@ var PageList = (function (doc) {
 
 /**
  * NOTE:圣杯模式
- * @param {模板} Origin 
- * @param {对象} Target 
+ * @param {模板} Origin
+ * @param {对象} Target
  */
 var inherit = (function () {
 	function Buffer () { }
@@ -3239,7 +3343,7 @@ var xhr = (function (doc, win) {
           o = null;
         }
 			}
-			
+
       o.open(type, url, async);
       type === 'POST' && o.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
       o.send(type === 'POST' ? formatData(data) : null);
@@ -3301,7 +3405,7 @@ var xhr = (function (doc, win) {
  * @param {xhr请求的方式} opt.type
  * @param {xhr同/异步} opt.async
  * @param {xhr返回的数据类型} opt.dataType
- * @param {xhr请求的数据} opt.data
+ * @param {xhr请求的数据} opt.datab
  * @param {成功的回调} opt.success
  * @param {失败的回调} opt.error
  */
@@ -3368,9 +3472,7 @@ var xhrWindowName = (function (doc) {
         getDatas(opt);
       });
     } else {
-      iframe.onload = function () {
-        getDatas(opt);
-      };
+      iframe.onload = getDatas(opt);
     }
   }
 })(document);
@@ -3379,43 +3481,42 @@ var xhrWindowName = (function (doc) {
 /**
  * cookie 写/删/读  操作
  */
-var mCookie = (function () {
-	return {
-		set: function (key, value, time) {
-			var args;
-			args = arguments[3] ? 'max-age' :
-				'expires';
-			document.cookie = key + '=' + value + '; ' + args + '=' + time;
-			return this;
-		},
+var mCookie = (function (doc) {
+  return {
+    set: function (key, value, seconds = -1) {
+      doc.cookie = key + '=' + value + ';max-age=' + seconds;
+      return this;
+    },
 
-		delete: function (key) {
-			this.set(key, '', -1);
-		},
+    get: function (key, cb) {
+      var cookies = doc.cookie;
 
-		get: function (key, callback) {
-			var cookieStr = document.cookie;
+      if (cookies) {
+        var cookiesArr = doc.cookie.split('; '),
+            arr = [];
 
-			if (cookieStr) {
-				var cookieArr = cookieStr.split('; '),
-						item = null,
-						tempArr = [];
-				for (var prop in cookieArr) {
-					if (cookieArr.hasOwnProperty(prop)) {
-						item = cookieArr[prop];
-						tempArr = item.split('=');
-						if (tempArr[0] == key) {
-							typeof (callback) == 'function' && callback(tempArr[1]);
-							return this;
-						}
-					}
-				}
-			}
-			typeof (callback) == 'function' && callback(undefined);
-			return this;
-		}
-	}
-})();
+        var res = cookiesArr.some((val) => {
+          	arr = val.split('=');
+
+          if (arr[0] === key) {
+            typeof(cb) === 'function' && cb(arr[1]);
+            return true;
+          }
+        })
+
+        !res && typeof(cb) === 'function' && cb(null);
+        return this;
+      }
+      typeof(cb) === 'function' && cb(null);
+      return this;
+    },
+
+    delete: function (key) {
+      this.set(key, '', -1);
+      return this;
+    }
+  }
+})(document);
 
 
 /**
@@ -3467,8 +3568,6 @@ var pointInTriangle = (function () {
  * 3、没有arguments对象，rest运算符代替
  * 4、在generator函数中，yield命令不能生效
  */
-
-
 
 /**
  * Object.keys() 遍历自身可枚举、非Symbol属性键名，并返回返回一个数组
